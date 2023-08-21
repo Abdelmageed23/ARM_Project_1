@@ -83,6 +83,16 @@ typedef enum
 
 }DMA_FIFOThresh;
 
+typedef enum
+{
+	DIR_ERR=1,
+	ERR_TRANS,
+	HALF_TRANS,
+	FULL_TRANS,
+	FIFO_ERR=7,
+
+}DMA_Interrupt;
+
 typedef struct
 {
 	DMA_DMAType DMA_Type;
@@ -101,6 +111,10 @@ typedef struct
 	DMA_PrioLevel PriorityLevel;
 
 	DMA_FIFOThresh FIFOThresh;
+
+	DMA_Interrupt InterruptType;
+
+	void (*CallBackFunc)(void);
 
 }DMA_Cnfg_T;
 

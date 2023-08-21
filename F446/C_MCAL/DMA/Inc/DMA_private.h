@@ -1,6 +1,7 @@
 #ifndef DMA_PRIVATE_H_
 #define DMA_PRIVATE_H_
 
+#define DMA_TYPE_NUM			2
 #define DMA_STREAM_NUM			8			/*Number of Streams*/
 #define DMA_STREAM_REG_NUM		6			/*Number of SCR registers*/
 
@@ -26,6 +27,11 @@
 #define DMA_PSIZE_SHIFT			11			/*Peripheral data size shift*/
 
 #define DMA_FTH_MASK			0b11		/*FIFO threshold mask*/
+
+
+#define DMA_FEIE_SHIFT			7			/* FIFO Interrupt enable shift*/
+
+#define DMA_FLAG_RISED			1
 
 #endif
 
