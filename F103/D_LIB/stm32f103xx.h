@@ -114,4 +114,31 @@ typedef struct
 
 #define RCC	((RCC_Reg_t*)RCC_BASE_ADDRESS)
 
+/************************************************************************************************/
+/******************************** DMA Registers ***********************************************/
+/************************************************************************************************/
+#define DMA1_BASE_ADDRESS			0x40020000U
+#define DMA2_BASE_ADDRESS			0x40020400U
+
+typedef enum
+{
+	CCR,
+	CNDTR,
+	CPAR,
+	CMAR,
+	RESERVED
+
+}DMA_ChannelReg_T;
+
+typedef struct
+{
+	volatile uint32_t ISR;
+	volatile uint32_t IFCR;
+	volatile uint32_t CHNR[7][5];
+
+}DMA_RegDef_T;
+
+#define DMA1			((DMA_RegDef_T *)DMA1_BASE_ADDRESS)
+#define DMA2			((DMA_RegDef_T *)DMA2_BASE_ADDRESS)
+
 #endif
