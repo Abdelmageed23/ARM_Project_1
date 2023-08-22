@@ -24,6 +24,10 @@
 #define ERROR_STATE_OK          1
 #define ERROR_STATE_NULL_PTR    2
 
+#define NOK                     0
+#define OK                      1
+#define NULL_PTR                2
+
 
 
 #endif
