@@ -69,5 +69,32 @@ typedef struct
 #define GPIOE            ((GPIO_RegDef_T  *)GPIOE_BASE_ADDRESS)
 #define GPIOF            ((GPIO_RegDef_T  *)GPIOF_BASE_ADDRESS)
 #define GPIOG            ((GPIO_RegDef_T  *)GPIOG_BASE_ADDRESS)
+/************************************************************************************************/
+/******************************** USART Registers ***********************************************/
+/************************************************************************************************/
+#define USART1_u32_BASE_ADDRESS                                0x40013800U
+#define USART2_u32_BASE_ADDRESS                                0x40004400U
+#define USART3_u32_BASE_ADDRESS                                0x40004800U
+#define  UART4_u32_BASE_ADDRESS                                0x40004C00U
+#define  UART5_u32_BASE_ADDRESS                                0x40005000U
+ typedef	struct
+{
+	volatile uint32_t SR     ;
+	volatile uint32_t DR     ;
+	volatile uint32_t BRR      ;
+	volatile uint32_t CR1      ;
+	volatile uint32_t CR2   ;
+	volatile uint32_t CR3  ;
+	volatile uint32_t GTPR  ;
+
+} USART_REG ;
+
+#define  USART1                     ( (  USART_REG *) USART1_u32_BASE_ADDRESS )
+#define  USART2                     ( (  USART_REG *) USART2_u32_BASE_ADDRESS )
+#define  USART3                     ( (  USART_REG *) USART3_u32_BASE_ADDRESS )
+#define   UART4                     ( (  USART_REG *) UART4_u32_BASE_ADDRESS  )
+#define   UART5                     ( (  USART_REG *) UART5_u32_BASE_ADDRESS  )
+
+
 
 #endif
