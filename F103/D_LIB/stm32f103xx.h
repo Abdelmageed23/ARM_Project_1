@@ -96,5 +96,49 @@ typedef struct
 #define   UART5                     ( (  USART_REG *) UART5_u32_BASE_ADDRESS  )
 
 
+/******************** RCC Register Definition Structure *****************/
+typedef struct
+{
+	uint32_t RCC_CR;
+	uint32_t RCC_CFGR;
+	uint32_t RCC_CIR;
+	uint32_t RCC_APB2STR;
+	uint32_t RCC_APB1STR;
+	uint32_t RCC_AHBENR;
+	uint32_t RCC_APB2ENR;
+	uint32_t RCC_APB1ENR;
+	uint32_t RCC_BDCR;
+	uint32_t RCC_CSR;
+}RCC_Reg_t;
+
+
+#define RCC	((RCC_Reg_t*)RCC_BASE_ADDRESS)
+
+/************************************************************************************************/
+/******************************** DMA Registers ***********************************************/
+/************************************************************************************************/
+#define DMA1_BASE_ADDRESS			0x40020000U
+#define DMA2_BASE_ADDRESS			0x40020400U
+
+typedef enum
+{
+	CCR,
+	CNDTR,
+	CPAR,
+	CMAR,
+	RESERVED
+
+}DMA_ChannelReg_T;
+
+typedef struct
+{
+	volatile uint32_t ISR;
+	volatile uint32_t IFCR;
+	volatile uint32_t CHNR[7][5];
+
+}DMA_RegDef_T;
+
+#define DMA1			((DMA_RegDef_T *)DMA1_BASE_ADDRESS)
+#define DMA2			((DMA_RegDef_T *)DMA2_BASE_ADDRESS)
 
 #endif
