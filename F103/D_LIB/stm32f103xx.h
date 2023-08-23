@@ -71,5 +71,41 @@ typedef struct
 #define GPIOE            ((GPIO_RegDef_T  *)GPIOE_BASE_ADDRESS)
 #define GPIOF            ((GPIO_RegDef_T  *)GPIOF_BASE_ADDRESS)
 #define GPIOG            ((GPIO_RegDef_T  *)GPIOG_BASE_ADDRESS)
-
+/********************************************************************************************************/
+/******************** APB1 Peripheral Base Addresses *****************/
+#define SPI2_BASE_ADDRESS		0x40003800UL
+#define SPI3_BASE_ADDRESS		0x40003C00UL
+/******************** APB2 Peripheral Base Addresses *****************/
+#define EXTI_BASE_ADDRESS		0x40010400UL
+#define SPI1_BASE_ADDRESS		0x40013000UL
+/******************** SPI Register Definition Structure *****************/
+typedef struct
+{
+	volatile uint32_t SPI_CR1;
+	volatile uint32_t SPI_CR2;
+	volatile uint32_t SPI_SR;
+	volatile uint32_t SPI_DR;
+	volatile uint32_t SPI_CRCPR;
+	volatile uint32_t SPI_RXCRCR;
+	volatile uint32_t SPI_TXCRCR;
+	volatile uint32_t SPI_I2SCFGR;
+	volatile uint32_t SPI_I2SPR;
+}SPI_Reg_t;
+/******************** EXTI Register Definition Structure *****************/
+typedef struct
+{
+	volatile uint32_t EXTI_IMR;
+	volatile uint32_t EXTI_EMR;
+	volatile uint32_t EXTI_RTSR;
+	volatile uint32_t EXTI_FTSR;
+	volatile uint32_t EXTI_SWIER;
+	volatile uint32_t EXTI_PR;
+}EXTI_Reg_t;
+/******************** SPI Peripheral Definition *****************/
+#define SPI1	((SPI_Reg_t*)SPI1_BASE_ADDRESS)
+#define SPI2	((SPI_Reg_t*)SPI2_BASE_ADDRESS)
+#define SPI3	((SPI_Reg_t*)SPI3_BASE_ADDRESS)
+/******************** EXTI Peripheral Definition *****************/
+#define EXTI	((EXTI_Reg_t*)EXTI_BASE_ADDRESS)
+/********************************************************************************************************/
 #endif
