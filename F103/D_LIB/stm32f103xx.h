@@ -53,16 +53,14 @@ typedef struct
 
 typedef struct
 {
-    volatile    uint32_t  CRL ;
-    volatile    uint32_t  CRH ;
-    volatile    uint32_t  IDR  ;
-    volatile    uint32_t  ODR  ;
-    volatile    uint32_t  BSRR  ;
-    volatile    uint32_t  BRR  ;
-    volatile    uint32_t  LCKR  ;
+    volatile uint32_t CR[2];
+    volatile uint32_t IDR;
+    volatile uint32_t ODR;
+    volatile uint32_t BSRR;
+    volatile uint32_t BRR;
+    volatile uint32_t LCKR;
 
 }GPIO_RegDef_T;
-
 
 #define GPIOA            ((GPIO_RegDef_T  *)GPIOA_BASE_ADDRESS)
 #define GPIOB            ((GPIO_RegDef_T  *)GPIOB_BASE_ADDRESS)
@@ -71,6 +69,77 @@ typedef struct
 #define GPIOE            ((GPIO_RegDef_T  *)GPIOE_BASE_ADDRESS)
 #define GPIOF            ((GPIO_RegDef_T  *)GPIOF_BASE_ADDRESS)
 #define GPIOG            ((GPIO_RegDef_T  *)GPIOG_BASE_ADDRESS)
+/************************************************************************************************/
+/******************************** USART Registers ***********************************************/
+/************************************************************************************************/
+#define USART1_u32_BASE_ADDRESS                                0x40013800U
+#define USART2_u32_BASE_ADDRESS                                0x40004400U
+#define USART3_u32_BASE_ADDRESS                                0x40004800U
+#define  UART4_u32_BASE_ADDRESS                                0x40004C00U
+#define  UART5_u32_BASE_ADDRESS                                0x40005000U
+ typedef	struct
+{
+	volatile uint32_t SR     ;
+	volatile uint32_t DR     ;
+	volatile uint32_t BRR      ;
+	volatile uint32_t CR1      ;
+	volatile uint32_t CR2   ;
+	volatile uint32_t CR3  ;
+	volatile uint32_t GTPR  ;
+
+} USART_REG ;
+
+#define  USART1                     ( (  USART_REG *) USART1_u32_BASE_ADDRESS )
+#define  USART2                     ( (  USART_REG *) USART2_u32_BASE_ADDRESS )
+#define  USART3                     ( (  USART_REG *) USART3_u32_BASE_ADDRESS )
+#define   UART4                     ( (  USART_REG *) UART4_u32_BASE_ADDRESS  )
+#define   UART5                     ( (  USART_REG *) UART5_u32_BASE_ADDRESS  )
+
+
+/******************** RCC Register Definition Structure *****************/
+typedef struct
+{
+	uint32_t RCC_CR;
+	uint32_t RCC_CFGR;
+	uint32_t RCC_CIR;
+	uint32_t RCC_APB2STR;
+	uint32_t RCC_APB1STR;
+	uint32_t RCC_AHBENR;
+	uint32_t RCC_APB2ENR;
+	uint32_t RCC_APB1ENR;
+	uint32_t RCC_BDCR;
+	uint32_t RCC_CSR;
+}RCC_Reg_t;
+
+
+#define RCC	((RCC_Reg_t*)RCC_BASE_ADDRESS)
+
+/************************************************************************************************/
+/******************************** DMA Registers ***********************************************/
+/************************************************************************************************/
+#define DMA1_BASE_ADDRESS			0x40020000U
+#define DMA2_BASE_ADDRESS			0x40020400U
+
+typedef enum
+{
+	CCR,
+	CNDTR,
+	CPAR,
+	CMAR,
+	RESERVED
+
+}DMA_ChannelReg_T;
+
+typedef struct
+{
+	volatile uint32_t ISR;
+	volatile uint32_t IFCR;
+	volatile uint32_t CHNR[7][5];
+
+}DMA_RegDef_T;
+
+#define DMA1			((DMA_RegDef_T *)DMA1_BASE_ADDRESS)
+#define DMA2			((DMA_RegDef_T *)DMA2_BASE_ADDRESS)
 /********************************************************************************************************/
 /******************** APB1 Peripheral Base Addresses *****************/
 #define SPI2_BASE_ADDRESS		0x40003800UL
