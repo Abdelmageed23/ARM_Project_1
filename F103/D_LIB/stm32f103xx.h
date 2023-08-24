@@ -81,7 +81,7 @@ typedef struct
 /******************** SPI Register Definition Structure *****************/
 typedef struct
 {
-	volatile uint32_t SPI_CR1;
+	volatile uint32_t SPI_CR1; 	
 	volatile uint32_t SPI_CR2;
 	volatile uint32_t SPI_SR;
 	volatile uint32_t SPI_DR;
@@ -107,5 +107,29 @@ typedef struct
 #define SPI3	((SPI_Reg_t*)SPI3_BASE_ADDRESS)
 /******************** EXTI Peripheral Definition *****************/
 #define EXTI	((EXTI_Reg_t*)EXTI_BASE_ADDRESS)
+/******************** Processsor Peripheral Base Addresses *****************/
+#define SCB_BASE_ADDRESS      	0xE000E008UL
+/******************** SCB Register Definition Structure *****************/
+typedef struct
+{
+  volatile uint32_t SCB_ACTLR;
+  volatile uint32_t Reserved1[829];
+	volatile uint32_t SCB_CPUID;
+  volatile uint32_t SCB_ICSR;
+  volatile uint32_t SCB_VTOR;
+  volatile uint32_t SCB_AIRCR;
+  volatile uint32_t SCB_SCR;
+  volatile uint32_t SCB_CCR;
+  volatile uint8_t SCB_SHPR[12];
+  volatile uint32_t SCB_SHCSR;
+  volatile uint32_t SCB_CFSR;
+  volatile uint32_t SCB_HFSR;
+  volatile uint32_t Reserved2;
+  volatile uint32_t SCB_MMAR;
+  volatile uint32_t SCB_BFAR;
+  volatile uint32_t SCB_AFSR;
+}SCB_RegDef_t;
+/******************** SCB Peripheral Definition *****************/
+#define SCB	((SCB_RegDef_t*)SCB_BASE_ADDRESS)
 /********************************************************************************************************/
 #endif
