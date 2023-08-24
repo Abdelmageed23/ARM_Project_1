@@ -141,4 +141,21 @@ typedef struct
 #define DMA1			((DMA_RegDef_T *)DMA1_BASE_ADDRESS)
 #define DMA2			((DMA_RegDef_T *)DMA2_BASE_ADDRESS)
 
+/************************************************************************************************/
+/******************************** AFIO Registers ***********************************************/
+/************************************************************************************************/
+#define AFIO_BASE_ADDRESS		 0x40010000U
+
+typedef struct
+{
+    volatile uint32_t EVCR;
+    volatile uint32_t MAPR;
+    volatile uint32_t EXTICR[4];
+    volatile uint32_t RESERVED;
+    volatile uint32_t MAPR2;
+
+}AFIO_RegDef_T;
+
+#define AFIO						((AFIO_RegDef_T *)AFIO_BASE_ADDRESS)
+
 #endif
