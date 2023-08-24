@@ -53,7 +53,7 @@ typedef struct
 
 typedef struct
 {
-<<<<<<< HEAD
+<<<<<<< Updated upstream
     volatile uint32_t CR[2];
     volatile uint32_t IDR;
     volatile uint32_t ODR;
@@ -75,7 +75,7 @@ typedef struct
 }GPIO_RegDef_T;
 
 
->>>>>>> origin/EXTI
+>>>>>>> Stashed changes
 #define GPIOA            ((GPIO_RegDef_T  *)GPIOA_BASE_ADDRESS)
 #define GPIOB            ((GPIO_RegDef_T  *)GPIOB_BASE_ADDRESS)
 #define GPIOC            ((GPIO_RegDef_T  *)GPIOC_BASE_ADDRESS)
@@ -83,7 +83,7 @@ typedef struct
 #define GPIOE            ((GPIO_RegDef_T  *)GPIOE_BASE_ADDRESS)
 #define GPIOF            ((GPIO_RegDef_T  *)GPIOF_BASE_ADDRESS)
 #define GPIOG            ((GPIO_RegDef_T  *)GPIOG_BASE_ADDRESS)
-<<<<<<< HEAD
+<<<<<<< Updated upstream
 /************************************************************************************************/
 /******************************** USART Registers ***********************************************/
 /************************************************************************************************/
@@ -156,6 +156,6 @@ typedef struct
 #define DMA1			((DMA_RegDef_T *)DMA1_BASE_ADDRESS)
 #define DMA2			((DMA_RegDef_T *)DMA2_BASE_ADDRESS)
 =======
->>>>>>> origin/EXTI
+>>>>>>> Stashed changes
 
 #endif
