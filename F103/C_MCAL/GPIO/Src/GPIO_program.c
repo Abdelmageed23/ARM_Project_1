@@ -14,7 +14,7 @@
 #include "../Inc/GPIO_private.h"
 #include "../Inc/GPIO_interface.h"
 
-static GPIO_RegDef_T *GPIOPort[GPIO_PERIPHERAL_NUM] = {GPIOA ,GPIOB ,GPIOC };
+static GPIO_RegDef_T *GPIOPort[GPIO_PERIPHERAL_NUM] = {GPIOA ,GPIOB ,GPIOC ,GPIOD ,GPIOE ,GPIOF ,GPIOG};
 
 /****************************************************************************/
 /*
@@ -78,7 +78,7 @@ uint8_t GPIO_u8SetPinValue(Port_T Port , Pin_T PinNum , PinVal_T PinValue)
 	uint8_t  Local_u8ErrorState = OK;
 
 	/*Check Valid Inputs Configuration*/
-	if((Port <= PORTC) && (PinNum <= PIN15)
+	if((Port <= PORTG) && (PinNum <= PIN15)
 			&& (PinValue <= PIN_HIGH))
 	{
 		(GPIOPort[Port])->ODR &= ~(ODR_MASK << PinNum);
@@ -105,7 +105,7 @@ uint8_t GPIO_u8TogglePinValue(Port_T Port , Pin_T PinNum)
 	uint8_t  Local_u8ErrorState = OK;
 
 	/*Check Valid Inputs Configuration*/
-	if((Port <= PORTC) && (PinNum <= PIN15))
+	if((Port <= PORTG) && (PinNum <= PIN15))
 	{
 		(GPIOPort[Port])->ODR ^= (ODR_MASK << PinNum);
 	}
@@ -133,7 +133,7 @@ uint8_t GPIO_u8ReadPinValue(Port_T Port , Pin_T PinNum , PinVal_T *PinValue)
 	uint8_t  Local_u8ErrorState = OK;
 
 	/*Check Valid Inputs Configuration*/
-	if((Port <= PORTC) && ((PinNum) <= PIN15))
+	if((Port <= PORTG) && ((PinNum) <= PIN15))
 	{
 		*PinValue = (((GPIOPort[Port])->IDR >> PinNum)&IDR_ANDING);
 	}
