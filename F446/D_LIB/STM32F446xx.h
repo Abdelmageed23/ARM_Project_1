@@ -3,32 +3,6 @@
 /*********************  AHB1 Peripheral Base Addresses   *********************/
 #define DMA1_BASE_ADRESS		 0x40026000U
 #define DMA2_BASE_ADRESS		 0x40026400U
-
-/******************** APB2 Peripheral Base Addresses *****************/
-#define EXTI_BASE_ADDRESS		    0x40013C00UL
-#define SYSCFG_BASE_ADDRESS		  	0x40013800UL
-/******************** EXTI Register Definition Structure *****************/
-typedef struct
-{
-	volatile uint32_t EXTI_IMR;
-	volatile uint32_t EXTI_EMR;
-	volatile uint32_t EXTI_RTSR;
-	volatile uint32_t EXTI_FTSR;
-	volatile uint32_t EXTI_SWIER;
-	volatile uint32_t EXTI_PR;
-}EXTI_RegDef_t;
-/******************** SYSCFG Register Definition Structure *****************/
-typedef struct
-{
-	volatile uint32_t SYSCFG_MEMRMP;
-	volatile uint32_t SYSCFG_PMC;
-	volatile uint32_t SYSCFG_EXTICR[4];
-  volatile uint32_t Reserved1[2];
-	volatile uint32_t SYSCFG_CMPCR;
-  volatile uint32_t Reserved2[2];
-	volatile uint32_t SYSCFG_CFGR;
-}SYSCFG_RegDef_t;
-
 /*********************  DMA Register Definition Structure   *********************/
 typedef enum
 {
@@ -167,12 +141,6 @@ typedef struct
 /**************************************************************************************************/
 
 #define NVIC                                  ((NVIC_REG*)NVIC_u32_BASE_ADDRESS)
-<<<<<<< HEAD
-/******************** EXTI Peripheral Definition *****************/
-#define EXTI	((EXTI_RegDef_t*)EXTI_BASE_ADDRESS)
-/******************** EXTI Peripheral Definition *****************/
-#define SYSCFG	((SYSCFG_RegDef_t*)SYSCFG_BASE_ADDRESS)
-
 /************************************************************************************************/
 /******************************** USART Registers ***********************************************/
 /************************************************************************************************/
@@ -194,29 +162,6 @@ typedef struct
 
 } USART_REG ;
 
-=======
-/************************************************************************************************/
-/******************************** USART Registers ***********************************************/
-/************************************************************************************************/
-#define USART1_u32_BASE_ADDRESS                                0x40011000U
-#define USART2_u32_BASE_ADDRESS                                0x40004400U
-#define USART3_u32_BASE_ADDRESS                                0x40004800U
-#define  UART4_u32_BASE_ADDRESS                                0x40004C00U
-#define  UART5_u32_BASE_ADDRESS                                0x40005000U
-#define USART6_u32_BASE_ADDRESS                                0x40011400U
- typedef	struct
-{
-	volatile uint32_t SR    ;
-	volatile uint32_t DR    ;
-	volatile uint32_t BRR   ;
-	volatile uint32_t CR1   ;
-	volatile uint32_t CR2   ;
-	volatile uint32_t CR3   ;
-	volatile uint32_t GTPR  ;
-
-} USART_REG ;
-
->>>>>>> origin/SCB
 #define  USART1                     ( (  USART_REG *) USART1_u32_BASE_ADDRESS )
 #define  USART2                     ( (  USART_REG *) USART2_u32_BASE_ADDRESS )
 #define  USART3                     ( (  USART_REG *) USART3_u32_BASE_ADDRESS )

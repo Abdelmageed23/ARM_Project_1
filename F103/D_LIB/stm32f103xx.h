@@ -98,6 +98,7 @@ typedef struct
 
 
 /******************** RCC Register Definition Structure *****************/
+#define RCC_BASE_ADDRESS			0x40021000U
 typedef struct
 {
 	uint32_t RCC_CR;
