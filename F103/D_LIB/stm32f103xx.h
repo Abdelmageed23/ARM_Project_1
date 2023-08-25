@@ -62,6 +62,7 @@ typedef struct
 
 }GPIO_RegDef_T;
 
+
 #define GPIOA            ((GPIO_RegDef_T  *)GPIOA_BASE_ADDRESS)
 #define GPIOB            ((GPIO_RegDef_T  *)GPIOB_BASE_ADDRESS)
 #define GPIOC            ((GPIO_RegDef_T  *)GPIOC_BASE_ADDRESS)
