@@ -56,10 +56,10 @@ typedef enum
 
 typedef enum
 {
-    LOW=0,
-    MEDIUM,
-    FAST,
-    HIGH
+    SPEED_LOW=0,
+    SPEED_MEDIUM,
+    SPEED_FAST,
+    SPEED_HIGH
 
 }OutSpeed_T;
 
