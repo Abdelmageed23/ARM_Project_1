@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include "STATUS.h"
+#include "ERROR_STATE.h"
 
 #include "stm32f103xx.h"
 
@@ -12,7 +12,7 @@ static void (*GeneralCallBackFun[DMA_TOT_IRQ_NUM])(void) = {NULL};
 
 uint8_t DMA_u8Init(DMA_Cnfg_T * DMA_Cnfg)
 {
-	uint8_t Local_u8ErrorState = OK;
+	uint8_t Local_u8ErrorState = ERROR_STATE_OK;
 
 	if(DMA_Cnfg != NULL)
 	{
@@ -65,7 +65,7 @@ uint8_t DMA_u8Init(DMA_Cnfg_T * DMA_Cnfg)
 
 	else
 	{
-		Local_u8ErrorState = NULL_PTR;
+		Local_u8ErrorState = ERROR_STATE_NULL_PTR;
 	}
 
 	return Local_u8ErrorState;
@@ -74,7 +74,7 @@ uint8_t DMA_u8Init(DMA_Cnfg_T * DMA_Cnfg)
 
 uint8_t DMA_u8StartTransfer(DMA_Cnfg_T *DMA_Cnfg,uint32_t *Copy_pu32SrcAddress , uint32_t *Copy_pu32DestAddress , uint16_t Copy_u16DataSize)
 {
-	uint8_t Local_u8ErrorState = OK;
+	uint8_t Local_u8ErrorState = ERROR_STATE_OK;
 
 	if((DMA_Cnfg != NULL) && (Copy_pu32DestAddress != NULL) && (Copy_pu32SrcAddress != NULL))
 	{
@@ -110,7 +110,7 @@ uint8_t DMA_u8StartTransfer(DMA_Cnfg_T *DMA_Cnfg,uint32_t *Copy_pu32SrcAddress ,
 
 	else
 	{
-		Local_u8ErrorState = NOK;
+		Local_u8ErrorState = ERROR_STATE_NOK;
 	}
 
 	return Local_u8ErrorState;
