@@ -8,7 +8,7 @@
 
 #include <stdint.h>
 
-#include "../Inc/STATUS.h"
+#include "ERROR_STATE.h"
 
 #include "../Inc/STM32F103xx.h"
 #include "../Inc/GPIO_private.h"
