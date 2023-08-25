@@ -88,6 +88,83 @@ typedef struct
 	uint32_t Reserved3[32];
 	volatile uint8_t IPR[240];		/*Interrupt priority register*/
 }NVIC_REG;
+/****************************************************************************/
+/******************** Core peripherals Base Addresses *****************/
+#define SCB_BASE_ADDRESS      		0xE000E008UL
+/******************** APB1 Peripheral Base Addresses *****************/
+#define SPI3_BASE_ADDRESS		    0x40003C00UL
+#define SPI2_BASE_ADDRESS		    0x40003800UL
+/******************** APB2 Peripheral Base Addresses *****************/
+#define EXTI_BASE_ADDRESS		    0x40013C00UL
+#define SYSCFG_BASE_ADDRESS		  	0x40013800UL
+#define SPI4_BASE_ADDRESS		    0x40013400UL
+#define SPI1_BASE_ADDRESS		    0x40013000UL
+/******************** SPI Register Definition Structure *****************/
+typedef struct
+{
+	volatile uint32_t SPI_CR1;/*All last 16 bits(16:31) of all registers is Reserved*/
+	volatile uint32_t SPI_CR2;
+	volatile uint32_t SPI_SR;
+	volatile uint32_t SPI_DR;
+	volatile uint32_t SPI_CRCPR;
+	volatile uint32_t SPI_RXCRCR;
+  	volatile uint32_t SPI_TXCRCR;
+  	volatile uint32_t SPI_I2SCFGR;
+  	volatile uint32_t SPI_I2SPR;
+}SPI_RegDef_t;
+/******************** EXTI Register Definition Structure *****************/
+typedef struct
+{
+	volatile uint32_t EXTI_IMR;
+	volatile uint32_t EXTI_EMR;
+	volatile uint32_t EXTI_RTSR;
+	volatile uint32_t EXTI_FTSR;
+	volatile uint32_t EXTI_SWIER;
+	volatile uint32_t EXTI_PR;
+}EXTI_RegDef_t;
+/******************** SYSCFG Register Definition Structure *****************/
+typedef struct
+{
+	volatile uint32_t SYSCFG_MEMRMP;
+	volatile uint32_t SYSCFG_PMC;
+	volatile uint32_t SYSCFG_EXTICR[4];
+  	volatile uint32_t Reserved1[2];
+	volatile uint32_t SYSCFG_CMPCR;
+  	volatile uint32_t Reserved2[2];
+	volatile uint32_t SYSCFG_CFGR;
+}SYSCFG_RegDef_t;
+/******************** SCB Register Definition Structure *****************/
+typedef struct
+{
+ 	volatile uint32_t SCB_ACTLR;
+  	volatile uint32_t Reserved1[829];
+	volatile uint32_t SCB_CPUID;
+  	volatile uint32_t SCB_ICSR;
+  	volatile uint32_t SCB_VTOR;
+  	volatile uint32_t SCB_AIRCR;
+  	volatile uint32_t SCB_SCR;
+  	volatile uint32_t SCB_CCR;
+  	volatile uint8_t SCB_SHPR[12];
+  	volatile uint32_t SCB_SHCSR;
+  	volatile uint32_t SCB_CFSR;
+  	volatile uint32_t SCB_HFSR;
+  	volatile uint32_t Reserved2;
+  	volatile uint32_t SCB_MMAR;
+  	volatile uint32_t SCB_BFAR;
+  	volatile uint32_t SCB_AFSR;
+}SCB_RegDef_t;
+/******************** SCB Peripheral Definition *****************/
+#define SCB	((SCB_RegDef_t*)SCB_BASE_ADDRESS)
+/******************** EXTI Peripheral Definition *****************/
+#define EXTI	((EXTI_RegDef_t*)EXTI_BASE_ADDRESS)
+/******************** EXTI Peripheral Definition *****************/
+#define SYSCFG	((SYSCFG_RegDef_t*)SYSCFG_BASE_ADDRESS)
+/******************** SPI Peripheral Definition *****************/
+#define SPI1	((SPI_RegDef_t*)SPI1_BASE_ADDRESS)
+#define SPI2	((SPI_RegDef_t*)SPI2_BASE_ADDRESS)
+#define SPI3	((SPI_RegDef_t*)SPI3_BASE_ADDRESS)
+#define SPI4	((SPI_RegDef_t*)SPI4_BASE_ADDRESS)
+/**************************************************************************************************/
 
 #define NVIC                                  ((NVIC_REG*)NVIC_u32_BASE_ADDRESS)
 <<<<<<< HEAD
@@ -189,44 +266,5 @@ typedef struct
 /******************** RCC Peripheral Definition *****************/
 
 #define RCC	((RCC_RegDef_t*)RCC_BASE_ADDRESS)
-
-/************************************************************************************************/
-/******************************** GPIO Registers ************************************************/
-/************************************************************************************************/
-
-#define GPIOA_BASE_ADDRESS       0x40020000U
-#define GPIOB_BASE_ADDRESS       0x40020400U
-#define GPIOC_BASE_ADDRESS       0x40020800U
-#define GPIOD_BASE_ADDRESS       0x40020C00U
-#define GPIOE_BASE_ADDRESS       0x40021000U
-#define GPIOF_BASE_ADDRESS       0x40021400U
-#define GPIOG_BASE_ADDRESS       0x40021800U
-#define GPIOH_BASE_ADDRESS       0x40021C00U
-
-typedef struct
-{
-    volatile    uint32_t  MODER ;       
-    volatile    uint32_t  OTYPER ;
-    volatile    uint32_t  OSPEEDER;
-    volatile    uint32_t  PUPDR;
-    volatile    uint32_t  IDR  ;
-    volatile    uint32_t  ODR  ;
-    volatile    uint32_t  BSRR  ;
-    volatile    uint32_t  LCKR  ;
-    volatile    uint32_t  AFR[2]  ;
-
-}GPIO_RegDef_T;
-
-#define GPIOA            ((GPIO_RegDef_T  *)GPIOA_BASE_ADDRESS)
-#define GPIOB            ((GPIO_RegDef_T  *)GPIOB_BASE_ADDRESS)
-#define GPIOC            ((GPIO_RegDef_T  *)GPIOC_BASE_ADDRESS)
-#define GPIOD            ((GPIO_RegDef_T  *)GPIOD_BASE_ADDRESS)
-#define GPIOE            ((GPIO_RegDef_T  *)GPIOE_BASE_ADDRESS)
-#define GPIOF            ((GPIO_RegDef_T  *)GPIOF_BASE_ADDRESS)
-#define GPIOG            ((GPIO_RegDef_T  *)GPIOG_BASE_ADDRESS)
-#define GPIOH            ((GPIO_RegDef_T  *)GPIOH_BASE_ADDRESS)
-
-
-
 
 #endif

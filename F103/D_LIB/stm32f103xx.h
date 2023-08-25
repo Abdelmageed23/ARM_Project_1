@@ -140,5 +140,65 @@ typedef struct
 
 #define DMA1			((DMA_RegDef_T *)DMA1_BASE_ADDRESS)
 #define DMA2			((DMA_RegDef_T *)DMA2_BASE_ADDRESS)
-
+/********************************************************************************************************/
+/******************** APB1 Peripheral Base Addresses *****************/
+#define SPI2_BASE_ADDRESS		0x40003800UL
+#define SPI3_BASE_ADDRESS		0x40003C00UL
+/******************** APB2 Peripheral Base Addresses *****************/
+#define EXTI_BASE_ADDRESS		0x40010400UL
+#define SPI1_BASE_ADDRESS		0x40013000UL
+/******************** SPI Register Definition Structure *****************/
+typedef struct
+{
+	volatile uint32_t SPI_CR1; 	
+	volatile uint32_t SPI_CR2;
+	volatile uint32_t SPI_SR;
+	volatile uint32_t SPI_DR;
+	volatile uint32_t SPI_CRCPR;
+	volatile uint32_t SPI_RXCRCR;
+	volatile uint32_t SPI_TXCRCR;
+	volatile uint32_t SPI_I2SCFGR;
+	volatile uint32_t SPI_I2SPR;
+}SPI_Reg_t;
+/******************** EXTI Register Definition Structure *****************/
+typedef struct
+{
+	volatile uint32_t EXTI_IMR;
+	volatile uint32_t EXTI_EMR;
+	volatile uint32_t EXTI_RTSR;
+	volatile uint32_t EXTI_FTSR;
+	volatile uint32_t EXTI_SWIER;
+	volatile uint32_t EXTI_PR;
+}EXTI_Reg_t;
+/******************** SPI Peripheral Definition *****************/
+#define SPI1	((SPI_Reg_t*)SPI1_BASE_ADDRESS)
+#define SPI2	((SPI_Reg_t*)SPI2_BASE_ADDRESS)
+#define SPI3	((SPI_Reg_t*)SPI3_BASE_ADDRESS)
+/******************** EXTI Peripheral Definition *****************/
+#define EXTI	((EXTI_Reg_t*)EXTI_BASE_ADDRESS)
+/******************** Processsor Peripheral Base Addresses *****************/
+#define SCB_BASE_ADDRESS      	0xE000E008UL
+/******************** SCB Register Definition Structure *****************/
+typedef struct
+{
+  volatile uint32_t SCB_ACTLR;
+  volatile uint32_t Reserved1[829];
+	volatile uint32_t SCB_CPUID;
+  volatile uint32_t SCB_ICSR;
+  volatile uint32_t SCB_VTOR;
+  volatile uint32_t SCB_AIRCR;
+  volatile uint32_t SCB_SCR;
+  volatile uint32_t SCB_CCR;
+  volatile uint8_t SCB_SHPR[12];
+  volatile uint32_t SCB_SHCSR;
+  volatile uint32_t SCB_CFSR;
+  volatile uint32_t SCB_HFSR;
+  volatile uint32_t Reserved2;
+  volatile uint32_t SCB_MMAR;
+  volatile uint32_t SCB_BFAR;
+  volatile uint32_t SCB_AFSR;
+}SCB_RegDef_t;
+/******************** SCB Peripheral Definition *****************/
+#define SCB	((SCB_RegDef_t*)SCB_BASE_ADDRESS)
+/********************************************************************************************************/
 #endif
