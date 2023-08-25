@@ -10,7 +10,11 @@ typedef enum
 {
     PORTA=0,
     PORTB,
-    PORTC
+    PORTC,
+	PORTD,
+	PORTE,
+	PORTF,
+	PORTG
 
 
 }Port_T;

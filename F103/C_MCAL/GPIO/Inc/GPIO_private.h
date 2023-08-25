@@ -1,7 +1,7 @@
 #ifndef GPIO_PRIVATE_H_
 #define GPIO_PRIVATE_H_
 
-#define GPIO_PERIPHERAL_NUM		3U
+#define GPIO_PERIPHERAL_NUM		7U
 
 
 #define CLR_MODE_PIN_ACCESS		4U
