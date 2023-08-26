@@ -98,6 +98,7 @@ typedef struct
 
 
 /******************** RCC Register Definition Structure *****************/
+#define RCC_BASE_ADDRESS			0x40021000U
 typedef struct
 {
 	uint32_t RCC_CR;
@@ -201,5 +202,23 @@ typedef struct
 }SCB_RegDef_t;
 /******************** SCB Peripheral Definition *****************/
 #define SCB	((SCB_RegDef_t*)SCB_BASE_ADDRESS)
+
+/*********************  AFIO Register Definition Structure   *********************/
+
+#define AFIO_BASE_ADDRESS		 0x40010000U
+
+typedef struct
+{
+    volatile uint32_t EVCR;
+    volatile uint32_t MAPR;
+    volatile uint32_t EXTICR[4];
+    volatile uint32_t RESERVED;
+    volatile uint32_t MAPR2;
+
+}AFIO_RegDef_T;
+
+#define AFIO						((AFIO_RegDef_T *)AFIO_BASE_ADDRESS)
+
 /********************************************************************************************************/
+
 #endif

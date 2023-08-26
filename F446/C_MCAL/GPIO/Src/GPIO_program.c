@@ -8,7 +8,7 @@
 
 #include <stdint.h>
 
-#include "../Inc/STATUS.h"
+#include "ERROR_STATE.h"
 
 #include "../Inc/STM32F446xx.h"
 #include "../Inc/GPIO_private.h"
@@ -25,7 +25,7 @@ static GPIO_RegDef_T *GPIOPort[GPIO_PERIPHERAL_NUM] = {GPIOA ,GPIOB ,GPIOC ,GPIO
  * */
 uint8_t GPIO_u8PinInit(const GPIO_PinConfig_T *PinConfig)
 {
-	uint8_t Local_u8ErrorState = OK,
+	uint8_t Local_u8ErrorState = ERROR_STATE_OK,
 			Local_u8RegNum,
 			Local_u8BitNum;
 
@@ -36,7 +36,7 @@ uint8_t GPIO_u8PinInit(const GPIO_PinConfig_T *PinConfig)
 		if((PinConfig->Port <= PORTH) && ((PinConfig->PinNum) <= PIN15)
 				&& (PinConfig->Mode <= ANALOG) && (PinConfig->AltFunc <= AF15)
 				&& (PinConfig->OutType <= OPEN_DRAIN) && (PinConfig->PullType <= PULL_DN)
-				&&(PinConfig->Speed) <= HIGH)
+				&&(PinConfig->Speed) <= SPEED_HIGH)
 		{
 			/*1. Set Pin Mode : Input ,Output ,Analog ,Alternative Function */
 			(GPIOPort[PinConfig->Port]->MODER) &= ~(MODER_MASK << ((PinConfig->PinNum)*MODER_PIN_ACCESS)) ;
@@ -70,13 +70,13 @@ uint8_t GPIO_u8PinInit(const GPIO_PinConfig_T *PinConfig)
 		}
 		else
 		{
-			Local_u8ErrorState = NOK;
+			Local_u8ErrorState = ERROR_STATE_NOK;
 		}
 	}
 
 	else
 	{
-		Local_u8ErrorState = NULL_PTR;
+		Local_u8ErrorState = ERROR_STATE_NULL_PTR;
 	}
 
 	return Local_u8ErrorState;
@@ -94,7 +94,7 @@ uint8_t GPIO_u8PinInit(const GPIO_PinConfig_T *PinConfig)
  * */
 uint8_t GPIO_u8SetPinValue(Port_T Port , Pin_T PinNum , PinVal_T PinValue)
 {
-	uint8_t  Local_u8ErrorState = OK;
+	uint8_t  Local_u8ErrorState = ERROR_STATE_OK;
 
 	/*Check Valid Inputs Configuration*/
 	if((Port <= PORTH) && (PinNum <= PIN15)
@@ -105,7 +105,7 @@ uint8_t GPIO_u8SetPinValue(Port_T Port , Pin_T PinNum , PinVal_T PinValue)
 	}
 	else
 	{
-		Local_u8ErrorState = NOK;
+		Local_u8ErrorState = ERROR_STATE_NOK;
 	}
 
 	return Local_u8ErrorState;
@@ -121,7 +121,7 @@ uint8_t GPIO_u8SetPinValue(Port_T Port , Pin_T PinNum , PinVal_T PinValue)
  * */
 uint8_t GPIO_u8TogglePinValue(Port_T Port , Pin_T PinNum)
 {
-	uint8_t  Local_u8ErrorState = OK;
+	uint8_t  Local_u8ErrorState = ERROR_STATE_OK;
 
 	/*Check Valid Inputs Configuration*/
 	if((Port <= PORTH) && (PinNum <= PIN15))
@@ -131,7 +131,7 @@ uint8_t GPIO_u8TogglePinValue(Port_T Port , Pin_T PinNum)
 
 	else
 	{
-		Local_u8ErrorState = NOK;
+		Local_u8ErrorState = ERROR_STATE_NOK;
 	}
 
 
@@ -149,7 +149,7 @@ uint8_t GPIO_u8TogglePinValue(Port_T Port , Pin_T PinNum)
  * */
 uint8_t GPIO_u8ReadPinValue(Port_T Port , Pin_T PinNum , PinVal_T *PinValue)
 {
-	uint8_t  Local_u8ErrorState = OK;
+	uint8_t  Local_u8ErrorState = ERROR_STATE_OK;
 
 	/*Check Valid Inputs Configuration*/
 	if((Port <= PORTH) && ((PinNum) <= PIN15))
@@ -158,7 +158,7 @@ uint8_t GPIO_u8ReadPinValue(Port_T Port , Pin_T PinNum , PinVal_T *PinValue)
 	}
 	else
 	{
-		Local_u8ErrorState = NOK;
+		Local_u8ErrorState = ERROR_STATE_NOK;
 	}
 
 	return Local_u8ErrorState;
