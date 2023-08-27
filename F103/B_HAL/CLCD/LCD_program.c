@@ -56,8 +56,8 @@ void HLCD_voidInit(void)
 
 	 GPIO_PinConfig_T LCD_RS ={LCD_u8_CONTRAL_PORT , LCD_u8_RS_PIN , OUTPUT_2MHZ ,GPO_PUSHPULL , PULL_DN };
 	 GPIO_u8PinInit (&LCD_RS);
-	 GPIO_PinConfig_T LCD_RW ={LCD_u8_CONTRAL_PORT , LCD_u8_RW_PIN , OUTPUT_2MHZ ,GPO_PUSHPULL , PULL_DN };
-	 GPIO_u8PinInit (&LCD_RW);
+	 //GPIO_PinConfig_T LCD_RW ={LCD_u8_CONTRAL_PORT , LCD_u8_RW_PIN , OUTPUT_2MHZ ,GPO_PUSHPULL , PULL_DN };
+	 //GPIO_u8PinInit (&LCD_RW);
 	 GPIO_PinConfig_T LCD_E ={LCD_u8_CONTRAL_PORT , LCD_u8_E_PIN , OUTPUT_2MHZ ,GPO_PUSHPULL , PULL_DN };
 	 GPIO_u8PinInit (&LCD_E);
 	 /*
@@ -97,14 +97,14 @@ static void HLCD_voidSendCmnd(uint8_t Copy_u8Comnd)
 {
   #if   LCD_u8_MODE  ==  LCD_u8_MODE_8_BIT
 	GPIO_u8SetPinValue(LCD_u8_CONTRAL_PORT,LCD_u8_RS_PIN,PIN_LOW);
-	GPIO_u8SetPinValue(LCD_u8_CONTRAL_PORT,LCD_u8_RW_PIN,PIN_LOW);
+	//GPIO_u8SetPinValue(LCD_u8_CONTRAL_PORT,LCD_u8_RW_PIN,PIN_LOW);
 	MGPIO_u8SetPortValue(LCD_u8_DATA_PORT,LCD_u8_DATA_Position,Copy_u8Comnd);
 	GPIO_u8SetPinValue(LCD_u8_CONTRAL_PORT,LCD_u8_E_PIN,PIN_HIGH);
 	MSTK_u8BusyWait(1);;
 	GPIO_u8SetPinValue(LCD_u8_CONTRAL_PORT,LCD_u8_E_PIN,PIN_LOW);
   #elif   LCD_u8_MODE  ==  LCD_u8_MODE_4_BIT
 	GPIO_u8SetPinValue(LCD_u8_CONTRAL_PORT,LCD_u8_RS_PIN,PIN_LOW);
-	GPIO_u8SetPinValue(LCD_u8_CONTRAL_PORT,LCD_u8_RW_PIN,PIN_LOW);
+	//GPIO_u8SetPinValue(LCD_u8_CONTRAL_PORT,LCD_u8_RW_PIN,PIN_LOW);
 	/*******************************************************************/
 	GPIO_u8SetPinValue(LCD_u8_DATA_PORT,LCD_u8_DATA_PIN0,GET_BIT(Copy_u8Comnd,4));
 	GPIO_u8SetPinValue(LCD_u8_DATA_PORT,LCD_u8_DATA_PIN1,GET_BIT(Copy_u8Comnd,5));
@@ -132,14 +132,14 @@ void HLCD_voidSendChar(uint8_t Copy_u8Char)
 {
   #if   LCD_u8_MODE  ==  LCD_u8_MODE_8_BIT
 	GPIO_u8SetPinValue(LCD_u8_CONTRAL_PORT,LCD_u8_RS_PIN,PIN_HIGH);
-	GPIO_u8SetPinValue(LCD_u8_CONTRAL_PORT,LCD_u8_RW_PIN,PIN_LOW);
+	//GPIO_u8SetPinValue(LCD_u8_CONTRAL_PORT,LCD_u8_RW_PIN,PIN_LOW);
 	MGPIO_u8SetPortValue(LCD_u8_DATA_PORT,LCD_u8_DATA_Position,Copy_u8Char);
 	GPIO_u8SetPinValue(LCD_u8_CONTRAL_PORT,LCD_u8_E_PIN,PIN_HIGH);
 	MSTK_u8BusyWait(1);
 	GPIO_u8SetPinValue(LCD_u8_CONTRAL_PORT,LCD_u8_E_PIN,PIN_LOW);
   #elif   LCD_u8_MODE  ==  LCD_u8_MODE_4_BIT
 	GPIO_u8SetPinValue(LCD_u8_CONTRAL_PORT,LCD_u8_RS_PIN,PIN_HIGH);
-	GPIO_u8SetPinValue(LCD_u8_CONTRAL_PORT,LCD_u8_RW_PIN,PIN_LOW);
+	//GPIO_u8SetPinValue(LCD_u8_CONTRAL_PORT,LCD_u8_RW_PIN,PIN_LOW);
 	/*******************************************************************/
 	GPIO_u8SetPinValue(LCD_u8_DATA_PORT,LCD_u8_DATA_PIN0,GET_BIT(Copy_u8Char,4));
 	GPIO_u8SetPinValue(LCD_u8_DATA_PORT,LCD_u8_DATA_PIN1,GET_BIT(Copy_u8Char,5));
