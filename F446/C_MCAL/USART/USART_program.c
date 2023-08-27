@@ -198,7 +198,7 @@ uint8_t  MUSART_u8ReceiveArraySynch  (  USARTindex_t Copy_USARTindex , uint8_t *
 	{
        for (uint8_t Local_u8Counter = 0 ; Local_u8Counter < Copy_u8ArraySize ; Local_u8Counter++ )
 	   {
-    	   MUSART_u8ReciveCharNonBlockingSynch( Copy_USARTindex , & (Copy_pu8DataArray[Local_u8Counter]) );
+    	   MUSART_u8ReceiveCharSynch( Copy_USARTindex , & (Copy_pu8DataArray[Local_u8Counter]) );
 	   }
 	}
 	else
