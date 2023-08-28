@@ -30,14 +30,17 @@ int main(void)
 {
 
 	/********************	Local variables initialization	********************/
-	uint8_t Local_u8EnteredPass[USR_PASS_LENGTH],
-	Local_u8PassFlag,
-	Local_u8Trials = 0;
+	uint8_t Local_u8PassFlag,
+			Local_u8Trials = 0,
+			Local_u8Counter;
 
-	uint8_t Local_u8NewDate[USR_DATE_LENGTH],
-			Local_u8NewTime[USR_TIME_LENGTH];
 
-	USR_Choice_T Local_u8Choice;
+	USR_NewDateTime_T Local_NewDateTime;
+
+	USR_Alarm_T Local_Alarms[USR_MAX_ALRMS]= {"\0"};
+
+	USR_Choice Local_u8Choice;
+	USR_AlarmSelect Local_u8AlrmSelect;
 
 	/*************************	Clock Settings	*****************************/
 	RCC_u8SetClksts(CLK_HSI, STATE_ON);
@@ -96,53 +99,113 @@ int main(void)
 
 
 	/*******************	User Interface Program	***********************/
-	USR_voidSendWelcome(USR_USART_Cnfg.USARTindex);
+
+	/* Welcome */
+	MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_Welcome);
+	MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
+
+	MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_EnterPass);
+	MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
 
 	do
 	{
 
 		if(Local_u8Trials != 0)
 		{
-			USR_voidSendWrongPass(USR_USART_Cnfg.USARTindex);
+			/* Wrong Password*/
+			MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_WrongPass);
+			MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
 		}
-
+		/* Check password*/
 		Local_u8PassFlag = USR_u8ReceivePass(USR_USART_Cnfg.USARTindex);
 		Local_u8Trials++;
 	}
 	while((Local_u8PassFlag == PASS_NOT_CORRECT) && (Local_u8Trials < USR_MAX_TRIALS));
 
+
 	if(Local_u8PassFlag == PASS_NOT_CORRECT)
 	{
-		USR_voidSendLoginFailed(USR_USART_Cnfg.USARTindex);
+		/*Login Failed*/
+		MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_TrailFailed);
+		MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
 	}
 
+	/* Logged in successfully*/
 	else
 	{
-		USR_voidSendDashBoard(USR_USART_Cnfg.USARTindex);
-		MUSART_u8ReceiveCharSynch(USR_USART_Cnfg.USARTindex, &Local_u8Choice);
+		do
+		{
+			/* Display dash-board*/
+			USR_voidSendDashBoard(USR_USART_Cnfg.USARTindex);
+			MUSART_u8ReceiveCharSynch(USR_USART_Cnfg.USARTindex, &Local_u8Choice);
+			MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
+
+			switch(Local_u8Choice)
+			{
+			case CHOICE_DISPLAY :
+
+				/*Call RTC HERE to get time
+				 *
+				 *
+				 * */
+				break;
+
+			case CHOICE_SET_TIME :
+
+				USR_voidReceiveTimeDate(USR_USART_Cnfg.USARTindex ,&Local_NewDateTime);
+
+				/* Call RTC HERE to set new time & date
+				 *
+				 *
+				 * */
+
+				/* Date and time is updated*/
+				MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_DateUpd);
+				MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
+				break;
+
+			case CHOICE_SET_ALRM :
+
+				for(Local_u8Counter = 0 ;Local_u8Counter < USR_MAX_ALRMS ;Local_u8Counter++)
+				{
+					/* Display Alarms board */
+					USR_u8DisplayAlarms(USR_USART_Cnfg.USARTindex,(Local_u8Counter+1) ,(uint8_t *)(&(Local_Alarms[Local_u8Counter].Name)));
+				}
+
+				/*Select alarm */
+				Local_u8AlrmSelect = USR_u8ReceiveAlarmSelect(USR_USART_Cnfg.USARTindex);
+
+				/* Set alarm configuration*/
+				USR_voidReceiveAlarmCnfg(USR_USART_Cnfg.USARTindex ,(&Local_Alarms[Local_u8AlrmSelect-1]));
+
+				/* Call APP2 HERE
+				 *
+				 *
+				 *
+				 * */
+
+				/* New alarm is set */
+				MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_AlarmSet);
+				MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
+				break;
+
+			case CHOICE_EXIT :
+
+				/* Exit the system */
+				MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_Exit);
+				MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
+				break;
+
+			default :
+				/* Invalid Choice */
+				MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_Invalid);
+				MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
+
+				break;
+			}
+		}
+		while(Local_u8Choice != CHOICE_EXIT);
 	}
-
-
-	switch(Local_u8Choice)
-	{
-	case CHOICE_DISPLAY :
-
-		/*Call RTC to get time*/
-		break;
-
-	case CHOICE_SET_TIME :
-
-		USR_voidReceiveTimeDate(USR_USART_Cnfg.USARTindex ,Local_u8NewDate ,Local_u8NewTime);
-		break;
-
-	case CHOICE_SET_ALRM :
-
-		break;
-
-	default :
-		break;
-	}
-
 
 	while(1)
 	{
