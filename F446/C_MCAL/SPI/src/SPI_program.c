@@ -10,7 +10,17 @@
 #include "../../../Library/ErrType.h"
 #include "../inc/SPI_interface.h"
 #include "../inc/SPI_prv.h"
+/******************************************************************************************************
+ *Static Globle Varaibles 
+ *****************************************************************************************************
+*/
 static SPI_RegDef_t* SPI_NUM[SPI_PERIPHERSL_NUM]={SPI1,SPI2,SPI3,SPI4};
+static uint8_t*SPI_pvTxData[SPI_PERIPHERSL_NUM]={0};
+static uint8_t*SPI_pvRxDestination[SPI_PERIPHERSL_NUM]={0};
+static uint8_t SPI_u8GlobleTxIntCounter[SPI_PERIPHERSL_NUM]={0};
+static uint8_t SPI_u8GlobleRxIntCounter[SPI_PERIPHERSL_NUM]={0};
+static uint8_t SPI_u8GlobleTxDataSize[SPI_PERIPHERSL_NUM]={0};
+static uint8_t SPI_u8GlobleRxDataSize[SPI_PERIPHERSL_NUM]={0};
 
 uint8_t SPI_u8Init(const SPI_Config_ty *Comunication)
 {
@@ -19,12 +29,12 @@ uint8_t SPI_u8Init(const SPI_Config_ty *Comunication)
     {
         /*SPI_CR1*/
         SPI_NUM[Comunication->SpiNumber]->SPI_CR1 =0;/*Register masking*/
-        SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->LinesDirections)<<15);
-        SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->DataFrameLenght)<<11);
-        SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->SPIperiphState)<<6);
-        SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->ClockSpeed)<<3);
-        SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->SpiState)<<2);
-        SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->SLaveSlection)<<9);
+        SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->LinesDirections)<<CR1_BIDIMODE);
+        SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->DataFrameLenght)<<CR1_DFF);
+        SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->SPIperiphState)<<CR1_SPE);
+        SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->ClockSpeed)<<CR1_BR);
+        SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->SpiState)<<CR1_MSTR);
+        SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->SLaveSlection)<<CR1_SSM);
 
         /*set call back funications*/
         SPI_pvTxEmptyCallBackLine[Comunication->SpiNumber] = (Comunication->Copy_pvTxEmptUserFunc);
@@ -32,13 +42,13 @@ uint8_t SPI_u8Init(const SPI_Config_ty *Comunication)
         
         /*SPI_CR2*/
         SPI_NUM[Comunication->SpiNumber]->SPI_CR2 =0;/*Register masking*/
-        SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->SSOstate)<<2);
-        SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.TxBufferEmptyInter)<<7);
-        SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.RxBufferNotEmptyInter)<<6);
-        SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.ErrorInter)<<5);
-        SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.FrameFromateInter)<<4);
-        SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.TxBufferDMA)<<1);
-        SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.RxBufferDMA)<<0);
+        SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->SSOstate)<<CR2_SSOE);
+        SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.TxBufferEmptyInter)<<CR2_TXEIE);
+        SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.RxBufferNotEmptyInter)<<CR2_RXNEIE);
+        SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.ErrorInter)<<CR2_ERRIE);
+        SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.FrameFromateInter)<<CR2_FRF);
+        SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.TxBufferDMA)<<CR2_TXDMAEN);
+        SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.RxBufferDMA)<<CR2_RXDMAEN);
         
     }
     else
@@ -47,12 +57,36 @@ uint8_t SPI_u8Init(const SPI_Config_ty *Comunication)
     }
     return Local_u8ErrorState;
 }
-uint8_t SPI_u8ReadData(SPI_Number_t   SpiNumber,uint16_t*pv_u16Distantion)
+uint8_t SPI_u8AreYouBusy(SPI_Number_t   SpiNumber)
+{
+    return ((SPI_NUM[SpiNumber]->SPI_SR)>>SR_BSY)&SPI_ONE_BIT_MASKING;
+}
+/******************************************************************************************************
+ *Recive functions
+ *****************************************************************************************************
+*/
+uint8_t SPI_u8ReciveData_IT(SPI_Number_t   SpiNumber,uint8_t DataLegth,uint16_t*pv_u16Distantion)
+{
+    uint8_t Local_u8ErrorState =OK;
+    if (SpiNumber<SPI_PERIPHERSL_NUM)
+    {
+        SPI_pvRxDestination[SpiNumber]=pv_u16Distantion;
+        SPI_u8GlobleRxDataSize[SpiNumber]=DataLegth;
+        SPI_u8GlobleRxIntCounter[SpiNumber]=0U;
+    }
+    else
+    {
+        Local_u8ErrorState = NOK;
+    }
+    return Local_u8ErrorState;
+}
+uint8_t SPI_u8ReciveData_pulling(SPI_Number_t   SpiNumber,uint16_t*pv_u16Distantion)
 {
     uint8_t Local_u8ErrorState =OK;
     if (SpiNumber<SPI_PERIPHERSL_NUM)
     {
         /*SPI_DR*/
+        while(((SPI_NUM[SpiNumber]->SPI_SR)>>SR_BSY)&SPI_ONE_BIT_MASKING);/*free if it = 0 */
         *pv_u16Distantion = SPI_NUM[SpiNumber]->SPI_DR;
     }
     else
@@ -61,13 +95,18 @@ uint8_t SPI_u8ReadData(SPI_Number_t   SpiNumber,uint16_t*pv_u16Distantion)
     }
     return Local_u8ErrorState;
 }
-uint8_t SPI_u8WriteData(SPI_Number_t   SpiNumber,uint16_t pv_u16Data)
+/******************************************************************************************************
+ *Send functions
+ *****************************************************************************************************
+*/
+uint8_t SPI_u8SendData_IT(SPI_Number_t   SpiNumber,uint8_t DataLegth,uint16_t* pv_u16Data)
 {
     uint8_t Local_u8ErrorState =OK;
     if (SpiNumber<SPI_PERIPHERSL_NUM)
     {
-        /*SPI_DR*/
-        SPI_NUM[SpiNumber]->SPI_DR =pv_u16Data;
+        SPI_pvTxData[SpiNumber]=pv_u16Distantion;
+        SPI_u8GlobleTxDataSize[SpiNumber]=DataLegth;
+        SPI_u8GlobleTxIntCounter[SpiNumber]=0U;
     }
     else
     {
@@ -75,48 +114,130 @@ uint8_t SPI_u8WriteData(SPI_Number_t   SpiNumber,uint16_t pv_u16Data)
     }
     return Local_u8ErrorState;
 }
-
+uint8_t SPI_u8SendData_polling(SPI_Number_t   SpiNumber,uint16_t Copy_u16Data)
+{
+    uint8_t Local_u8ErrorState =OK;
+    if (SpiNumber<SPI_PERIPHERSL_NUM)
+    {
+        /*SPI_DR*/
+        while(((SPI_NUM[SpiNumber]->SPI_SR)>>SR_BSY)&SPI_ONE_BIT_MASKING);/*free if it = 0 */
+        SPI_NUM[SpiNumber]->SPI_DR =Copy_u16Data;
+    }
+    else
+    {
+        Local_u8ErrorState = NOK;
+    }
+    return Local_u8ErrorState;
+}
+/*******************************************************************************************************
+ * ISR functions 
+ *******************************************************************************************************
+*/
 void SPI1_IRQHandler(void)
 {
-    if (((SPI_NUM[SPI_1]->SPI_SR)>>0)&1)
+    if (((SPI_NUM[SPI_1]->SPI_SR)>>SR_RXNE)&SPI_ONE_BIT_MASKING)
     {
-        SPI_pvRxNotEmptyCallBackLine[SPI_1]();
+        if (SPI_u8GlobleRxIntCounter[SPI_1]<SPI_u8GlobleRxDataSize[SPI_1])
+        {
+            SPI_pvRxDestination[SPI_1][SPI_u8GlobleRxIntCounter[SPI_1]] = SPI_NUM[SPI_1]->SPI_DR;
+            SPI_u8GlobleRxIntCounter[SPI_1]++;
+        }        
+        if (NULL!=SPI_pvRxNotEmptyCallBackLine[SPI_1])
+		{
+			SPI_pvRxNotEmptyCallBackLine[SPI_1]();
+		}
     }
-    if (((SPI_NUM[SPI_1]->SPI_SR)>>1)&1)
+    if (((SPI_NUM[SPI_1]->SPI_SR)>>SR_TXE)&SPI_ONE_BIT_MASKING)
     {
-        SPI_pvTxEmptyCallBackLine[SPI_1]();
+        if (SPI_u8GlobleTxIntCounter[SPI_1]<SPI_u8GlobleTxDataSize[SPI_1])
+        {
+            SPI_NUM[SPI_1]->SPI_DR = SPI_pvTxData[SPI_1][SPI_u8GlobleTxIntCounter[SPI_1]];
+            SPI_u8GlobleTxIntCounter[SPI_1]++;
+        }
+        if (NULL!=SPI_pvTxEmptyCallBackLine[SPI_1])
+		{
+			SPI_pvTxEmptyCallBackLine[SPI_1]();
+		}
     }
 }
 void SPI2_IRQHandler(void)
 {
-    if (((SPI_NUM[SPI_2]->SPI_SR)>>0)&1)
+    if (((SPI_NUM[SPI_2]->SPI_SR)>>SR_RXNE)&SPI_ONE_BIT_MASKING)
     {
-        SPI_pvRxNotEmptyCallBackLine[SPI_2]();
+        if (SPI_u8GlobleRxIntCounter[SPI_2]<SPI_u8GlobleRxDataSize[SPI_2])
+        {
+            SPI_pvRxDestination[SPI_2][SPI_u8GlobleRxIntCounter[SPI_2]] = SPI_NUM[SPI_2]->SPI_DR;
+            SPI_u8GlobleRxIntCounter[SPI_2]++;
+        }
+        if (NULL!=SPI_pvRxNotEmptyCallBackLine[SPI_2])
+		{
+			SPI_pvRxNotEmptyCallBackLine[SPI_2]();
+		}
     }
-    if (((SPI_NUM[SPI_2]->SPI_SR)>>1)&1)
+    if (((SPI_NUM[SPI_2]->SPI_SR)>>SR_TXE)&SPI_ONE_BIT_MASKING)
     {
-        SPI_pvTxEmptyCallBackLine[SPI_2]();
+        if (SPI_u8GlobleTxIntCounter[SPI_2]<SPI_u8GlobleTxDataSize[SPI_2])
+        {
+            SPI_NUM[SPI_2]->SPI_DR = SPI_pvTxData[SPI_2][SPI_u8GlobleTxIntCounter[SPI_2]];
+            SPI_u8GlobleTxIntCounter[SPI_2]++;
+        }
+        if (NULL!=SPI_pvTxEmptyCallBackLine[SPI_2])
+		{
+			SPI_pvTxEmptyCallBackLine[SPI_2]();
+		}
     }
 }
 void SPI3_IRQHandler(void)
 {
-    if (((SPI_NUM[SPI_3]->SPI_SR)>>0)&1)
+    if (((SPI_NUM[SPI_3]->SPI_SR)>>SR_RXNE)&SPI_ONE_BIT_MASKING)
     {
-        SPI_pvRxNotEmptyCallBackLine[SPI_3]();
+        if (SPI_u8GlobleRxIntCounter[SPI_3]<SPI_u8GlobleRxDataSize[SPI_3])
+        {
+            SPI_pvRxDestination[SPI_3][SPI_u8GlobleRxIntCounter[SPI_3]] = SPI_NUM[SPI_3]->SPI_DR;
+            SPI_u8GlobleRxIntCounter[SPI_3]++;
+        }
+        if (NULL!=SPI_pvRxNotEmptyCallBackLine[SPI_3])
+		{
+			SPI_pvRxNotEmptyCallBackLine[SPI_3]();
+		}
     }
-    if (((SPI_NUM[SPI_3]->SPI_SR)>>1)&1)
+    if (((SPI_NUM[SPI_3]->SPI_SR)>>SR_TXE)&SPI_ONE_BIT_MASKING)
     {
-        SPI_pvTxEmptyCallBackLine[SPI_3]();
+        if (SPI_u8GlobleTxIntCounter[SPI_3]<SPI_u8GlobleTxDataSize[SPI_3])
+        {
+            SPI_NUM[SPI_3]->SPI_DR = SPI_pvTxData[SPI_3][SPI_u8GlobleTxIntCounter[SPI_3]];
+            SPI_u8GlobleTxIntCounter[SPI_3]++;
+        }
+        if (NULL!=SPI_pvTxEmptyCallBackLine[SPI_3])
+		{
+			SPI_pvTxEmptyCallBackLine[SPI_3]();
+		}
     }
 }
 void SPI4_IRQHandler(void)
 {
-    if (((SPI_NUM[SPI_4]->SPI_SR)>>0)&1)
+    if (((SPI_NUM[SPI_4]->SPI_SR)>>SR_RXNE)&SPI_ONE_BIT_MASKING)
     {
-        SPI_pvRxNotEmptyCallBackLine[SPI_4]();
+        if (SPI_u8GlobleRxIntCounter[SPI_4]<SPI_u8GlobleRxDataSize[SPI_4])
+        {
+            SPI_pvRxDestination[SPI_4][SPI_u8GlobleRxIntCounter[SPI_4]] = SPI_NUM[SPI_4]->SPI_DR;
+            SPI_u8GlobleRxIntCounter[SPI_4]++;
+        }
+        if (NULL!=SPI_pvRxNotEmptyCallBackLine[SPI_4])
+		{
+			SPI_pvRxNotEmptyCallBackLine[SPI_4]();
+		}
     }
-    if (((SPI_NUM[SPI_4]->SPI_SR)>>1)&1)
+    if (((SPI_NUM[SPI_4]->SPI_SR)>>SR_TXE)&SPI_ONE_BIT_MASKING)
     {
-        SPI_pvTxEmptyCallBackLine[SPI_4]();
+        if (SPI_u8GlobleTxIntCounter[SPI_4]<SPI_u8GlobleTxDataSize[SPI_4])
+        {
+            SPI_NUM[SPI_4]->SPI_DR = SPI_pvTxData[SPI_4][SPI_u8GlobleTxIntCounter[SPI_4]];
+            SPI_u8GlobleTxIntCounter[SPI_4]++;
+        }
+        if (NULL!=SPI_pvTxEmptyCallBackLine[SPI_4])
+		{
+			SPI_pvTxEmptyCallBackLine[SPI_4]();
+		}
     }
 }
