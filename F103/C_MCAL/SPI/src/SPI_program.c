@@ -65,12 +65,12 @@ uint8_t SPI_u8AreYouBusy(SPI_Number_t   SpiNumber)
  *Recive functions
  *****************************************************************************************************
 */
-uint8_t SPI_u8ReciveData_IT(SPI_Number_t   SpiNumber,uint8_t DataLegth,uint16_t*pv_u16Distantion)
+uint8_t SPI_u8ReciveData_IT(SPI_Number_t   SpiNumber,uint8_t DataLegth,uint8_t*pv_u8Distantion)
 {
     uint8_t Local_u8ErrorState =OK;
     if (SpiNumber<SPI_PERIPHERSL_NUM)
     {
-        SPI_pvRxDestination[SpiNumber]=pv_u16Distantion;
+        SPI_pvRxDestination[SpiNumber]=pv_u8Distantion;
         SPI_u8GlobleRxDataSize[SpiNumber]=DataLegth;
         SPI_u8GlobleRxIntCounter[SpiNumber]=0U;
     }
@@ -99,12 +99,12 @@ uint8_t SPI_u8ReciveData_pulling(SPI_Number_t   SpiNumber,uint16_t*pv_u16Distant
  *Send functions
  *****************************************************************************************************
 */
-uint8_t SPI_u8SendData_IT(SPI_Number_t   SpiNumber,uint8_t DataLegth,uint16_t* pv_u16Data)
+uint8_t SPI_u8SendData_IT(SPI_Number_t   SpiNumber,uint8_t DataLegth,uint8_t* pv_u8Data)
 {
     uint8_t Local_u8ErrorState =OK;
     if (SpiNumber<SPI_PERIPHERSL_NUM)
     {
-        SPI_pvTxData[SpiNumber]=pv_u16Distantion;
+        SPI_pvTxData[SpiNumber]=pv_u8Data;
         SPI_u8GlobleTxDataSize[SpiNumber]=DataLegth;
         SPI_u8GlobleTxIntCounter[SpiNumber]=0U;
     }
@@ -120,7 +120,6 @@ uint8_t SPI_u8SendData_polling(SPI_Number_t   SpiNumber,uint16_t Copy_u16Data)
     if (SpiNumber<SPI_PERIPHERSL_NUM)
     {
         /*SPI_DR*/
-        /*wait util he end if it is busy*/
         while(((SPI_NUM[SpiNumber]->SPI_SR)>>SR_BSY)&SPI_ONE_BIT_MASKING);/*free if it = 0 */
         SPI_NUM[SpiNumber]->SPI_DR =Copy_u16Data;
     }
