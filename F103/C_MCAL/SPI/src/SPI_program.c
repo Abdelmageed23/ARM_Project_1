@@ -14,7 +14,7 @@
  *Static Globle Varaibles 
  *****************************************************************************************************
 */
-static SPI_RegDef_t* SPI_NUM[SPI_PERIPHERSL_NUM]={SPI1,SPI2,SPI3};
+static SPI_Reg_t* SPI_NUM[SPI_PERIPHERSL_NUM]={SPI1,SPI2,SPI3};
 static uint8_t*SPI_pvTxData[SPI_PERIPHERSL_NUM]={0};
 static uint8_t*SPI_pvRxDestination[SPI_PERIPHERSL_NUM]={0};
 static uint8_t SPI_u8GlobleTxIntCounter[SPI_PERIPHERSL_NUM]={0};
@@ -46,7 +46,6 @@ uint8_t SPI_u8Init(const SPI_Config_ty *Comunication)
         SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.TxBufferEmptyInter)<<CR2_TXEIE);
         SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.RxBufferNotEmptyInter)<<CR2_RXNEIE);
         SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.ErrorInter)<<CR2_ERRIE);
-        SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.FrameFromateInter)<<CR2_FRF);
         SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.TxBufferDMA)<<CR2_TXDMAEN);
         SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.RxBufferDMA)<<CR2_RXDMAEN);
         
@@ -56,6 +55,14 @@ uint8_t SPI_u8Init(const SPI_Config_ty *Comunication)
         Local_u8ErrorState = NOK;
     }
     return Local_u8ErrorState;
+}
+void SPI_voidModeFaultClr(SPI_Number_t   SpiNumber)
+{
+    SPI_NUM[SpiNumber]->SPI_SR &=~(SPI_ONE_BIT_MASKING<<SR_MODF);
+}
+uint8_t SPI_u8SlaveSWslection(SPI_Number_t   SpiNumber)
+{
+    SPI_NUM[SpiNumber]->SPI_CR1 |=(SPI_ONE_BIT_MASKING<<CR1_SSI);
 }
 uint8_t SPI_u8AreYouBusy(SPI_Number_t   SpiNumber)
 {
@@ -86,6 +93,7 @@ uint8_t SPI_u8ReciveData_pulling(SPI_Number_t   SpiNumber,uint16_t*pv_u16Distant
     if (SpiNumber<SPI_PERIPHERSL_NUM)
     {
         /*SPI_DR*/
+        while(1!=(((SPI_NUM[SpiNumber]->SPI_SR)>>SR_RXNE)&SPI_ONE_BIT_MASKING));
         while(((SPI_NUM[SpiNumber]->SPI_SR)>>SR_BSY)&SPI_ONE_BIT_MASKING);/*free if it = 0 */
         *pv_u16Distantion = SPI_NUM[SpiNumber]->SPI_DR;
     }

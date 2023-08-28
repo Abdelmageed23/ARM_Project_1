@@ -29,11 +29,11 @@ uint8_t SPI_u8Init(const SPI_Config_ty *Comunication)
     {
         /*SPI_CR1*/
         SPI_NUM[Comunication->SpiNumber]->SPI_CR1 =0;/*Register masking*/
+        SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->SpiState)<<CR1_MSTR);
         SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->LinesDirections)<<CR1_BIDIMODE);
         SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->DataFrameLenght)<<CR1_DFF);
-        SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->SPIperiphState)<<CR1_SPE);
         SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->ClockSpeed)<<CR1_BR);
-        SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->SpiState)<<CR1_MSTR);
+
         SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->SLaveSlection)<<CR1_SSM);
 
         /*set call back funications*/
@@ -49,13 +49,18 @@ uint8_t SPI_u8Init(const SPI_Config_ty *Comunication)
         SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.FrameFromateInter)<<CR2_FRF);
         SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.TxBufferDMA)<<CR2_TXDMAEN);
         SPI_NUM[Comunication->SpiNumber]->SPI_CR2 |=((Comunication->InterruptsStates.RxBufferDMA)<<CR2_RXDMAEN);
-        
+
+        SPI_NUM[Comunication->SpiNumber]->SPI_CR1 |=((Comunication->SPIperiphState)<<CR1_SPE);
     }
     else
     {
         Local_u8ErrorState = NOK;
     }
     return Local_u8ErrorState;
+}
+void SPI_voidModeFaultClr(SPI_Number_t   SpiNumber)
+{
+    SPI_NUM[SpiNumber]->SPI_SR &=~(SPI_ONE_BIT_MASKING<<SR_MODF);
 }
 uint8_t SPI_u8AreYouBusy(SPI_Number_t   SpiNumber)
 {

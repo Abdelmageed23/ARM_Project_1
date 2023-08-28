@@ -85,9 +85,11 @@ typedef struct
 
 uint8_t SPI_u8Init(const SPI_Config_ty *Comunication);
 uint8_t SPI_u8AreYouBusy(SPI_Number_t   SpiNumber);
+uint8_t SPI_u8SlaveSWslection(SPI_Number_t   SpiNumber);
 uint8_t SPI_u8ReciveData_IT(SPI_Number_t   SpiNumber,uint8_t DataLegth,uint8_t*pv_u8Distantion);
 uint8_t SPI_u8ReciveData_pulling(SPI_Number_t   SpiNumber,uint16_t*pv_u16Distantion);
 uint8_t SPI_u8SendData_IT(SPI_Number_t   SpiNumber,uint8_t DataLegth,uint8_t* pv_u8Data);
 uint8_t SPI_u8SendData_polling(SPI_Number_t   SpiNumber,uint16_t Copy_u16Data);
+void SPI_voidModeFaultClr(SPI_Number_t   SpiNumber);
 
 #endif /* SPI_INTERFACE_H_ */
