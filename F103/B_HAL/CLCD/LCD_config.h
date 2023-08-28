@@ -21,7 +21,7 @@
  */
 #define LCD_u8_CONTRAL_PORT_Position    PORT_HIGH
 #define LCD_u8_RS_PIN                   PIN11
-#define LCD_u8_RW_PIN                   PIN9
+//#define LCD_u8_RW_PIN                   PIN9
 #define LCD_u8_E_PIN                    PIN8
 /******************************************************************************/
 
