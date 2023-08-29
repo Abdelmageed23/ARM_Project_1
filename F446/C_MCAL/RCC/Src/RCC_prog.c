@@ -43,7 +43,7 @@ uint8_t RCC_u8SetClksts(CLKsSYS_type_ty ClkType,STATE_ty State)
 		break;
 	case STATE_OFF:
 		RCC->RCC_CR &=~(1 << ClkType);
-		/NO need for polling/
+		/*NO need for polling*/
 		break;
 	default:
 		Local_ErrorState= ERROR_STATE_NOK;
