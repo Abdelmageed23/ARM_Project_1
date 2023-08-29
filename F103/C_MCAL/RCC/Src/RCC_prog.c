@@ -8,7 +8,7 @@
 
 #include <stdint.h>
 #include "stm32f103xx.h"
-#include "ErrType.h"
+#include "ERROR_STATE.h"
 #include "RCC_prv.h"
 #include "RCC_interface.h"
 /****************************************************
@@ -32,7 +32,7 @@ uint8_t RCC_SetClksts(SET_CLK_type_ty ClkType,STATE_ty State)
         }
 		if (Polling == CLKYYPE_TIMEOUT)
 		{
-			Local_State_Error=TIME_OUT_ERR;
+			Local_State_Error=NOK;
 		}
 		break;
 	case STATE_OFF:
