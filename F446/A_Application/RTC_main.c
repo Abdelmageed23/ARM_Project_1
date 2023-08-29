@@ -30,14 +30,14 @@ void NumberToString (uint8_t Copy_u8Number , uint8_t* Copy_pu8String )
 		Copy_pu8String[1]= (Copy_u8Number % 10 )+ 48;
 	}
 }
-uint8_t *DataToString(RTC_data_t *Copy_Data)
+uint8_t *DataToString(RTC_date_t *Copy_Date)
 {
 	static uint8_t Local_Au8String[9];
-	NumberToString(Copy_Data->date, &Local_Au8String[0]);
+	NumberToString(Copy_Date->date, &Local_Au8String[0]);
 	Local_Au8String[2]='/';
-	NumberToString(Copy_Data->month,&Local_Au8String[3]);
+	NumberToString(Copy_Date->month,&Local_Au8String[3]);
 	Local_Au8String[5]='/';
-	NumberToString(Copy_Data->year ,&Local_Au8String[6]);
+	NumberToString(Copy_Date->year ,&Local_Au8String[6]);
 	Local_Au8String[8]='\0';
 	return Local_Au8String;
 }
@@ -70,7 +70,7 @@ int main(void)
 	RCC_voidAPB1EnablePerapheralClock(APB1_I2C1);
 	uint8_t x =0  ;
 	RTC_time_t   SetTime,GetTime;
-	RTC_data_t   SetDate,GetDate;
+	RTC_date_t   SetDate,GetDate;
 	HRTC_u8Init();
 
 	SetDate.day = MONDAY;

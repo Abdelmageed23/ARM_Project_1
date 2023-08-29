@@ -167,7 +167,7 @@ void HRTC_voidGetCurrentTime(RTC_time_t *RTC_time)
  ******************************************************************************
  * @fn             : HRTC_voidSetCurrentDate
  * @brief          : Set Current Date
- * @param[in]      : RTC_data_t --> Set Value @RTC_date struct
+ * @param[in]      : RTC_date_t --> Set Value @RTC_date struct
  * @retval         : void
  ******************************************************************************
  * @attention
@@ -175,7 +175,7 @@ void HRTC_voidGetCurrentTime(RTC_time_t *RTC_time)
  *
  ******************************************************************************
  */
-void HRTC_voidSetCurrentDate(RTC_data_t *RTC_date)
+void HRTC_voidSetCurrentDate(RTC_date_t *RTC_date)
 {
 	RTC_voidWriteRegister( BinaryToBCD(RTC_date->date) ,  RTC_ADDRESS_DATE  );
 	RTC_voidWriteRegister( BinaryToBCD(RTC_date->month),  RTC_ADDRESS_MONTH );
@@ -186,7 +186,7 @@ void HRTC_voidSetCurrentDate(RTC_data_t *RTC_date)
  ******************************************************************************
  * @fn             : HRTC_voidGetCurrentDate
  * @brief          : Get Current Date
- * @param[in]      : RTC_data_t --> Get Value @RTC_date struct
+ * @param[in]      : RTC_date_t --> Get Value @RTC_date struct
  * @retval         : void
  ******************************************************************************
  * @attention
@@ -194,7 +194,7 @@ void HRTC_voidSetCurrentDate(RTC_data_t *RTC_date)
  *
  ******************************************************************************
  */
-void HRTC_voidGetCurrentDate(RTC_data_t *RTC_date)
+void HRTC_voidGetCurrentDate(RTC_date_t *RTC_date)
 {
 	RTC_date->date   = BCDToBinary (RTC_voidReadRegister(RTC_ADDRESS_DATE));
 	RTC_date->month  = BCDToBinary (RTC_voidReadRegister(RTC_ADDRESS_MONTH));
