@@ -172,10 +172,10 @@ typedef struct
 	volatile uint32_t EXTI_SWIER;
 	volatile uint32_t EXTI_PR;
 }EXTI_Reg_t;
-/******************** SPI Peripheral Definition *****************/
+/******************** SPI Peripheral Definition ****************
 #define SPI1	((SPI_Reg_t*)SPI1_BASE_ADDRESS)
 #define SPI2	((SPI_Reg_t*)SPI2_BASE_ADDRESS)
-#define SPI3	((SPI_Reg_t*)SPI3_BASE_ADDRESS)
+#define SPI3	((SPI_Reg_t*)SPI3_BASE_ADDRESS)*/
 /******************** EXTI Peripheral Definition *****************/
 #define EXTI	((EXTI_Reg_t*)EXTI_BASE_ADDRESS)
 /******************** Processsor Peripheral Base Addresses *****************/
@@ -220,5 +220,29 @@ typedef struct
 #define AFIO						((AFIO_RegDef_T *)AFIO_BASE_ADDRESS)
 
 /********************************************************************************************************/
+/************************************************************************************************/
+/******************************** SPI Registers ************************************************/
+/************************************************************************************************/
+#define SPI1_u32_BASE_ADDRESS                                0x40013000U
+#define SPI2_u32_BASE_ADDRESS                                0x40003800U
+#define SPI3_u32_BASE_ADDRESS                                0x40003C00U
+
+ typedef	struct
+{
+	volatile uint32_t CR1     ;
+	volatile uint32_t CR2     ;
+	volatile uint32_t SR      ;
+	volatile uint32_t DR      ;
+	volatile uint32_t CRCPR   ;
+	volatile uint32_t RXCRCR  ;
+	volatile uint32_t TXCRCR  ;
+	volatile uint32_t I2SCFGR ;
+	volatile uint32_t I2SPR   ;
+
+} SPI_REG ;
+
+#define  SPI1                     ( ( SPI_REG *) SPI1_u32_BASE_ADDRESS )
+#define  SPI2                     ( ( SPI_REG *) SPI2_u32_BASE_ADDRESS )
+#define  SPI3                     ( ( SPI_REG *) SPI3_u32_BASE_ADDRESS )
 
 #endif

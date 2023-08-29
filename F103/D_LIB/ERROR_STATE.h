@@ -28,6 +28,6 @@
 #define OK                      1
 #define NULL_PTR                2
 
-
+#define NULL_PTR_ERR 		2
 
 #endif
