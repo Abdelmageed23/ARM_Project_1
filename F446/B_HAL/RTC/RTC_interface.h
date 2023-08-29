@@ -21,14 +21,14 @@ typedef enum{
 			SATURDAY
 }Days_t;
 /******************************************************************************/
-/************************ @RTC_data_t *****************************************/
+/************************ @RTC_date_t *****************************************/
 /******************************************************************************/
 typedef struct{
 			uint8_t date  ;
 			uint8_t month ;
 			uint8_t year  ;
 			Days_t  day   ;
-}RTC_data_t;
+}RTC_date_t;
 /******************************************************************************/
 /************************ @RTC_time_t *****************************************/
 /******************************************************************************/
@@ -97,7 +97,7 @@ void HRTC_voidGetCurrentTime(RTC_time_t *RTC_time);
  ******************************************************************************
  * @fn             : HRTC_voidSetCurrentDate
  * @brief          : Set Current Date
- * @param[in]      : RTC_data_t --> Set Value @RTC_date struct
+ * @param[in]      : RTC_date_t --> Set Value @RTC_date struct
  * @retval         : void
  ******************************************************************************
  * @attention
@@ -105,12 +105,12 @@ void HRTC_voidGetCurrentTime(RTC_time_t *RTC_time);
  *
  ******************************************************************************
  */
-void HRTC_voidSetCurrentDate(RTC_data_t *RTC_date);
+void HRTC_voidSetCurrentDate(RTC_date_t *RTC_date);
 /**
  ******************************************************************************
  * @fn             : HRTC_voidGetCurrentDate
  * @brief          : Get Current Date
- * @param[in]      : RTC_data_t --> Get Value @RTC_date struct
+ * @param[in]      : RTC_date_t --> Get Value @RTC_date struct
  * @retval         : void
  ******************************************************************************
  * @attention
@@ -118,7 +118,7 @@ void HRTC_voidSetCurrentDate(RTC_data_t *RTC_date);
  *
  ******************************************************************************
  */
-void HRTC_voidGetCurrentDate(RTC_data_t *RTC_date);
+void HRTC_voidGetCurrentDate(RTC_date_t *RTC_date);
 
 /*************************************************************************************************************************************/
 /*************************************************************************************************************************************/
