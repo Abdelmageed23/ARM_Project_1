@@ -26,7 +26,7 @@
 #define USR_Script_DateTmp				"\nDD/MM/YYYY"
 
 #define USR_Script_NewTime				"\nEnter New Time :"
-#define USR_Script_TimeTmp				"\nHH:MM:SS"
+#define USR_Script_TimeTmp				"\nHH:MM"
 #define USR_Script_DateUpd				"\nThe Date & Time is updated successfully\n"
 
 #define USR_Script_AlarmNull			"..........\n"

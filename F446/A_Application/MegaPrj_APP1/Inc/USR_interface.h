@@ -12,8 +12,8 @@
 #define USR_MAX_ALRMS				5
 
 
-#define USR_DATE_LENGTH				8
-#define USR_TIME_LENGTH				6
+#define USR_DATE_LENGTH				4
+#define USR_TIME_LENGTH				2
 #define USR_MAX_NAME_LENGTH			10
 
 typedef enum
@@ -50,18 +50,18 @@ typedef struct
 
 }USR_Alarm_T;
 
-typedef struct
-{
-	uint8_t Date[USR_DATE_LENGTH];
-	uint8_t Time[USR_TIME_LENGTH];
-
-}USR_NewDateTime_T;
+//typedef struct
+//{
+//	uint8_t Date[USR_DATE_LENGTH];
+//	uint8_t Time[USR_TIME_LENGTH];
+//
+//}USR_NewDateTime_T;
 
 USR_PassStatus USR_u8ReceivePass(USARTindex_t Copy_u8USART);
 
 void USR_voidSendDashBoard(USARTindex_t Copy_u8USART);
 
-void USR_voidReceiveTimeDate(USARTindex_t Copy_u8USART ,USR_NewDateTime_T *Copy_TimeDateCnfg );
+void USR_voidReceiveTimeDate(USARTindex_t Copy_u8USART ,USR_Alarm_T *Copy_TimeDateCnfg );
 
 void USR_voidReceiveAlarm(USARTindex_t Copy_u8USART ,USR_Alarm_T *Copy_AlarmCnfg);
 

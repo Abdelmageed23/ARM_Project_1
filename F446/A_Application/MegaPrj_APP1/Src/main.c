@@ -35,7 +35,12 @@ int main(void)
 			Local_u8Counter;
 
 
-	USR_NewDateTime_T Local_NewDateTime;
+	USR_Alarm_T Local_NewDateTime=
+	{
+		.Date = "\0",
+		.Name = "NewDate",
+		.Time = "\0"
+	};
 
 	USR_Alarm_T Local_Alarms[USR_MAX_ALRMS]= {"\0"};
 
@@ -135,6 +140,7 @@ int main(void)
 	{
 		do
 		{
+
 			/* Display dash-board*/
 			USR_voidSendDashBoard(USR_USART_Cnfg.USARTindex);
 			MUSART_u8ReceiveCharSynch(USR_USART_Cnfg.USARTindex, &Local_u8Choice);
@@ -157,9 +163,11 @@ int main(void)
 				/* Call RTC HERE to set new time & date
 				 *
 				 *
+				 *
+				 *
 				 * */
 
-				/* Date and time is updated*/
+				/* Date and time is update d*/
 				MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_DateUpd);
 				MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
 				break;
@@ -187,6 +195,7 @@ int main(void)
 				/* New alarm is set */
 				MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_AlarmSet);
 				MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
+
 				break;
 
 			case CHOICE_EXIT :
