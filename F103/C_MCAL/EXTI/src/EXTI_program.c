@@ -168,6 +168,7 @@ void EXTI0_IRQHandler(void)
 {
 	if (NULL!=EXTI_pvGlobCallBackLine[0])
 	{
+		EXTI->EXTI_PR |=(1<<0);
 		EXTI_pvGlobCallBackLine[0]();
 	}
 	
