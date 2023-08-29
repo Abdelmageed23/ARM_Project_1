@@ -7,10 +7,10 @@
 
 
 #include<stdint.h>
-#include"../../../Library/stm32f446xx.h"
-#include"../../../Library/ErrType.h"
-#include"../inc/SCB_interface.h"
-#include"../inc/SCB_prv.h"
+#include"stm32f446xx.h"
+#include"ERROR_STATE.h"
+#include"SCB_interface.h"
+#include"SCB_prv.h"
 
 void SCB_voidSetPriorityGroup(uint8_t Copy_u8PriorityGroup)
 {
