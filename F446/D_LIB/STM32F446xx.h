@@ -98,7 +98,7 @@ typedef struct
 
 #define NVIC                                  ((NVIC_REG *)NVIC_u32_BASE_ADDRESS)
 
-/******************** SPI Register Definition Structure *****************/
+/******************** SPI Register Definition Structure ****************
 
 
 #define SPI3_BASE_ADDRESS		    0x40003C00UL
@@ -108,7 +108,7 @@ typedef struct
 #define SPI1_BASE_ADDRESS		    0x40013000UL
 typedef struct
 {
-	volatile uint32_t SPI_CR1;/*All last 16 bits(16:31) of all registers is Reserved*/
+	volatile uint32_t SPI_CR1;
 	volatile uint32_t SPI_CR2;
 	volatile uint32_t SPI_SR;
 	volatile uint32_t SPI_DR;
@@ -118,13 +118,13 @@ typedef struct
   	volatile uint32_t SPI_I2SCFGR;
   	volatile uint32_t SPI_I2SPR;
 }SPI_RegDef_t;
-
-/******************** SPI Peripheral Definition *****************/
+*/
+/******************** SPI Peripheral Definition ****************
 #define SPI1	((SPI_RegDef_t*)SPI1_BASE_ADDRESS)
 #define SPI2	((SPI_RegDef_t*)SPI2_BASE_ADDRESS)
 #define SPI3	((SPI_RegDef_t*)SPI3_BASE_ADDRESS)
 #define SPI4	((SPI_RegDef_t*)SPI4_BASE_ADDRESS)
-
+*/
 /******************** SCB Register Definition Structure *****************/
 #define SCB_BASE_ADDRESS      		0xE000E008UL
 
@@ -284,6 +284,33 @@ typedef struct{
 #define I2C1		(( I2C_REG*)(I2C1_u32_BASE_ADDRESS))
 #define I2C2		(( I2C_REG*)(I2C2_u32_BASE_ADDRESS))
 #define I2C3		(( I2C_REG*)(I2C3_u32_BASE_ADDRESS))
+
+/************************************************************************************************/
+/******************************** SPI Registers *************************************************/
+/************************************************************************************************/
+#define SPI1_u32_BASE_ADDRESS                                0x40013000U
+#define SPI2_u32_BASE_ADDRESS                                0x40003800U
+#define SPI3_u32_BASE_ADDRESS                                0x40003C00U
+#define SPI4_u32_BASE_ADDRESS                                0x40013400U
+
+ typedef	struct
+{
+	volatile uint32_t CR1     ;
+	volatile uint32_t CR2     ;
+	volatile uint32_t SR      ;
+	volatile uint32_t DR      ;
+	volatile uint32_t CRCPR   ;
+	volatile uint32_t RXCRCR  ;
+	volatile uint32_t TXCRCR  ;
+	volatile uint32_t I2SCFGR ;
+	volatile uint32_t I2SPR   ;
+
+} SPI_REG ;
+
+#define  SPI1                     ( ( SPI_REG *) SPI1_u32_BASE_ADDRESS )
+#define  SPI2                     ( ( SPI_REG *) SPI2_u32_BASE_ADDRESS )
+#define  SPI3                     ( ( SPI_REG *) SPI3_u32_BASE_ADDRESS )
+#define  SPI4                     ( ( SPI_REG *) SPI4_u32_BASE_ADDRESS )
 
 
 #endif
