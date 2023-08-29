@@ -7,18 +7,18 @@
 
 
 #include <stdint.h>
-#include "../../../Library/stm32f103xx.h"
-#include "../../../Library/ErrType.h"
+#include "stm32f103xx.h"
+#include "ERROR_STATE.h"
 
-#include "../Inc/EXTI_interface.h"
-#include "../Inc/EXTI_prv.h"
+#include "EXTI_interface.h"
+#include "EXTI_prv.h"
 
 uint8_t EXTI_u8Init(EXTI_CONFIG_ty *Config)
 {
     uint8_t Local_u8ErrorState = OK;
 	if((Config != NULL)&&(NULL!=(Config->Copy_pvUserFunc)))
 	{
-		if(((Config->Port) <= EXTI_PORTH)&&((Config->Line) <= EXTI_PIN15)&&((Config->InterruptState)<=EXTI_ENABLE))
+		if(((Config->Port) <= EXTI_PORTG)&&((Config->Line) <= EXTI_PIN15)&&((Config->InterruptState)<=EXTI_ENABLE))
 		{
 			switch ((Config->Trig_Src))
 			{

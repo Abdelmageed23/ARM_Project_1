@@ -7,11 +7,11 @@
 
 
 #include <stdint.h>
-#include "../../Library/stm32f446xx.h"
-#include "../../Library/ErrType.h"
+#include "stm32f446xx.h"
+#include "ERROR_STATE.h"
 
-#include "../Inc/EXTI_interface.h"
-#include "../Inc/EXTI_prv.h"
+#include "EXTI_interface.h"
+#include "EXTI_prv.h"
 
 uint8_t EXTI_u8Init(EXTI_CONFIG_ty *Config)
 {
