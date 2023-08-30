@@ -1,0 +1,8 @@
+RCC_prog.c:22:9:RCC_u8SetClksts	6
+RCC_prog.c:64:9:RCC_SetSysClk	2
+RCC_prog.c:80:6:RCC_voidAHB1EnablePerapheralClock	1
+RCC_prog.c:84:6:RCC_voidAHB1DisablePerapheralClock	1
+RCC_prog.c:89:6:RCC_voidAPB2EnablePerapheralClock	1
+RCC_prog.c:93:6:RCC_voidAPB2DisablePerapheralClock	1
+RCC_prog.c:98:6:RCC_voidAPB1EnablePerapheralClock	1
+RCC_prog.c:102:6:RCC_voidAPB1DisablePerapheralClock	1
