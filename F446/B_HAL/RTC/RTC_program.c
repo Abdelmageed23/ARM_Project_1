@@ -4,7 +4,7 @@
  * @author         : Diea Abdeltwab
  * @layer          : HAL
  * @brief          : 
- * @date           : 24/8/2023
+ * @date           : 22/8/2023
  ******************************************************************************
  * @attention
  *
@@ -93,13 +93,16 @@ void HRTC_u8GetRtcStatus ( uint8_t *Copy_u8Status )
 void HRTC_voidSetCurrentTime ( RTC_time_t *RTC_time )
 {
 	/*********************************************************************************************/
-	uint8_t Local_u8Second = BinaryToBCD(RTC_time->seconds);
-	Local_u8Second &= ~(RTC_SEC_CH_MASK<<RTC_SEC_CH_BIT);
-	RTC_voidWriteRegister(Local_u8Second , RTC_ADDRESS_SEC );
+	//uint8_t Local_u8Second = BinaryToBCD(RTC_time->seconds);
+	//Local_u8Second &= ~(RTC_SEC_CH_MASK<<RTC_SEC_CH_BIT);
+	//RTC_voidWriteRegister(Local_u8Second , RTC_ADDRESS_SEC );
 	/*********************************************************************************************/
 	RTC_voidWriteRegister(BinaryToBCD(RTC_time->minutes) , RTC_ADDRESS_MIN );
 	/*********************************************************************************************/
 	uint8_t Local_u8Hours = BinaryToBCD(RTC_time->hours);
+
+	Local_u8Hours &= ~(RTC_HRS_12_24_MASK<<RTC_HRS_12_24_BIT);
+	/*
 	if ( RTC_time-> time_format == _24HRS )
 	{
 		Local_u8Hours &= ~(RTC_HRS_12_24_MASK<<RTC_HRS_12_24_BIT);
@@ -115,7 +118,7 @@ void HRTC_voidSetCurrentTime ( RTC_time_t *RTC_time )
 		{
 			Local_u8Hours &=  ~ (RTC_HRS_PM_AM_MASK<<RTC_HRS_PM_AM_BIT);
 		}
-	}
+	}*/
 	RTC_voidWriteRegister(Local_u8Hours , RTC_ADDRESS_HRS );
 	/*********************************************************************************************/
 }
@@ -134,13 +137,14 @@ void HRTC_voidSetCurrentTime ( RTC_time_t *RTC_time )
 void HRTC_voidGetCurrentTime(RTC_time_t *RTC_time)
 {
 	/*********************************************************************************************/
-	uint8_t Local_u8Second = RTC_voidReadRegister(RTC_ADDRESS_SEC);
-	Local_u8Second &= ~(RTC_SEC_CH_MASK<<RTC_SEC_CH_BIT);
-	RTC_time->seconds = BCDToBinary(Local_u8Second);
+	//uint8_t Local_u8Second = RTC_voidReadRegister(RTC_ADDRESS_SEC);
+	//Local_u8Second &= ~(RTC_SEC_CH_MASK<<RTC_SEC_CH_BIT);
+	//RTC_time->seconds = BCDToBinary(Local_u8Second);
 	/*********************************************************************************************/
 	RTC_time->minutes = BCDToBinary(RTC_voidReadRegister(RTC_ADDRESS_MIN));
 	/*********************************************************************************************/
 	uint8_t Local_u8Hours  = RTC_voidReadRegister(RTC_ADDRESS_HRS) ;
+	/*
 	if (  Local_u8Hours & (RTC_HRS_12_24_MASK << RTC_HRS_12_24_BIT ))
 	{
 		if (  Local_u8Hours & (RTC_HRS_PM_AM_MASK << RTC_HRS_PM_AM_BIT ) )
@@ -159,7 +163,7 @@ void HRTC_voidGetCurrentTime(RTC_time_t *RTC_time)
 	{
 		RTC_time->time_format = _24HRS ;
 
-	}
+	}*/
 	RTC_time->hours   = BCDToBinary(Local_u8Hours);
 	/*********************************************************************************************/
 }
@@ -167,7 +171,7 @@ void HRTC_voidGetCurrentTime(RTC_time_t *RTC_time)
  ******************************************************************************
  * @fn             : HRTC_voidSetCurrentDate
  * @brief          : Set Current Date
- * @param[in]      : RTC_date_t --> Set Value @RTC_date struct
+ * @param[in]      : RTC_data_t --> Set Value @RTC_date struct
  * @retval         : void
  ******************************************************************************
  * @attention
@@ -180,13 +184,13 @@ void HRTC_voidSetCurrentDate(RTC_date_t *RTC_date)
 	RTC_voidWriteRegister( BinaryToBCD(RTC_date->date) ,  RTC_ADDRESS_DATE  );
 	RTC_voidWriteRegister( BinaryToBCD(RTC_date->month),  RTC_ADDRESS_MONTH );
 	RTC_voidWriteRegister( BinaryToBCD(RTC_date->year) ,  RTC_ADDRESS_YEAR  );
-	RTC_voidWriteRegister( BinaryToBCD(RTC_date->day)  ,  RTC_ADDRESS_DAY   );
+	//RTC_voidWriteRegister( BinaryToBCD(RTC_date->day)  ,  RTC_ADDRESS_DAY   );
 }
 /**
  ******************************************************************************
  * @fn             : HRTC_voidGetCurrentDate
  * @brief          : Get Current Date
- * @param[in]      : RTC_date_t --> Get Value @RTC_date struct
+ * @param[in]      : RTC_data_t --> Get Value @RTC_date struct
  * @retval         : void
  ******************************************************************************
  * @attention
@@ -199,7 +203,7 @@ void HRTC_voidGetCurrentDate(RTC_date_t *RTC_date)
 	RTC_date->date   = BCDToBinary (RTC_voidReadRegister(RTC_ADDRESS_DATE));
 	RTC_date->month  = BCDToBinary (RTC_voidReadRegister(RTC_ADDRESS_MONTH));
 	RTC_date->year   = BCDToBinary (RTC_voidReadRegister(RTC_ADDRESS_YEAR));
-	RTC_date->day    = BCDToBinary (RTC_voidReadRegister(RTC_ADDRESS_DAY));
+	//RTC_date->day    = BCDToBinary (RTC_voidReadRegister(RTC_ADDRESS_DAY));
 }
 /*************************************************************************************************************************************/
 /********************************************************* Static Functions implementations ******************************************/
