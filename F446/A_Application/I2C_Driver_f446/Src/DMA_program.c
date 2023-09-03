@@ -7,7 +7,7 @@
 #include "DMA_interface.h"
 
 static DMA_RegDef_T *DMA_Arr[2] = {DMA1 , DMA2};
-
+static DMA_Status DMA_StatusArr[2] ;
 static void (*GeneralCallBackFun[DMA_TYPE_NUM*DMA_STREAM_NUM])(void) = {NULL};
 
 uint8_t DMA_u8Init(DMA_Cnfg_T* DMA_Cnfg)
@@ -84,7 +84,10 @@ uint8_t DMA_u8Init(DMA_Cnfg_T* DMA_Cnfg)
 		}
 
 
+		/* DMA is IDLE*/
+		DMA_StatusArr[DMA_Cnfg->DMA_Type] = DMA_IS_IDLE;
 	}
+
 
 	else
 	{
@@ -99,8 +102,11 @@ uint8_t DMA_u8StartTransfer(DMA_Cnfg_T *DMA_Cnfg,uint32_t *Copy_pu32SrcAddress ,
 {
 	uint8_t Local_u8ErrorState = OK;
 
-	if((DMA_Cnfg != NULL) && (Copy_pu32DestAddress != NULL) && (Copy_pu32SrcAddress != NULL))
+	if((DMA_Cnfg != NULL) && (Copy_pu32DestAddress != NULL) && (Copy_pu32SrcAddress != NULL) && (DMA_StatusArr[DMA_Cnfg->DMA_Type] != DMA_IS_BUSY))
 	{
+		/* DMA is in busy state*/
+		DMA_StatusArr[DMA_Cnfg->DMA_Type] = DMA_IS_BUSY;
+
 		if (DMA_Cnfg->SrcDestMode == MEM_TO_PERIPH)
 		{
 			/* Set memory as source address*/
@@ -125,8 +131,8 @@ uint8_t DMA_u8StartTransfer(DMA_Cnfg_T *DMA_Cnfg,uint32_t *Copy_pu32SrcAddress ,
 		DMA_Arr[DMA_Cnfg->DMA_Type]->STR[DMA_Cnfg->StreamNum][SNDTR] = 	Copy_u32DataSize;
 
 		/*Clear interrupt status registers*/
-		DMA_Arr[DMA_Cnfg->DMA_Type]->ISR[0] = 0x00;
-		DMA_Arr[DMA_Cnfg->DMA_Type]->ISR[1] = 0x00;
+		DMA_Arr[DMA_Cnfg->DMA_Type]->ISR[0] = 0x00000000;
+		DMA_Arr[DMA_Cnfg->DMA_Type]->ISR[1] = 0x00000000;
 
 		/*Enable Stream*/
 		DMA_Arr[DMA_Cnfg->DMA_Type]->STR[DMA_Cnfg->StreamNum][SCR] |= 1;
@@ -150,6 +156,9 @@ void DMA1_Stream0_IRQHandler(void)
 	DMA1->IFCR[0] = 0xffffffff;
 
 	GeneralCallBackFun[STREAM0]();
+
+	/* DMA is in IDLE state*/
+	DMA_StatusArr[DMA_1] = DMA_IS_IDLE;
 }
 
 void DMA1_Stream1_IRQHandler(void)
@@ -159,6 +168,10 @@ void DMA1_Stream1_IRQHandler(void)
 
 	/* Call Callback Function*/
 	GeneralCallBackFun[STREAM1]();
+
+	/* DMA is in IDLE state*/
+	DMA_StatusArr[DMA_1] = DMA_IS_IDLE;
+
 }
 void DMA1_Stream2_IRQHandler(void)
 {
@@ -167,6 +180,9 @@ void DMA1_Stream2_IRQHandler(void)
 
 	/* Call Callback Function*/
 	GeneralCallBackFun[STREAM2]();
+
+	/* DMA is in IDLE state*/
+	DMA_StatusArr[DMA_1] = DMA_IS_IDLE;
 }
 void DMA1_Stream3_IRQHandler(void)
 {
@@ -175,6 +191,10 @@ void DMA1_Stream3_IRQHandler(void)
 
 	/* Call Callback Function*/
 	GeneralCallBackFun[STREAM3]();
+
+	/* DMA is in IDLE state*/
+	DMA_StatusArr[DMA_1] = DMA_IS_IDLE;
+
 }
 void DMA1_Stream4_IRQHandler(void)
 {
@@ -183,6 +203,9 @@ void DMA1_Stream4_IRQHandler(void)
 
 	/* Call Callback Function*/
 	GeneralCallBackFun[STREAM4]();
+
+	/* DMA is in IDLE state*/
+	DMA_StatusArr[DMA_1] = DMA_IS_IDLE;
 }
 void DMA1_Stream5_IRQHandler(void)
 {
@@ -191,6 +214,9 @@ void DMA1_Stream5_IRQHandler(void)
 
 	/* Call Callback Function*/
 	GeneralCallBackFun[STREAM5]();
+
+	/* DMA is in IDLE state*/
+	DMA_StatusArr[DMA_1] = DMA_IS_IDLE;
 }
 void DMA1_Stream6_IRQHandler(void)
 {
@@ -199,6 +225,9 @@ void DMA1_Stream6_IRQHandler(void)
 
 	/* Call Callback Function*/
 	GeneralCallBackFun[STREAM6]();
+
+	/* DMA is in IDLE state*/
+	DMA_StatusArr[DMA_1] = DMA_IS_IDLE;
 }
 
 void DMA1_Stream7_IRQHandler(void)
@@ -209,6 +238,9 @@ void DMA1_Stream7_IRQHandler(void)
 
 	/* Call Callback Function*/
 	GeneralCallBackFun[STREAM7]();
+
+	/* DMA is in IDLE state*/
+	DMA_StatusArr[DMA_1] = DMA_IS_IDLE;
 }
 
 void DMA2_Stream0_IRQHandler(void)
@@ -218,6 +250,9 @@ void DMA2_Stream0_IRQHandler(void)
 
 	/* Call Callback Function*/
 	GeneralCallBackFun[(STREAM0 + DMA_STREAM_NUM)]();
+
+	/* DMA is in IDLE state*/
+	DMA_StatusArr[DMA_2] = DMA_IS_IDLE;
 }
 void DMA2_Stream1_IRQHandler(void)
 {
@@ -226,6 +261,9 @@ void DMA2_Stream1_IRQHandler(void)
 
 	/* Call Callback Function*/
 	GeneralCallBackFun[STREAM1 + DMA_STREAM_NUM]();
+
+	/* DMA is in IDLE state*/
+	DMA_StatusArr[DMA_2] = DMA_IS_IDLE;
 }
 void DMA2_Stream2_IRQHandler(void)
 {
@@ -234,6 +272,9 @@ void DMA2_Stream2_IRQHandler(void)
 
 	/* Call Callback Function*/
 	GeneralCallBackFun[STREAM2 + DMA_STREAM_NUM]();
+
+	/* DMA is in IDLE state*/
+	DMA_StatusArr[DMA_2] = DMA_IS_IDLE;
 }
 void DMA2_Stream3_IRQHandler(void)
 {
@@ -242,6 +283,8 @@ void DMA2_Stream3_IRQHandler(void)
 
 	/* Call Callback Function*/
 	GeneralCallBackFun[STREAM3 + DMA_STREAM_NUM]();
+
+	DMA_StatusArr[DMA_2] = DMA_IS_IDLE;
 }
 void DMA2_Stream4_IRQHandler(void)
 {
@@ -250,6 +293,8 @@ void DMA2_Stream4_IRQHandler(void)
 
 	/* Call Callback Function*/
 	GeneralCallBackFun[STREAM4 + DMA_STREAM_NUM]();
+
+	DMA_StatusArr[DMA_2] = DMA_IS_IDLE;
 }
 
 void DMA2_Stream5_IRQHandler(void)
@@ -259,6 +304,8 @@ void DMA2_Stream5_IRQHandler(void)
 
 	/* Call Callback Function*/
 	GeneralCallBackFun[STREAM5 + DMA_STREAM_NUM]();
+
+	DMA_StatusArr[DMA_2] = DMA_IS_IDLE;
 }
 void DMA2_Stream6_IRQHandler(void)
 {
@@ -267,7 +314,10 @@ void DMA2_Stream6_IRQHandler(void)
 
 	/* Call Callback Function*/
 	GeneralCallBackFun[STREAM6 + DMA_STREAM_NUM]();
+
+	DMA_StatusArr[DMA_2] = DMA_IS_IDLE;
 }
+
 void DMA2_Stream7_IRQHandler(void)
 {
 	/*Clear Flag*/
@@ -275,4 +325,6 @@ void DMA2_Stream7_IRQHandler(void)
 
 	/* Call Callback Function*/
 	GeneralCallBackFun[STREAM7 + DMA_STREAM_NUM]();
+
+	DMA_StatusArr[DMA_2] = DMA_IS_IDLE;
 }

@@ -215,13 +215,13 @@ uint8_t MI2C_u8ReceiveSynch ( I2Cindex_t Copy_I2Cindex , uint16_t Copy_u16SlaveA
 uint8_t MI2C_u8Transmit_DMA( I2Cconfig_t* I2Cconfig , uint16_t Copy_u16SlaveAdd ,uint8_t *Copy_pu8Data , uint32_t Copy_u32Size)
 {
 	uint8_t Local_u8ErrorState = ERROR_STATE_OK ;
-	volatile uint8_t Local_u8tmp ;
+	volatile uint32_t Local_u32tmp ;
 	if ( I2Cconfig != NULL &&  Copy_pu8Data != NULL)
 	{
 		/*********************************************************************************************/
 		for (uint32_t i =0 ; i<=100;i++)
 		{
-			Local_u8tmp=i;
+			Local_u32tmp=i;
 		}
 
 		/* Enable event interrupt*/
@@ -242,8 +242,12 @@ uint8_t MI2C_u8Transmit_DMA( I2Cconfig_t* I2Cconfig , uint16_t Copy_u16SlaveAdd 
 		while( MI2C_u8GetFlagStatus(  I2Cconfig->I2Cindex , MASTER_BYTE_TRANSMITTER)==FLAG_RESET);
 
 		/* Start transmission*/
-		DMA_u8StartTransfer(&(I2Cconfig->DMA_Tx),(uint32_t *)Copy_pu8Data, (uint32_t *)&(I2C_Index[I2Cconfig->I2Cindex]->DR),Copy_u32Size);
+		DMA_u8StartTransfer(&(I2Cconfig->DMA_Tx),(uint32_t *)Copy_pu8Data, (uint32_t *)(&(I2C_Index[I2Cconfig->I2Cindex]->DR)),Copy_u32Size);
 
+		for (uint32_t i =0 ; i<=100000;i++)
+		{
+			Local_u32tmp=i;
+		}
 
 	}
 	else
@@ -257,7 +261,7 @@ uint8_t MI2C_u8Transmit_DMA( I2Cconfig_t* I2Cconfig , uint16_t Copy_u16SlaveAdd 
 uint8_t MI2C_u8Receive_DMA( I2Cconfig_t* I2Cconfig , uint16_t Copy_u16SlaveAdd ,uint8_t *Copy_pu8Data , uint32_t Copy_u32Size)
 {
 	uint8_t Local_u8ErrorState = ERROR_STATE_OK ;
-	volatile uint8_t Local_u8tmp ;
+	volatile uint32_t Local_u32tmp ;
 	if ( I2Cconfig != NULL &&  Copy_pu8Data != NULL)
 	{
 		/* Enable event interrupt*/
@@ -281,6 +285,11 @@ uint8_t MI2C_u8Receive_DMA( I2Cconfig_t* I2Cconfig , uint16_t Copy_u16SlaveAdd ,
 
 			/* Start transmission*/
 			DMA_u8StartTransfer(&(I2Cconfig->DMA_Rx),(uint32_t *)&(I2C_Index[I2Cconfig->I2Cindex]->DR),(uint32_t *)Copy_pu8Data ,Copy_u32Size);
+
+			for (uint32_t i =0 ; i<=100000;i++)
+			{
+				Local_u32tmp=i;
+			}
 
 		}
 	}
