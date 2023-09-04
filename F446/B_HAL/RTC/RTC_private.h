@@ -56,7 +56,7 @@ static void RTC_voidWriteRegister( uint8_t Copy_u8Value , uint8_t Copy_u8RegAddr
  *
  ******************************************************************************
  */
-static uint8_t RTC_voidReadRegister( uint8_t Copy_u8RegAddress );
+//static uint8_t RTC_voidReadRegister( uint8_t Copy_u8RegAddress );
 /**
  ******************************************************************************
  * @fn             : BinaryToBCD
