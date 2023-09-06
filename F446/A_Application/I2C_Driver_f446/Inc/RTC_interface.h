@@ -20,24 +20,43 @@ typedef enum{
 			FRIDAY        ,
 			SATURDAY
 }Days_t;
-/******************************************************************************/
-/************************ @RTC_date_t *****************************************/
-/******************************************************************************/
+
 typedef struct{
-			uint8_t date  ;
-			uint8_t month ;
-			uint8_t year  ;
-			Days_t  day   ;
-}RTC_date_t;
-/******************************************************************************/
-/************************ @RTC_time_t *****************************************/
-/******************************************************************************/
-typedef struct{
-    		uint8_t 	 seconds      ;
-    		uint8_t 	 minutes      ;
-    		uint8_t		 hours        ;
-    		TimeFormat_t time_format  ;
-}RTC_time_t;
+
+
+	uint8_t minutes;
+    uint8_t	hours ;
+    Days_t  day   ;
+	uint8_t date  ;
+	uint8_t month ;
+	uint8_t year  ;
+
+}RTC_DateTime_t;
+
+typedef struct
+{
+
+	uint8_t StartAdd;
+	uint8_t Mins;
+	uint8_t Hrs;
+	uint8_t Day;
+	uint8_t Date;
+	uint8_t Month;
+	uint8_t Year;
+
+}RTC_Send_T;
+
+typedef enum
+{
+	MINS,
+	HRS,
+	DAY,
+	DATE,
+	MONTH,
+	YEAR,
+
+}RTC_Elemnts;
+
 /*************************************************************************************************************************************/
 /********************************************************* Functions Prototype *******************************************************/
 /*************************************************************************************************************************************/
@@ -67,58 +86,14 @@ void HRTC_u8Init( I2Cconfig_t *Copy_I2CCnfg );
  ******************************************************************************
  */
 void HRTC_u8GetRtcStatus ( I2Cconfig_t *Copy_I2CCnfg,uint8_t *Copy_u8Status );
-/**
- ******************************************************************************
- * @fn             : HRTC_voidSetCurrentTime
- * @brief          : Set Current Time
- * @param[in]      : RTC_time_t --> Set Value @RTC_time struct
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-void HRTC_voidSetCurrentTime ( I2Cconfig_t *Copy_I2CCnfg,RTC_time_t *RTC_time );
-/**
- ******************************************************************************
- * @fn             : HRTC_voidGetCurrentTime
- * @brief          : Get Current Time
- * @param[in]      : RTC_time_t --> Get Value @RTC_time struct
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-void HRTC_voidGetCurrentTime(I2Cconfig_t *Copy_I2CCnfg,RTC_time_t *RTC_time);
-/**
- ******************************************************************************
- * @fn             : HRTC_voidSetCurrentDate
- * @brief          : Set Current Date
- * @param[in]      : RTC_date_t --> Set Value @RTC_date struct
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-void HRTC_voidSetCurrentDate(I2Cconfig_t *Copy_I2CCnfg ,RTC_date_t *RTC_date);
-/**
- ******************************************************************************
- * @fn             : HRTC_voidGetCurrentDate
- * @brief          : Get Current Date
- * @param[in]      : RTC_date_t --> Get Value @RTC_date struct
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-void HRTC_voidGetCurrentDate(I2Cconfig_t *Copy_I2CCnfg,RTC_date_t *RTC_date);
+
+void HRTC_voidSetDateTime ( I2Cconfig_t *Copy_I2CCnfg,RTC_DateTime_t *RTC_time );
+
+void HRTC_voidGetDateTime ( I2Cconfig_t *Copy_I2CCnfg,RTC_DateTime_t *RTC_time );
+
+void BCDToBinary (uint8_t *Copy_pu8BcdArr , uint8_t *Copy_pu8BinArr ,uint8_t Copy_u8ArrSize);
+
+void BinaryToBCD (uint8_t *Copy_pu8BinArr ,uint8_t *Copy_pu8BcdArr ,uint8_t Copy_u8ArrSize);
 
 /*************************************************************************************************************************************/
 /*************************************************************************************************************************************/

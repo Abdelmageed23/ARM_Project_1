@@ -7,6 +7,8 @@
 /******************************************************************************/
 /************************ MCAL Layer ******************************************/
 /******************************************************************************/
+#include "STM32F446xx.h"
+
 #include "RCC_INTERFACE.h"
 #include "GPIO_INTERFACE.h"
 #include "DMA_interface.h"
@@ -35,33 +37,33 @@ void NumberToString (uint8_t Copy_u8Number , uint8_t* Copy_pu8String )
 		Copy_pu8String[1]= (Copy_u8Number % 10 )+ 48;
 	}
 }
-uint8_t *DataToString(RTC_date_t *Copy_Date)
-{
-	static uint8_t Local_Au8String[9];
-	NumberToString(Copy_Date->date, &Local_Au8String[0]);
-	Local_Au8String[2]='/';
-	NumberToString(Copy_Date->month,&Local_Au8String[3]);
-	Local_Au8String[5]='/';
-	NumberToString(Copy_Date->year ,&Local_Au8String[6]);
-	Local_Au8String[8]='\0';
-	return Local_Au8String;
-}
-uint8_t *TimeToString(RTC_time_t *Copy_Time)
-{
-	static uint8_t Local_Au8String[9];
-	NumberToString(Copy_Time->hours  ,&Local_Au8String[0]);
-	Local_Au8String[2]=':';
-	NumberToString(Copy_Time->minutes,&Local_Au8String[3]);
-	Local_Au8String[5]=':';
-	NumberToString(Copy_Time->seconds,&Local_Au8String[6]);
-	Local_Au8String[8]='\0';
-	return Local_Au8String;
-}
-char *GetDay(uint8_t Copy_DayIndex)
-{
-	char * Local_Au8Days[]={ "SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY", "SATURDAY" };
-	return Local_Au8Days[Copy_DayIndex-1];
-}
+//uint8_t *DataToString(RTC_date_t *Copy_Date)
+//{
+//	static uint8_t Local_Au8String[9];
+//	NumberToString(Copy_Date->date, &Local_Au8String[0]);
+//	Local_Au8String[2]='/';
+//	NumberToString(Copy_Date->month,&Local_Au8String[3]);
+//	Local_Au8String[5]='/';
+//	NumberToString(Copy_Date->year ,&Local_Au8String[6]);
+//	Local_Au8String[8]='\0';
+//	return Local_Au8String;
+//}
+//uint8_t *TimeToString(RTC_time_t *Copy_Time)
+//{
+//	static uint8_t Local_Au8String[9];
+//	NumberToString(Copy_Time->hours  ,&Local_Au8String[0]);
+//	Local_Au8String[2]=':';
+//	NumberToString(Copy_Time->minutes,&Local_Au8String[3]);
+//	Local_Au8String[5]=':';
+//	NumberToString(Copy_Time->seconds,&Local_Au8String[6]);
+//	Local_Au8String[8]='\0';
+//	return Local_Au8String;
+//}
+//char *GetDay(uint8_t Copy_DayIndex)
+//{
+//	char * Local_Au8Days[]={ "SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY", "SATURDAY" };
+//	return Local_Au8Days[Copy_DayIndex-1];
+//}
 
 /***********************************************************************************/
 int main(void)
@@ -70,9 +72,8 @@ int main(void)
 	RCC_u8SetClksts(CLK_HSI,STATE_ON);
 	RCC_SetSysClk(HSI);
 	RCC_voidAHB1EnablePerapheralClock(AHB1_GPIOA);
-    /****************************************************************************************************************************************************/
+	/****************************************************************************************************************************************************/
 	RCC_voidAHB1EnablePerapheralClock(AHB1_GPIOB);
-	RCC_voidAPB1EnablePerapheralClock(APB1_I2C1);
 
 	RCC_voidAHB1EnablePerapheralClock(AHB1_DMA1);
 
@@ -82,7 +83,14 @@ int main(void)
 	GPIO_u8PinInit(&sda);
 	GPIO_PinConfig_T scl ={RTC_I2C_PORT , RTC_I2C_SCL_PIN , ALTER_FUNC , SPEED_FAST , OPEN_DRAIN , RTC_I2C_PULL , AF4};
 	GPIO_u8PinInit(&scl);
+
+	GPIO_u8SetPinValue(sda.Port, sda.PinNum, PIN_HIGH);
+	GPIO_u8SetPinValue(scl.Port, scl.PinNum, PIN_HIGH);
+
 	/*********************************************************************************************/
+
+	RCC_voidAPB1EnablePerapheralClock(APB1_I2C1);
+
 
 	I2Cconfig_t I2cCinfig ={RTC_I2C,SM,SCL_SM_100K,STRETCHING_ENABLE,I2C_MODE,ACK_ENABLE,ENGC_ENABLE};
 
@@ -112,7 +120,7 @@ int main(void)
 			.MemIncSize = BYTE,
 			.PerIncMode = FIXED,
 			.PerIncSize = BYTE,
-			.PriorityLevel = HIGH,
+			.PriorityLevel = VERY_HIGH,
 			.SrcDestMode = MEM_TO_PERIPH,
 			.StreamNum = STREAM7,
 			.TransferMode = DIRECT_MODE
@@ -130,50 +138,29 @@ int main(void)
 	MNVIC_u8EnableInterrupt(NVIC_DMA1_Stream0);
 	MNVIC_u8EnableInterrupt(NVIC_DMA1_Stream7);
 
-	RTC_time_t   SetTime,GetTime;
-	RTC_date_t   SetDate,GetDate;
+	RTC_DateTime_t SetNewDateTime =
+	{
+			.day = MONDAY,
+			.date = 4,
+			.month = 9,
+			.year = 23,
+			.minutes = 44,
+			.hours = 6,
+	};
+	RTC_DateTime_t GetBcd,GetDateTime;
+
 	HRTC_u8Init(&I2cCinfig);
 
+	HRTC_voidSetDateTime(&I2cCinfig, &SetNewDateTime);
 
 
-
-	SetDate.day = MONDAY;
-	SetDate.date = 28;
-	SetDate.month = 8;
-	SetDate.year = 23;
-	HRTC_voidSetCurrentDate(&I2cCinfig,&SetDate);
-
-	SetTime.hours = 9;
-	SetTime.minutes = 47;
-	SetTime.seconds = 1;
-	SetTime.time_format = _12HRS_AM;
-	HRTC_voidSetCurrentTime(&I2cCinfig,&SetTime);
+	HRTC_voidGetDateTime(&I2cCinfig, &GetBcd);
 
 
 	for(;;)
 	{
-			HRTC_voidGetCurrentDate(&I2cCinfig,&GetDate);
-			HRTC_voidGetCurrentTime(&I2cCinfig,&GetTime);
-			uint8_t *am_or_pm ;
-			if ( GetTime.time_format != _24HRS )
-			{
-				if ( GetTime.time_format == _12HRS_AM )
-				{
-					am_or_pm="AM";
-				}
-				else
-				{
-					am_or_pm="PM";
-				}
-				printf("Current Time = %s %s\n",TimeToString(&GetTime),am_or_pm);
-			}
-			else
-			{
-				printf("Current Time = %s\n",TimeToString(&GetTime));
-			}
-			printf("Current Data = %s <%s>\n",DataToString(&GetDate),GetDay(GetDate.day) );
 
-
+		BCDToBinary(&GetBcd.minutes,&GetDateTime.minutes, 6);
 
 	}
 

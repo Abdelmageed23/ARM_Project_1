@@ -51,244 +51,45 @@
  */
 void HRTC_u8Init( I2Cconfig_t *Copy_I2CCnfg )
 {
-//	/*********************************************************************************************/
-//	GPIO_PinConfig_T sda ={RTC_I2C_PORT , RTC_I2C_SDA_PIN , ALTER_FUNC , SPEED_FAST , OPEN_DRAIN , RTC_I2C_PULL , AF4};
-//	GPIO_u8PinInit(&sda);
-//	GPIO_PinConfig_T scl ={RTC_I2C_PORT , RTC_I2C_SCL_PIN , ALTER_FUNC , SPEED_FAST , OPEN_DRAIN , RTC_I2C_PULL , AF4};
-//	GPIO_u8PinInit(&scl);
-//	/*********************************************************************************************/
-//
-//	I2Cconfig_t I2cCinfig ={RTC_I2C,SM,SCL_SM_100K,STRETCHING_ENABLE,I2C_MODE,ACK_ENABLE,ENGC_ENABLE};
-//
-//	DMA_Cnfg_T I2C_DMA_Rx =
-//	{
-//			.ChannelNum = CHANNEL1,
-//			.DMA_Type = DMA_1,
-//			.InterruptType = FULL_TRANS,
-//			.MemIncMode = INCREMENT,
-//			.MemIncSize = BYTE,
-//			.PerIncMode = FIXED,
-//			.PerIncSize = BYTE,
-//			.PriorityLevel = HIGH,
-//			.SrcDestMode = MEM_TO_PERIPH,
-//			.StreamNum = STREAM7,
-//			.TransferMode = DIRECT_MODE
-//	};
-//
-//	DMA_Cnfg_T I2C_DMA_Tx =
-//	{
-//			.ChannelNum = CHANNEL1,
-//			.DMA_Type = DMA_1,
-//			.InterruptType = FULL_TRANS,
-//			.MemIncMode = FIXED,
-//			.MemIncSize = BYTE,
-//			.PerIncMode = FIXED,
-//			.PerIncSize = BYTE,
-//			.PriorityLevel = HIGH,
-//			.SrcDestMode = PERIPH_TO_MEM,
-//			.StreamNum = STREAM0,
-//			.TransferMode = DIRECT_MODE
-//	};
-//
-//
-//	I2cCinfig.DMA_Rx = I2C_DMA_Rx;
-//	I2cCinfig.DMA_Rx = I2C_DMA_Tx;
-//
-//	DMA_u8Init(&I2C_DMA_Tx);
-//	DMA_u8Init(&I2C_DMA_Rx);
-//
-//	MI2C_u8SetConfiguration(&I2cCinfig);
+	uint8_t Local_Au8TransmitArray[2] ;
+	Local_Au8TransmitArray[0] = ADDRESS_SEC ;
+	Local_Au8TransmitArray[1] = RTC_SEC_MASK ;
 	/*********************************************************************************************/
-	RTC_voidWriteRegister( Copy_I2CCnfg ,RTC_SEC_MASK , RTC_ADDRESS_SEC );
+	MI2C_u8Transmit_DMA(Copy_I2CCnfg, RTC_I2C_SLAVE_ADDRESS, Local_Au8TransmitArray,2);
+
 	/*********************************************************************************************/
 }
-/**
- ******************************************************************************
- * @fn             : HRTC_u8GetRtcStatus
- * @brief          : Get Rtc Status
- * @param[in]      : Copy_u8Status --> Get Value
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-void HRTC_u8GetRtcStatus ( I2Cconfig_t *Copy_I2CCnfg ,uint8_t *Copy_u8Status )
+
+void HRTC_voidSetDateTime ( I2Cconfig_t *Copy_I2CCnfg,RTC_DateTime_t *RTC_time )
 {
-	*Copy_u8Status = GET_BIT( RTC_voidReadRegister(Copy_I2CCnfg, RTC_ADDRESS_SEC ) , RTC_SEC_CH_BIT );
-}
-/**
- ******************************************************************************
- * @fn             : HRTC_voidSetCurrentTime
- * @brief          : Set Current Time
- * @param[in]      : RTC_time_t --> Set Value @RTC_time struct
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-void HRTC_voidSetCurrentTime ( I2Cconfig_t *Copy_I2CCnfg,RTC_time_t *RTC_time )
-{
-	/*********************************************************************************************/
-	uint8_t Local_u8Second = BinaryToBCD(RTC_time->seconds);
-	Local_u8Second &= ~(RTC_SEC_CH_MASK<<RTC_SEC_CH_BIT);
-	RTC_voidWriteRegister(Copy_I2CCnfg,Local_u8Second , RTC_ADDRESS_SEC );
-	/*********************************************************************************************/
-	RTC_voidWriteRegister(Copy_I2CCnfg,BinaryToBCD(RTC_time->minutes) , RTC_ADDRESS_MIN );
-	/*********************************************************************************************/
-	uint8_t Local_u8Hours = BinaryToBCD(RTC_time->hours);
-	if ( RTC_time-> time_format == _24HRS )
+	uint8_t Local_u8BcdArr[7];
+
+	BinaryToBCD((uint8_t*)RTC_time,Local_u8BcdArr,7);
+
+	Local_u8BcdArr[HRS] &= ~(RTC_HRS_12_24_MASK<<RTC_HRS_12_24_BIT);
+
+	RTC_Send_T NewArr =
 	{
-		Local_u8Hours &= ~(RTC_HRS_12_24_MASK<<RTC_HRS_12_24_BIT);
-	}
-	else
-	{
-		Local_u8Hours |= (RTC_HRS_12_24_MASK<<RTC_HRS_12_24_BIT);
-		if (RTC_time->time_format == _12HRS_PM)
-		{
-			Local_u8Hours |=   (RTC_HRS_PM_AM_MASK<<RTC_HRS_PM_AM_BIT);
-		}
-		else
-		{
-			Local_u8Hours &=  ~ (RTC_HRS_PM_AM_MASK<<RTC_HRS_PM_AM_BIT);
-		}
-	}
-	RTC_voidWriteRegister(Copy_I2CCnfg,Local_u8Hours , RTC_ADDRESS_HRS );
-	/*********************************************************************************************/
+
+		.StartAdd = ADDRESS_MIN,
+		.Mins = Local_u8BcdArr[MINS],
+		.Hrs = Local_u8BcdArr[HRS],
+		.Day = Local_u8BcdArr[DAY],
+		.Date = Local_u8BcdArr[DATE],
+		.Month = Local_u8BcdArr[MONTH],
+		.Year = Local_u8BcdArr[YEAR]
+	};
+	MI2C_u8Transmit_DMA(Copy_I2CCnfg, RTC_I2C_SLAVE_ADDRESS, &NewArr.StartAdd, 7);
+
 }
-/**
- ******************************************************************************
- * @fn             : HRTC_voidGetCurrentTime
- * @brief          : Get Current Time
- * @param[in]      : RTC_time_t --> Get Value @RTC_time struct
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-void HRTC_voidGetCurrentTime(I2Cconfig_t *Copy_I2CCnfg,RTC_time_t *RTC_time)
+void HRTC_voidGetDateTime ( I2Cconfig_t *Copy_I2CCnfg,RTC_DateTime_t *RTC_time )
 {
-	/*********************************************************************************************/
-	uint8_t Local_u8Second = RTC_voidReadRegister(Copy_I2CCnfg ,RTC_ADDRESS_SEC);
-	Local_u8Second &= ~(RTC_SEC_CH_MASK<<RTC_SEC_CH_BIT);
-	RTC_time->seconds = BCDToBinary(Local_u8Second);
-	/*********************************************************************************************/
-	RTC_time->minutes = BCDToBinary(RTC_voidReadRegister(Copy_I2CCnfg,RTC_ADDRESS_MIN));
-	/*********************************************************************************************/
-	uint8_t Local_u8Hours  = RTC_voidReadRegister(Copy_I2CCnfg,RTC_ADDRESS_HRS) ;
-	if (  Local_u8Hours & (RTC_HRS_12_24_MASK << RTC_HRS_12_24_BIT ))
-	{
-		if (  Local_u8Hours & (RTC_HRS_PM_AM_MASK << RTC_HRS_PM_AM_BIT ) )
-		{
+	uint8_t RTC_AddArr[7] = RTC_ADDRESS_ARR;
 
-			RTC_time->time_format = _12HRS_PM;
-		}
-		else
-		{
-			RTC_time->time_format = _12HRS_AM;
-
-		}
-		Local_u8Hours &= ~(RTC_HRS_12_24_PM_AM_MASK<<RTC_HRS_PM_AM_BIT);
-	}
-	else
-	{
-		RTC_time->time_format = _24HRS ;
-
-	}
-	RTC_time->hours   = BCDToBinary(Local_u8Hours);
-	/*********************************************************************************************/
+	MI2C_u8Transmit_DMA(Copy_I2CCnfg, RTC_I2C_SLAVE_ADDRESS, (uint8_t*)(&RTC_AddArr[ADDRESS_MIN]), 1);
+	MI2C_u8Receive_DMA(Copy_I2CCnfg, RTC_I2C_SLAVE_ADDRESS,(uint8_t *)RTC_time , 6);
 }
-/**
- ******************************************************************************
- * @fn             : HRTC_voidSetCurrentDate
- * @brief          : Set Current Date
- * @param[in]      : RTC_date_t --> Set Value @RTC_date struct
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-void HRTC_voidSetCurrentDate(I2Cconfig_t *Copy_I2CCnfg ,RTC_date_t *RTC_date)
-{
-	RTC_voidWriteRegister( Copy_I2CCnfg,BinaryToBCD(RTC_date->date) ,  RTC_ADDRESS_DATE  );
-	RTC_voidWriteRegister( Copy_I2CCnfg,BinaryToBCD(RTC_date->month),  RTC_ADDRESS_MONTH );
-	RTC_voidWriteRegister( Copy_I2CCnfg,BinaryToBCD(RTC_date->year) ,  RTC_ADDRESS_YEAR  );
-	RTC_voidWriteRegister( Copy_I2CCnfg,BinaryToBCD(RTC_date->day)  ,  RTC_ADDRESS_DAY   );
-}
-/**
- ******************************************************************************
- * @fn             : HRTC_voidGetCurrentDate
- * @brief          : Get Current Date
- * @param[in]      : RTC_date_t --> Get Value @RTC_date struct
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-void HRTC_voidGetCurrentDate(I2Cconfig_t *Copy_I2CCnfg ,RTC_date_t *RTC_date)
-{
-	RTC_date->date   = BCDToBinary (RTC_voidReadRegister(Copy_I2CCnfg,RTC_ADDRESS_DATE));
-	RTC_date->month  = BCDToBinary (RTC_voidReadRegister(Copy_I2CCnfg,RTC_ADDRESS_MONTH));
-	RTC_date->year   = BCDToBinary (RTC_voidReadRegister(Copy_I2CCnfg,RTC_ADDRESS_YEAR));
-	RTC_date->day    = BCDToBinary (RTC_voidReadRegister(Copy_I2CCnfg,RTC_ADDRESS_DAY));
-}
-/*************************************************************************************************************************************/
-/********************************************************* Static Functions implementations ******************************************/
-/*************************************************************************************************************************************/
-/**
- ******************************************************************************
- * @fn             : RTC_voidWriteRegister
- * @brief          : Write Data on Rtc Register
- * @param[in]      : Copy_u8Value --> Set Value
- * @param[in]      : Copy_u8RegAddress --> Set Register Address
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-static void RTC_voidWriteRegister( I2Cconfig_t *Copy_I2CCnfg  ,uint8_t Copy_u8Value , uint8_t Copy_u8RegAddress )
-{
-    uint8_t Local_Au8TransmitArray[2] ;
-    Local_Au8TransmitArray[0] = Copy_u8RegAddress ;
-    Local_Au8TransmitArray[1] = Copy_u8Value ;
-	MI2C_u8Transmit_DMA(Copy_I2CCnfg, RTC_I2C_SLAVE_ADDRESS, Local_Au8TransmitArray, 2);
-//	MI2C_u8SendSynch ( RTC_I2C , RTC_I2C_SLAVE_ADDRESS , Local_Au8TransmitArray , 2 , STOP_ENABLE , REPEAT_DISABBLE );
 
-}
-/**
- ******************************************************************************
- * @fn             : RTC_voidReadRegister
- * @brief          : Read Data From Rtc Register
- * @param[in]      : Copy_u8RegAddress --> Set Register Address
- * @retval         : Register Value u8
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-static uint8_t RTC_voidReadRegister( I2Cconfig_t *Copy_I2CCnfg  ,uint8_t Copy_u8RegAddress )
-{
-	uint8_t Local_u8Data ;
-	MI2C_u8Transmit_DMA(Copy_I2CCnfg, RTC_I2C_SLAVE_ADDRESS, &Copy_u8RegAddress, 1);
-	MI2C_u8Receive_DMA(Copy_I2CCnfg, RTC_I2C_SLAVE_ADDRESS,&Local_u8Data , 1);
-
-//	MI2C_u8SendSynch    ( RTC_I2C , RTC_I2C_SLAVE_ADDRESS ,&Copy_u8RegAddress , 1 , STOP_ENABLE , REPEAT_DISABBLE);
-//	MI2C_u8ReceiveSynch ( RTC_I2C , RTC_I2C_SLAVE_ADDRESS ,&Local_u8Data      , 1 , STOP_ENABLE , REPEAT_ENABLE  );
-	return Local_u8Data ;
-
-}
 /**
  ******************************************************************************
  * @fn             : BinaryToBCD
@@ -301,17 +102,27 @@ static uint8_t RTC_voidReadRegister( I2Cconfig_t *Copy_I2CCnfg  ,uint8_t Copy_u8
  *
  ******************************************************************************
  */
-static uint8_t BinaryToBCD (uint8_t Copy_u8BinaryVlaue )
+void BinaryToBCD  (uint8_t *Copy_pu8BinArr ,uint8_t *Copy_pu8BcdArr ,uint8_t Copy_u8ArrSize)
 {
-	uint8_t Local_u8Tens , Local_u8Ones ,Local_u8BCD ;
-	Local_u8BCD = Copy_u8BinaryVlaue ;
-	if ( Copy_u8BinaryVlaue >= 10 )
+	uint8_t Local_u8Tens , Local_u8Ones ,Local_u8Counter;
+
+
+	for(Local_u8Counter = 0 ;Local_u8Counter < Copy_u8ArrSize ;Local_u8Counter++)
 	{
-		Local_u8Tens = Copy_u8BinaryVlaue/10;
-		Local_u8Ones = Copy_u8BinaryVlaue%10;
-		Local_u8BCD = (uint8_t)((Local_u8Tens<<4) | Local_u8Ones) ;
+		if ( Copy_pu8BinArr[Local_u8Counter] >= 10 )
+		{
+			Local_u8Tens =  Copy_pu8BinArr[Local_u8Counter]/10;
+			Local_u8Ones =  Copy_pu8BinArr[Local_u8Counter]%10;
+			Copy_pu8BcdArr[Local_u8Counter] = (uint8_t)((Local_u8Tens<<4) | Local_u8Ones) ;
+		}
+		else
+		{
+			Copy_pu8BcdArr[Local_u8Counter] = Copy_pu8BinArr[Local_u8Counter];
+
+		}
 	}
-	return Local_u8BCD ;
+
+
 
 }
 /**
@@ -326,13 +137,16 @@ static uint8_t BinaryToBCD (uint8_t Copy_u8BinaryVlaue )
  *
  ******************************************************************************
  */
-static uint8_t BCDToBinary (uint8_t Copy_u8BcdVlaue )
+ void BCDToBinary (uint8_t *Copy_pu8BcdArr , uint8_t *Copy_pu8BinArr ,uint8_t Copy_u8ArrSize)
 {
-	uint8_t Local_u8Tens , Local_u8Ones ,Local_u8Binary ;
-	Local_u8Tens = (uint8_t)((Copy_u8BcdVlaue >> 4) * 10) ;
-	Local_u8Ones = Copy_u8BcdVlaue & (uint8_t)0x0F;
-	Local_u8Binary = Local_u8Tens + Local_u8Ones ;
-	return Local_u8Binary ;
+	uint8_t Local_u8Tens , Local_u8Ones ,Local_u8Counter;
+
+	for(Local_u8Counter = 0 ;Local_u8Counter < Copy_u8ArrSize ;Local_u8Counter++)
+	{
+		Local_u8Tens = (uint8_t)((Copy_pu8BcdArr[Local_u8Counter] >> 4) * 10) ;
+		Local_u8Ones = Copy_pu8BcdArr[Local_u8Counter] & (uint8_t)0x0F;
+		Copy_pu8BinArr[Local_u8Counter] = Local_u8Tens + Local_u8Ones ;
+	}
 
 }
 
