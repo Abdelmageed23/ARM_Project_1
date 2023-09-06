@@ -172,6 +172,7 @@ uint8_t MI2C_u8DMArequests (  I2Cindex_t Copy_I2Cindex , DMArequests_t Copy_DMAr
 uint8_t MI2C_u8Transmit_DMA( I2Cconfig_t* I2Cconfig , uint16_t Copy_u16SlaveAdd ,uint8_t *Copy_pu8Data , uint32_t Copy_u32Size);
 
 uint8_t MI2C_u8Receive_DMA( I2Cconfig_t* I2Cconfig , uint16_t Copy_u16SlaveAdd ,uint8_t *Copy_pu8Data , uint32_t Copy_u32Size);
+void MI2C_voidResetI2C(I2Cindex_t Copy_I2Cindex);
 
 void MI2C_u8ACallbackTx(void);
 void MI2C_u8ACallbackRx(void);
