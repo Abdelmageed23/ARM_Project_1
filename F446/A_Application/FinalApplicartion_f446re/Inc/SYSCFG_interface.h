@@ -1,0 +1,45 @@
+/*
+ * SYSCFG_interface.h
+ *
+ *  Created on: 15 Jul 2023
+ *      Author: kareem
+ */
+
+#ifndef SYSCFG_INTERFACE_H_
+#define SYSCFG_INTERFACE_H_
+
+typedef enum
+{
+    SYSCFG_PORTA =0U,
+    SYSCFG_PORTB,
+    SYSCFG_PORTC,
+    SYSCFG_PORTD,
+    SYSCFG_PORTE,
+    SYSCFG_PORTF,
+    SYSCFG_PORTG,
+    SYSCFG_PORTH
+}SYSCFG_port_ty;
+
+typedef enum
+{
+    SYSCFG_LINE00 =0U,
+    SYSCFG_LINE01,
+    SYSCFG_LINE02,
+    SYSCFG_LINE03,
+    SYSCFG_LINE04,
+    SYSCFG_LINE05,
+    SYSCFG_LINE06,
+    SYSCFG_LINE07,
+    SYSCFG_LINE08,
+    SYSCFG_LINE09,
+    SYSCFG_LINE10,
+    SYSCFG_LINE11,
+    SYSCFG_LINE12,
+    SYSCFG_LINE13,
+    SYSCFG_LINE14,
+    SYSCFG_LINE15
+}SYSCFG_line_ty;
+
+uint8_t SYSCFG_u8SetEXTIPort(SYSCFG_line_ty Line,SYSCFG_port_ty Port);
+
+#endif /* SYSCFG_INTERFACE_H_ */

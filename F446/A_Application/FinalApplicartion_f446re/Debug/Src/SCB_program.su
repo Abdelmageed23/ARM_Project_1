@@ -1,0 +1,4 @@
+../Src/SCB_program.c:15:6:SCB_voidSetPriorityGroup	16	static
+../Src/SCB_program.c:19:9:SCB_u8setIQRprionty	24	static
+../Src/SCB_program.c:32:9:SCB_u8EnableFaultInterrupt	24	static
+../Src/SCB_program.c:45:9:SCB_u8DisableFaultInterrupt	24	static
