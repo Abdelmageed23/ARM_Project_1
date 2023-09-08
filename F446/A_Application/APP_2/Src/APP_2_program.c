@@ -9,6 +9,7 @@
 #include"../../../D_LIB/ERROR_STATE.h"
 /******************************MCAL****************************/
 #include "../../../C_MCAL/SysTick/STK_interface.h"
+#include "../../../C_MCAL/Inc/I2C_interface.h"
 /******************************HAL******************************/
 #include"../../../B_HAL/RTC/RTC_interface.h"
 /******************************APP*******************************/
@@ -19,25 +20,47 @@
  * Globle Variables
  * ***************************************************************************************************
 */
-static uint16_t* APP2_pvCurrentTimearry=NULL;
-static uint16_t* APP2_pvAlarmTime[NUMBER_OF_ALARMS]={NULL,NULL,NULL,NULL,NULL};
-static uint32_t* APP2_pvCurrentDatearry=NULL;
-static uint32_t* APP2_pvAlarmDate[NUMBER_OF_ALARMS]={NULL,NULL,NULL,NULL,NULL};
 
-APP2_alarmFlagState APP2_Alarm_1_FlagState = APP2_FLAG_UNRISED;
-APP2_alarmFlagState APP2_Alarm_2_FlagState = APP2_FLAG_UNRISED;
-APP2_alarmFlagState APP2_Alarm_3_FlagState = APP2_FLAG_UNRISED;
-APP2_alarmFlagState APP2_Alarm_4_FlagState = APP2_FLAG_UNRISED;
-APP2_alarmFlagState APP2_Alarm_5_FlagState = APP2_FLAG_UNRISED;
+static RTC_DateTime_t* APP2_pvCurrentDateTimearry=NULL;
+static uint8_t APP2_pvAlarmTimeDatearry[NUMBER_OF_ALARMS]={ALARM_NOT_DEFINED};
+static RTC_DateTime_t  APP2_AlarmsTimeDateArry[NUMBER_OF_ALARMS];
+
+uint8_t Globla_Alrams_Flags_state = 0;
+
+I2Cconfig_t I2cCinfig ={RTC_I2C,SM,SCL_SM_100K,STRETCHING_ENABLE,I2C_MODE,ACK_ENABLE,ENGC_ENABLE};
+
 /*****************************************************************************************************
  * init functions
  * ***************************************************************************************************
 */
+/**
+ * @fn      APP2_voidInit
+ * @brief   Set the callback functions
+ * @retval  no return value
+*/
 void APP2_voidInit(void)
 {
-    /*pass DMA callback Func*/
-
     /*pass Systick callback func*/
+    MSTK_u8ClockConfig(STK_AHB_DIV_8);
+    MSTK_u8SetInterval(SYSTICK_RELOAD_VALUE,PERIODIC,APP2_SysTick_ISR);
+}
+
+void APP2_voidWantCurrentDate(RTC_date_t*GetDate)
+{
+    if (NULL!=APP2_pvCurrentDateTimearry)
+    {
+        GetDate->date= (APP2_pvCurrentDateTimearry->date);
+        GetDate->month= (APP2_pvCurrentDateTimearry->month);
+        GetDate->year=  (APP2_pvCurrentDateTimearry->year);
+    }
+}
+void APP2_voidWantCurrentTime(RTC_time_t*GetTime)
+{
+    if (NULL!=APP2_pvCurrentDateTimearry)
+    {
+        GetTime->hours= (APP2_pvCurrentDateTimearry->hours);
+        GetTime->minutes= (APP2_pvCurrentDateTimearry->minutes);
+    }
 }
 /*****************************************************************************************************
  * Time Functions
@@ -50,32 +73,34 @@ void APP2_voidInit(void)
 */
 void APP2_voidReadTime(void)
 {
-    HRTC_voidGetCurrentTime(APP2_pvCurrentTimearry);
-    HRTC_voidGetCurrentDate(APP2_pvCurrentDatearry);
+    if (NULL!=APP2_pvCurrentDateTimearry)
+    {
+        HRTC_voidSetDateTime(I2cCinfig ,APP2_pvCurrentDateTimearry);
+    }
 }
+
 /**
  * @fn          APP2_voidSetTime
  * @brief       set current date and time,and set the RTC time and date
- * @param[in]   alarm :pointer to Time and dateo
+ * @param[in]   Current :pointer to Time and dateo
  * @retval      no return value
  */
-void APP2_voidSetTime(USR_Alarm_T *alarm)
+void APP2_voidSetTime(USR_Alarm_T *Current)
 {
-    APP2_pvCurrentTimearry=(uint16_t*)(&(alarm->Time));
-    APP2_pvCurrentTimearry=(uint32_t*)(&(alarm->Date));
-    RTC_time_t RTC_Time=
+    if (Current != NULL)
     {
-        .minutes=alarm->Time[1],
-        .hours=alarm->Time[0],
-    };
-    RTC_date_t RTC_Date=
-    {
-        .date=alarm->Date[0],
-        .month=alarm->Date[1],
-        .year=alarm->Date[2]
-    };
-    HRTC_voidSetCurrentTime(&RTC_Time);
-    HRTC_voidSetCurrentDate(&RTC_Date);
+        static RTC_DateTime_t APP2_CurrentTime=
+        {
+            .minutes =Current->time[1]-'0',
+            .hours   =Current->time[0]-'0',
+            .date    =Current->date[0]-'0',
+            .month   =Current->date[1]-'0',
+            .year    =Current->date[2]-'0',
+        };
+        BCDToBinary(&APP2_CurrentTime,&APP2_CurrentTime,6);
+        APP2_pvCurrentDateTimearry = &APP2_CurrentTime;
+        HRTC_voidSetDateTime(I2cCinfig ,APP2_pvCurrentDateTimearry);
+    }    
 }
 /********************************************************************************************************
  * Alarm Functions
@@ -90,8 +115,18 @@ void APP2_voidSetTime(USR_Alarm_T *alarm)
 */
 void APP2_voidSetAlarm(USR_Alarm_T *alarm,APP2_AlarmNumber_t alarmNumber)
 {
-    APP2_pvAlarmTime[alarmNumber]=(uint16_t*)(&(alarm->Time));
-    APP2_pvAlarmDate[alarmNumber]=(uint32_t*)(&(alarm->Date));
+    if ((NULL!=alarm)&&(alarmNumber<=APP2_ALARM_5))
+    {
+        APP2_AlarmsTimeDateArry[alarmNumber]=
+        {
+            .minutes =alarm->time[1]-'0',
+            .hours   =alarm->time[0]-'0',
+            .date    =alarm->date[0]-'0',
+            .month   =alarm->date[1]-'0',
+            .year    =alarm->date[2]-'0',
+        };
+        APP2_pvAlarmTimeDatearry[alarmNumber]=ALAREM_DFINED;
+    }
 }
 /**
  * @fn          APP2_voidAlarmNotification
@@ -100,39 +135,34 @@ void APP2_voidSetAlarm(USR_Alarm_T *alarm,APP2_AlarmNumber_t alarmNumber)
 */
 void APP2_voidAlarmNotification(void)
 {
-    if ((APP2_pvAlarmTime[APP2_ALARM_1]!=NULL)  &&(APP2_pvAlarmDate[APP2_ALARM_1]!=NULL)  
-        &&((uint16_t)(*APP2_pvCurrentTimearry)==(uint16_t)(*APP2_pvAlarmTime[APP2_ALARM_1]))
-        &&((uint32_t)(*APP2_pvCurrentDatearry)==(uint32_t)(*APP2_pvAlarmDate[APP2_ALARM_1])))
+    if ((APP2_pvAlarmTimeDatearry[APP2_ALARM_1]!=ALARM_NOT_DEFINED)
+        &&((uint64_t)(*APP2_pvCurrentDateTimearry)==(uint64_t)(APP2_AlarmsTimeDateArry[APP2_ALARM_1])))
     {
-        APP2_Alarm_1_FlagState=APP2_FLAG_RISED;
+        APP2_alarmFlagState |=(1<<APP2_ALARM_1);
         /*Set interrupt && send alarm name to f103 over SPI*/
     }
-    else if ((APP2_pvAlarmTime[APP2_ALARM_2]!=NULL)  &&(APP2_pvAlarmDate[APP2_ALARM_2]!=NULL) 
-        &&((uint16_t)(*APP2_pvCurrentTimearry)==(uint16_t)(*APP2_pvAlarmTime[APP2_ALARM_2]))
-        &&((uint32_t)(*APP2_pvCurrentDatearry)==(uint32_t)(*APP2_pvAlarmDate[APP2_ALARM_2])))
+    else if ((APP2_pvAlarmTimeDatearry[APP2_ALARM_2]!=ALARM_NOT_DEFINED)
+        &&((uint64_t)(*APP2_pvCurrentDateTimearry)==(uint64_t)(APP2_AlarmsTimeDateArry[APP2_ALARM_2])))
     {
-        APP2_Alarm_2_FlagState=APP2_FLAG_RISED;
+        APP2_alarmFlagState |=(1<<APP2_ALARM_2);
         /*Set interrupt && send alarm name to f103 over SPI*/
     }
-    else if ((APP2_pvAlarmTime[APP2_ALARM_3]!=NULL)  &&(APP2_pvAlarmDate[APP2_ALARM_3]!=NULL) 
-        &&((uint16_t)(*APP2_pvCurrentTimearry)==(uint16_t)(*APP2_pvAlarmTime[APP2_ALARM_3]))
-        &&((uint32_t)(*APP2_pvCurrentDatearry)==(uint32_t)(*APP2_pvAlarmDate[APP2_ALARM_3])))
+    else if ((APP2_pvAlarmTimeDatearry[APP2_ALARM_3]!=ALARM_NOT_DEFINED)
+        &&((uint64_t)(*APP2_pvCurrentDateTimearry)==(uint64_t)(APP2_AlarmsTimeDateArry[APP2_ALARM_3])))
     {
-        APP2_Alarm_3_FlagState=APP2_FLAG_RISED;
+        APP2_alarmFlagState |=(1<<APP2_ALARM_3);
         /*Set interrupt && send alarm name to f103 over SPI*/
     }
-    else if ((APP2_pvAlarmTime[APP2_ALARM_4]!=NULL)  &&(APP2_pvAlarmDate[APP2_ALARM_4]!=NULL) 
-        &&((uint16_t)(*APP2_pvCurrentTimearry)==(uint16_t)(*APP2_pvAlarmTime[APP2_ALARM_4]))
-        &&((uint32_t)(*APP2_pvCurrentDatearry)==(uint32_t)(*APP2_pvAlarmDate[APP2_ALARM_4])))
+    else if ((APP2_pvAlarmTimeDatearry[APP2_ALARM_4]!=ALARM_NOT_DEFINED)
+        &&((uint64_t)(*APP2_pvCurrentDateTimearry)==(uint64_t)(APP2_AlarmsTimeDateArry[APP2_ALARM_4])))
     {
-        APP2_Alarm_4_FlagState=APP2_FLAG_RISED;
+        APP2_alarmFlagState |=(1<<APP2_ALARM_4);
         /*Set interrupt && send alarm name to f103 over SPI*/
     }
-    else if ((APP2_pvAlarmTime[APP2_ALARM_5]!=NULL)  &&(APP2_pvAlarmDate[APP2_ALARM_5]!=NULL) 
-        &&((uint16_t)(*APP2_pvCurrentTimearry)==(uint16_t)(*APP2_pvAlarmTime[APP2_ALARM_5]))
-        &&((uint32_t)(*APP2_pvCurrentDatearry)==(uint32_t)(*APP2_pvAlarmDate[APP2_ALARM_5])))
+    else if ((APP2_pvAlarmTimeDatearry[APP2_ALARM_5]!=ALARM_NOT_DEFINED)
+        &&((uint64_t)(*APP2_pvCurrentDateTimearry)==(uint64_t)(APP2_AlarmsTimeDateArry[APP2_ALARM_5])))
     {
-        APP2_Alarm_5_FlagState=APP2_FLAG_RISED;
+        APP2_alarmFlagState |=(1<<APP2_ALARM_5);
         /*Set interrupt && send alarm name to f103 over SPI*/
     }
 }
@@ -140,20 +170,17 @@ void APP2_voidAlarmNotification(void)
  * ISR Handler (SysTick,DMA)
  * *************************************************************************************************************************************
 */
-
 void APP2_SysTick_ISR(void)
 {
-    static uint8_t Local_u8Counter=1U;
-    if (MAX_SYSTICK_OF_COUNT==Local_u8Counter)
+    static Local_Static_counter=0;
+    if (Local_Static_counter==0)
     {
         APP2_voidReadTime();
+        Local_Static_counter++;
     }
-    else
+    else if (Local_Static_counter==1)
     {
-        Local_u8Counter++;
+        APP2_voidAlarmNotification();
+        Local_Static_counter=0;
     }
-}
-void APP2_DMA_ISR(void)
-{
-    APP2_voidAlarmNotification();
 }

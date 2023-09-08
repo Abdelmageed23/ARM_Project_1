@@ -24,7 +24,9 @@ typedef enum
 
 void APP2_voidInit(void);
 void APP2_voidReadTime(void);
-void APP2_voidSetTime(USR_Alarm_T *alarm);
+void APP2_voidWantCurrentDate(RTC_date_t*GetDate);
+void APP2_voidWantCurrentTime(RTC_time_t*GetTime);
+void APP2_voidSetTime(USR_Alarm_T *Current)
 void APP2_voidSetAlarm(USR_Alarm_T* alarm,APP2_AlarmNumber_t alarmNumber);
 void APP2_voidAlarmNotification(void);
 #endif /* APP_2_INTERFACE_H_ */
