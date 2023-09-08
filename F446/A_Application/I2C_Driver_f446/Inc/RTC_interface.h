@@ -30,9 +30,9 @@ typedef struct{
 	uint8_t date  ;
 	uint8_t month ;
 	uint8_t year  ;
-
+	uint16_t Revesed;
 }RTC_DateTime_t;
-
+/*At all RTC_DateTime_t = 64 bit*/
 typedef struct
 {
 
