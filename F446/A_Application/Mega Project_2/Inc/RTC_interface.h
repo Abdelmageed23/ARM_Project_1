@@ -4,13 +4,13 @@
 /************************ @TimeFormat_t ***************************************/
 /******************************************************************************/
 typedef enum{
-			_12HRS_AM        =0,
-			_12HRS_PM          ,
-			_24HRS
+		_12HRS_AM        =0,
+		_12HRS_PM          ,
+		_24HRS
 }TimeFormat_t;
 /******************************************************************************/
 /************************ @Days_t *********************************************/
-/*****************************************************************************
+/******************************************************************************/
 typedef enum{
 			SUNDAY     = 1,
 			MONDAY        ,
@@ -19,34 +19,44 @@ typedef enum{
 			THURSDAY      ,
 			FRIDAY        ,
 			SATURDAY
-}Days_t;*/
-/******************************************************************************/
-/************************ @RTC_data_t *****************************************/
-/*****************************************************************************
+}Days_t;
+
 typedef struct{
-			uint8_t date  ;
-			uint8_t month ;
-			uint8_t year  ;
-			Days_t  day   ;
-}RTC_date_t;*/
-typedef struct{
-			uint8_t date  ;
-			uint8_t month ;
-			uint8_t year  ;
-}RTC_date_t;
-/******************************************************************************/
-/************************ @RTC_time_t *****************************************/
-/*****************************************************************************
-typedef struct{
-    		uint8_t 	 seconds      ;
-    		uint8_t 	 minutes      ;
-    		uint8_t		 hours        ;
-    		TimeFormat_t time_format  ;
-}RTC_time_t;*/
-typedef struct{
-			uint8_t		 hours        ;
-    		uint8_t 	 minutes      ;
-}RTC_time_t;
+
+
+	uint8_t minutes;
+    uint8_t	hours ;
+    Days_t  day   ;
+	uint8_t date  ;
+	uint8_t month ;
+	uint8_t year  ;
+	uint16_t Revesed;
+}RTC_DateTime_t;
+/*At all RTC_DateTime_t = 64 bit*/
+typedef struct
+{
+
+	uint8_t StartAdd;
+	uint8_t Mins;
+	uint8_t Hrs;
+	uint8_t Day;
+	uint8_t Date;
+	uint8_t Month;
+	uint8_t Year;
+
+}RTC_Send_T;
+
+typedef enum
+{
+	MINS,
+	HRS,
+	DAY,
+	DATE,
+	MONTH,
+	YEAR,
+
+}RTC_Elemnts;
+
 /*************************************************************************************************************************************/
 /********************************************************* Functions Prototype *******************************************************/
 /*************************************************************************************************************************************/
@@ -62,7 +72,7 @@ typedef struct{
  *
  ******************************************************************************
  */
-void HRTC_u8Init(void);
+void HRTC_u8Init( I2Cconfig_t *Copy_I2CCnfg );
 /**
  ******************************************************************************
  * @fn             : HRTC_u8GetRtcStatus
@@ -75,92 +85,18 @@ void HRTC_u8Init(void);
  *
  ******************************************************************************
  */
-void HRTC_u8GetRtcStatus ( uint8_t *Copy_u8Status );
-/**
- ******************************************************************************
- * @fn             : HRTC_voidSetCurrentTime
- * @brief          : Set Current Time
- * @param[in]      : RTC_time --> Set Value @RTC_time_t struct
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-void HRTC_voidSetCurrentTime ( RTC_time_t *RTC_time );
-/**
- ******************************************************************************
- * @fn             : HRTC_voidGetCurrentTime
- * @brief          : Get Current Time
- * @param[in]      : RTC_time --> Get Value @RTC_time_t struct
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-void HRTC_voidGetCurrentTime(RTC_time_t *RTC_time );
-/**
- ******************************************************************************
- * @fn             : HRTC_voidSetCurrentDate
- * @brief          : Set Current Date
- * @param[in]      : RTC_data --> Set Value @RTC_date_t struct
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
+void HRTC_u8GetRtcStatus ( I2Cconfig_t *Copy_I2CCnfg,uint8_t *Copy_u8Status );
 
-void HRTC_voidSetCurrentDate(RTC_date_t *RTC_date); */
-/**
- ******************************************************************************
- * @fn             : HRTC_voidGetCurrentDate
- * @brief          : Get Current Date
- * @param[in]      : RTC_data --> Get Value @RTC_date_t struct
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-void HRTC_voidGetCurrentDate(RTC_date_t *RTC_date);
-/*************************************************************************************************************************************/
-/*************************************************************************************************************************************/
-/*************************************************************************************************************************************/
-/**
- ******************************************************************************
- * @fn             : HRTC_voidGetCurrentTimeDate
- * @brief          : Get Current Time and Date
- * @param[in]      : RTC_time --> Set Value @RTC_time_t struct
- * @param[in]      : RTC_data --> Get Value @RTC_date_t struct
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-void HRTC_voidGetCurrentTimeDate(RTC_time_t *RTC_time , RTC_date_t *RTC_date);
-/**
- ******************************************************************************
- * @fn             : HRTC_voidSetCurrentTimeDate
- * @brief          : Set Current Time and Date
- * @param[in]      : RTC_time --> Set Value @RTC_time_t struct
- * @param[in]      : RTC_data --> Get Value @RTC_date_t struct
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-void HRTC_voidSetCurrentTimeDate(RTC_time_t *RTC_time , RTC_date_t *RTC_date);
+void HRTC_voidSetDateTime ( I2Cconfig_t *Copy_I2CCnfg,RTC_DateTime_t *RTC_time );
+
+void HRTC_voidGetDateTime ( I2Cconfig_t *Copy_I2CCnfg,RTC_DateTime_t *RTC_time );
+
+void BCDToBinary (uint8_t *Copy_pu8BcdArr , uint8_t *Copy_pu8BinArr ,uint8_t Copy_u8ArrSize);
+
+void BinaryToBCD (uint8_t *Copy_pu8BinArr ,uint8_t *Copy_pu8BcdArr ,uint8_t Copy_u8ArrSize);
 
 /*************************************************************************************************************************************/
 /*************************************************************************************************************************************/
 /*************************************************************************************************************************************/
+
 #endif

@@ -19,44 +19,23 @@
 /******************************************************************************/
 /************************ Addresses *******************************************/
 /******************************************************************************/
-#define RTC_ADDRESS_SEC               0x00
-#define RTC_ADDRESS_MIN               0x01
-#define RTC_ADDRESS_HRS               0x02
-#define RTC_ADDRESS_DAY               0x03
-#define RTC_ADDRESS_DATE              0x04
-#define RTC_ADDRESS_MONTH             0x05
-#define RTC_ADDRESS_YEAR              0x06
+typedef enum
+{
+	ADDRESS_SEC  ,
+	ADDRESS_MIN  ,
+	ADDRESS_HRS  ,
+	ADDRESS_DAY  ,
+	ADDRESS_DATE ,
+	ADDRESS_MONTH,
+	ADDRESS_YEAR
+}RTC_Address;
+
+#define RTC_ADDRESS_ARR				{ADDRESS_SEC ,ADDRESS_MIN  ,ADDRESS_HRS  ,ADDRESS_DAY  ,ADDRESS_DATE ,ADDRESS_MONTH,ADDRESS_YEAR}
 #define RTC_I2C_SLAVE_ADDRESS         0b01101000
 /*************************************************************************************************************************************/
 /********************************************************* Static Functions Prototype ************************************************/
 /*************************************************************************************************************************************/
 /**
- ******************************************************************************
- * @fn             : RTC_voidWriteRegister
- * @brief          : Write Data on Rtc Register
- * @param[in]      : Copy_u8Value --> Set Value
- * @param[in]      : Copy_u8RegAddress --> Set Register Address
- * @retval         : void
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-static void RTC_voidWriteRegister( uint8_t Copy_u8Value , uint8_t Copy_u8RegAddress );
-/**
- ******************************************************************************
- * @fn             : RTC_voidReadRegister
- * @brief          : Read Data From Rtc Register
- * @param[in]      : Copy_u8RegAddress --> Set Register Address
- * @retval         : Register Value u8
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-//static uint8_t RTC_voidReadRegister( uint8_t Copy_u8RegAddress );
 /**
  ******************************************************************************
  * @fn             : BinaryToBCD
@@ -69,7 +48,7 @@ static void RTC_voidWriteRegister( uint8_t Copy_u8Value , uint8_t Copy_u8RegAddr
  *
  ******************************************************************************
  */
-static uint8_t BinaryToBCD (uint8_t Copy_u8BinaryVlaue );
+ void BinaryToBCD (uint8_t *Copy_pu8BinArr ,uint8_t *Copy_pu8BcdArr ,uint8_t Copy_u8ArrSize);
 /**
  ******************************************************************************
  * @fn             : BinaryToBCD
@@ -82,7 +61,7 @@ static uint8_t BinaryToBCD (uint8_t Copy_u8BinaryVlaue );
  *
  ******************************************************************************
  */
-static uint8_t BCDToBinary (uint8_t Copy_u8BcdVlaue );
+//static void BCDToBinary (uint8_t *Copy_pu8BcdArr , uint8_t *Copy_pu8BinArr ,uint8_t Copy_u8ArrSize);
 /*************************************************************************************************************************************/
 /*************************************************************************************************************************************/
 /*************************************************************************************************************************************/

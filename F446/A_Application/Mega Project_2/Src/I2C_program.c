@@ -21,6 +21,8 @@
 /******************************************************************************/
 /************************ MCAL Layer ******************************************/
 /******************************************************************************/
+#include "DMA_interface.h"
+
 #include "I2C_interface.h"
 #include "I2C_private.h"
 #include "I2C_config.h"
@@ -43,12 +45,15 @@
  *
  ******************************************************************************
  */
+static   I2C_REG* I2C_Index[I2C_NUMBERS]={I2C1,I2C2,I2C3};
 
 uint8_t MI2C_u8SetConfiguration ( const I2Cconfig_t* I2Cconfig )
 {
 	uint8_t Local_u8ErrorState = ERROR_STATE_OK;
 	if (  I2Cconfig !=NULL )
 	{
+
+		MI2C_voidResetI2C(I2Cconfig->I2Cindex);
 		I2C_Index[I2Cconfig->I2Cindex]->CR1 |=  (I2C_F_S_MASK<<I2C_CCR_F_S);
 		I2C_Index[I2Cconfig->I2Cindex]->CR1 &= ~(I2C_F_S_MASK<<I2C_CCR_F_S);
 		uint32_t Local_u16Temp=0 , Local_u16Freq=0 , Local_u16Result=0 ;
@@ -77,6 +82,8 @@ uint8_t MI2C_u8SetConfiguration ( const I2Cconfig_t* I2Cconfig )
 		Local_u16Temp  &=~ ( I2C_ENGC_MASK          << I2C_CR1_ENGC );
 		Local_u16Temp  |=  ( I2Cconfig->GeneralCall << I2C_CR1_ENGC );
 		I2C_Index[I2Cconfig->I2Cindex]->CR1 = Local_u16Temp ;
+
+
 		/*******************************************************************************/
 		SET_BIT(I2C_Index[I2Cconfig->I2Cindex]->CR1,I2C_CR1_PE);
 	}
@@ -106,35 +113,34 @@ uint8_t MI2C_u8SetConfiguration ( const I2Cconfig_t* I2Cconfig )
  ******************************************************************************
  */
 uint8_t MI2C_u8SendSynch    ( I2Cindex_t Copy_I2Cindex , uint16_t Copy_u16SlaveAddress ,uint8_t *Copy_pu8DataToTransmit , uint32_t Copy_u32DataLenght
-		                    , StopCondition_t Copy_StopCondition , StartRepeat_t Copy_StartRepeat)
+		, StopCondition_t Copy_StopCondition , StartRepeat_t Copy_StartRepeat)
 {
 	uint8_t Local_u8ErrorState = ERROR_STATE_OK ;
-
 	volatile uint8_t Local_u8tmp ;
 	if ( Copy_I2Cindex <= I2C_3 &&  Copy_pu8DataToTransmit != NULL && Copy_StopCondition<= STOP_ENABLE && Copy_StartRepeat<= REPEAT_ENABLE )
 	{
-		 for (uint32_t i =0 ; i<=100;i++)
-		 {
-			 Local_u8tmp=i;
-		 }
-		 /*********************************************************************************************/
-		 MI2C_u8GenerateStart( Copy_I2Cindex ,FUNC_STATE_ENABLE ,  REPEAT_DISABBLE);
-		 while( (MI2C_u8GetFlagStatus( I2C_1 , FLAG_EV5)==FLAG_RESET));
-		 MI2C_u8SendAddress(Copy_I2Cindex ,Copy_u16SlaveAddress , TRANSMITTER);
-		 while( MI2C_u8GetFlagStatus( Copy_I2Cindex , FLAG_EV6)==FLAG_RESET);
-         /*********************************************************************************************/
-		 while( MI2C_u8GetFlagStatus( Copy_I2Cindex , MASTER_BYTE_TRANSMITTER)==FLAG_RESET);
-		 for (uint8_t Local_u8Counter =0 ; Local_u8Counter < Copy_u32DataLenght ; Local_u8Counter++)
-		 {
-			 I2C_Index[Copy_I2Cindex]->DR = Copy_pu8DataToTransmit[Local_u8Counter];
-			 while( MI2C_u8GetFlagStatus( Copy_I2Cindex , FLAG_EV8)==FLAG_RESET);
-		 }
-		 /*********************************************************************************************/
-		 if (Copy_StopCondition == STOP_ENABLE )
-		 {
-			 MI2C_u8GenerateStop(Copy_I2Cindex , STOP_ENABLE );
-		 }
-		 /*********************************************************************************************/
+		/*********************************************************************************************/
+		for (uint32_t i =0 ; i<=100;i++)
+		{
+			Local_u8tmp=i;
+		}
+		MI2C_u8GenerateStart( Copy_I2Cindex ,FUNC_STATE_ENABLE ,  REPEAT_DISABBLE);
+		while( (MI2C_u8GetFlagStatus( Copy_I2Cindex , FLAG_EV5)==FLAG_RESET));
+		MI2C_u8SendAddress(Copy_I2Cindex ,Copy_u16SlaveAddress , TRANSMITTER);
+		while( MI2C_u8GetFlagStatus( Copy_I2Cindex , FLAG_EV6)==FLAG_RESET);
+		/*********************************************************************************************/
+		while( MI2C_u8GetFlagStatus( Copy_I2Cindex , MASTER_BYTE_TRANSMITTER)==FLAG_RESET);
+		for (uint8_t Local_u8Counter =0 ; Local_u8Counter < Copy_u32DataLenght ; Local_u8Counter++)
+		{
+			I2C_Index[Copy_I2Cindex]->DR = Copy_pu8DataToTransmit[Local_u8Counter];
+			while( MI2C_u8GetFlagStatus( Copy_I2Cindex , FLAG_EV8)==FLAG_RESET);
+		}
+		/*********************************************************************************************/
+		if (Copy_StopCondition == STOP_ENABLE )
+		{
+			MI2C_u8GenerateStop(Copy_I2Cindex , STOP_ENABLE );
+		}
+		/*********************************************************************************************/
 
 	}
 	else
@@ -161,45 +167,45 @@ uint8_t MI2C_u8SendSynch    ( I2Cindex_t Copy_I2Cindex , uint16_t Copy_u16SlaveA
  ******************************************************************************
  */
 uint8_t MI2C_u8ReceiveSynch ( I2Cindex_t Copy_I2Cindex , uint16_t Copy_u16SlaveAddress ,uint8_t *Copy_pu8DataToReveive , uint32_t Copy_u32DataLenght
-		                    , StopCondition_t Copy_StopCondition , StartRepeat_t Copy_StartRepeat)
+		, StopCondition_t Copy_StopCondition , StartRepeat_t Copy_StartRepeat)
 {
 	uint8_t Local_u8ErrorState = ERROR_STATE_OK ;
 	volatile uint8_t Local_u8tmp ;
 	if ( Copy_I2Cindex <= I2C_3 &&  Copy_pu8DataToReveive != NULL && Copy_StopCondition<= STOP_ENABLE && Copy_StartRepeat<= REPEAT_ENABLE )
 	{
-		 /*********************************************************************************************/
-		 MI2C_u8GenerateStart( Copy_I2Cindex ,FUNC_STATE_ENABLE ,  REPEAT_DISABBLE);
-		 while( MI2C_u8GetFlagStatus( Copy_I2Cindex , FLAG_EV5)==FLAG_RESET);
-		 MI2C_u8SendAddress(Copy_I2Cindex ,Copy_u16SlaveAddress , RECEIVER);
-		 while( MI2C_u8GetFlagStatus( Copy_I2Cindex , FLAG_EV6)==FLAG_RESET);
-		 /*********************************************************************************************/
-		 MI2C_u8AcknowledgeConfig(Copy_I2Cindex , ACK_ENABLE);
-		 /*********************************************************************************************/
-		 if (Copy_u32DataLenght >= 1 )
-		 {
-			 for (uint8_t Local_u8Counter = Copy_u32DataLenght ; Local_u8Counter >= 1 ; Local_u8Counter--)
-			 {
-				 while( MI2C_u8GetFlagStatus( Copy_I2Cindex , FLAG_EV7)==FLAG_RESET);
-				 *Copy_pu8DataToReveive = I2C_Index[Copy_I2Cindex]->DR ;
-				  Copy_pu8DataToReveive++;
-			 }
-			 MI2C_u8AcknowledgeConfig(Copy_I2Cindex , ACK_DISABBLE);
+		/*********************************************************************************************/
+		MI2C_u8GenerateStart( Copy_I2Cindex ,FUNC_STATE_ENABLE ,  REPEAT_DISABBLE);
+		while( MI2C_u8GetFlagStatus( Copy_I2Cindex , FLAG_EV5)==FLAG_RESET);
+		MI2C_u8SendAddress(Copy_I2Cindex ,Copy_u16SlaveAddress , RECEIVER);
+		while( MI2C_u8GetFlagStatus( Copy_I2Cindex , FLAG_EV6)==FLAG_RESET);
+		/*********************************************************************************************/
+		MI2C_u8AcknowledgeConfig(Copy_I2Cindex , ACK_ENABLE);
+		/*********************************************************************************************/
+		if (Copy_u32DataLenght >= 1 )
+		{
+			for (uint8_t Local_u8Counter = Copy_u32DataLenght ; Local_u8Counter >= 1 ; Local_u8Counter--)
+			{
+				while( MI2C_u8GetFlagStatus( Copy_I2Cindex , FLAG_EV7)==FLAG_RESET);
+				*Copy_pu8DataToReveive = I2C_Index[Copy_I2Cindex]->DR ;
+				Copy_pu8DataToReveive++;
+			}
+			MI2C_u8AcknowledgeConfig(Copy_I2Cindex , ACK_DISABBLE);
 
-		 }
-		 /*********************************************************************************************/
-		 if (Copy_StopCondition == STOP_ENABLE )
-		 {
+		}
+		/*********************************************************************************************/
+		if (Copy_StopCondition == STOP_ENABLE )
+		{
 
-			 MI2C_u8GenerateStop(Copy_I2Cindex , STOP_ENABLE );
-			 for (uint32_t i =0 ; i<=1000;i++)
-			 {
-				 Local_u8tmp=i;
-			 }
+			MI2C_u8GenerateStop(Copy_I2Cindex , STOP_ENABLE );
+			for (uint32_t i =0 ; i<=100;i++)
+			{
+				Local_u8tmp=i;
+			}
 
-		 }
-		 /*********************************************************************************************/
-		 MI2C_u8AcknowledgeConfig(Copy_I2Cindex , ACK_ENABLE);
-		 /*********************************************************************************************/
+		}
+		/*********************************************************************************************/
+		MI2C_u8AcknowledgeConfig(Copy_I2Cindex , ACK_ENABLE);
+		/*********************************************************************************************/
 	}
 	else
 	{
@@ -207,19 +213,99 @@ uint8_t MI2C_u8ReceiveSynch ( I2Cindex_t Copy_I2Cindex , uint16_t Copy_u16SlaveA
 	}
 	return Local_u8ErrorState ;
 }
+
+uint8_t MI2C_u8Transmit_DMA( I2Cconfig_t* I2Cconfig , uint16_t Copy_u16SlaveAdd ,uint8_t *Copy_pu8Data , uint32_t Copy_u32Size)
+{
+	uint8_t Local_u8ErrorState = ERROR_STATE_OK ;
+	volatile uint32_t Local_u32tmp ;
+	if ( I2Cconfig != NULL &&  Copy_pu8Data != NULL)
+	{
+		/*********************************************************************************************/
+		for (uint32_t i =0 ; i<=100;i++)
+		{
+			Local_u32tmp=i;
+		}
+
+		/* Enable event interrupt*/
+		I2C_Index[I2Cconfig->I2Cindex]->CR2 |= 1 << I2C_ITEVTEN_SHIFT;
+
+		/* Enable DMA request */
+		I2C_Index[I2Cconfig->I2Cindex]->CR2 |=  (1 << I2C_CR2_DMAEN);
+
+		/* Generate Start*/
+		MI2C_u8GenerateStart( I2Cconfig->I2Cindex ,FUNC_STATE_ENABLE ,  REPEAT_DISABBLE);
+		while( (MI2C_u8GetFlagStatus(  I2Cconfig->I2Cindex , FLAG_EV5)==FLAG_SET));
+
+
+		/* Send slave Address*/
+		MI2C_u8SendAddress( I2Cconfig->I2Cindex ,Copy_u16SlaveAdd , TRANSMITTER);
+		while( MI2C_u8GetFlagStatus(  I2Cconfig->I2Cindex , FLAG_EV6)==FLAG_SET);
+		/*********************************************************************************************/
+		while( MI2C_u8GetFlagStatus(  I2Cconfig->I2Cindex , MASTER_BYTE_TRANSMITTER)==FLAG_RESET);
+
+		/* Start transmission*/
+		DMA_u8StartTransfer(&(I2Cconfig->DMA_Tx),(uint32_t *)Copy_pu8Data, (uint32_t *)(&(I2C_Index[I2Cconfig->I2Cindex]->DR)),Copy_u32Size);
+
+	}
+	else
+	{
+		Local_u8ErrorState = ERROR_STATE_NOK ;
+	}
+	return Local_u8ErrorState ;
+
+}
+
+uint8_t MI2C_u8Receive_DMA( I2Cconfig_t* I2Cconfig , uint16_t Copy_u16SlaveAdd ,uint8_t *Copy_pu8Data , uint32_t Copy_u32Size)
+{
+	uint8_t Local_u8ErrorState = ERROR_STATE_OK ;
+	volatile uint32_t Local_u32tmp ;
+	if ( I2Cconfig != NULL &&  Copy_pu8Data != NULL)
+	{
+		/* Enable event interrupt*/
+		I2C_Index[I2Cconfig->I2Cindex]->CR2 |= 1 << I2C_ITEVTEN_SHIFT;
+
+		/* Enable DMA request */
+		I2C_Index[I2Cconfig->I2Cindex]->CR2 |=  (1 << I2C_CR2_DMAEN);
+
+		/* Generate start bit*/
+		MI2C_u8GenerateStart( I2Cconfig->I2Cindex ,FUNC_STATE_ENABLE ,  REPEAT_DISABBLE);
+
+		/* pulling for start bit flag is raised*/
+		while( MI2C_u8GetFlagStatus( I2Cconfig->I2Cindex , FLAG_EV5)==FLAG_SET);
+
+		/* Send Slave Adsress*/
+		MI2C_u8SendAddress(I2Cconfig->I2Cindex ,Copy_u16SlaveAdd , RECEIVER);
+
+
+		while( MI2C_u8GetFlagStatus( I2Cconfig->I2Cindex , FLAG_EV6)==FLAG_SET);
+
+		MI2C_u8AcknowledgeConfig(I2Cconfig->I2Cindex , ACK_ENABLE);
+		if (Copy_u32Size >= 1 )
+		{
+			/* Start transmission*/
+			DMA_u8StartTransfer(&(I2Cconfig->DMA_Rx),(uint32_t *)(&(I2C_Index[I2Cconfig->I2Cindex]->DR)),(uint32_t *)Copy_pu8Data ,Copy_u32Size);
+		}
+	}
+	else
+	{
+		Local_u8ErrorState = ERROR_STATE_NOK ;
+	}
+	return Local_u8ErrorState ;
+
+}
 /**
-******************************************************************************
-* @fn             : MI2C_u8DMArequests
-* @brief          : DMA requests
-* @param[in]      : Copy_I2Cindex  --> get option from @I2Cindex_t  enum
-* @param[in]      : Copy_DMArequests --> get option from @DMArequests_t  enum
-* @retval         : ErrorState
-******************************************************************************
-* @attention
-*
-*
-******************************************************************************
-*/
+ ******************************************************************************
+ * @fn             : MI2C_u8DMArequests
+ * @brief          : DMA requests
+ * @param[in]      : Copy_I2Cindex  --> get option from @I2Cindex_t  enum
+ * @param[in]      : Copy_DMArequests --> get option from @DMArequests_t  enum
+ * @retval         : ErrorState
+ ******************************************************************************
+ * @attention
+ *
+ *
+ ******************************************************************************
+ */
 
 uint8_t MI2C_u8DMArequests (  I2Cindex_t Copy_I2Cindex , DMArequests_t Copy_DMArequests )
 {
@@ -232,7 +318,7 @@ uint8_t MI2C_u8DMArequests (  I2Cindex_t Copy_I2Cindex , DMArequests_t Copy_DMAr
 			Bit 11 DMAEN: DMA requests enable
 			0: DMA requests disabled
 			1: DMA request enabled when TxE=1 or RxNE =1
-			*/
+			 */
 			//while( MI2C_u8GetFlagStatus( Copy_I2Cindex , FLAG_EV7)==FLAG_RESET); /* RxNE=1 */
 			while( MI2C_u8GetFlagStatus( Copy_I2Cindex , FLAG_EV8)==FLAG_RESET); /* TxE =1 */
 		}
@@ -266,65 +352,77 @@ uint8_t MI2C_u8DMArequests (  I2Cindex_t Copy_I2Cindex , DMArequests_t Copy_DMAr
 static FlagStatus_t MI2C_u8GetFlagStatus( I2Cindex_t Copy_I2Cindex , Flag_t Copy_Flag)
 {
 	volatile uint32_t Local_u32DummyRead;
+	static uint32_t Local_u32Counter = 0;
+
 	FlagStatus_t Local_BitStatus = FLAG_RESET ;
 	uint32_t Local_u32Flag1 , Local_u32Flag2 , Local_u32LastEvent ;
 	switch (Copy_Flag)
 	{
-		case FLAG_BUSY :
+	case FLAG_BUSY :
+	{
+		if (FLAG_SET ==GET_BIT(I2C_Index[Copy_I2Cindex]->SR2 ,I2C_SR2_BUSY))
 		{
-			if (FLAG_SET ==GET_BIT(I2C_Index[Copy_I2Cindex]->SR2 ,I2C_SR2_BUSY))
-			{
-				 Local_BitStatus = FLAG_SET ;
-			}
-			break;
+			Local_BitStatus = FLAG_SET ;
+			Local_u32Counter++;
 		}
-		case FLAG_EV5 :
+		break;
+	}
+	case FLAG_EV5 :
+	{
+		if (FLAG_SET ==GET_BIT(I2C_Index[Copy_I2Cindex]->SR1 ,I2C_SR1_SB))
 		{
-			if (FLAG_SET ==GET_BIT(I2C_Index[Copy_I2Cindex]->SR1 ,I2C_SR1_SB))
-			{
-				 Local_BitStatus = FLAG_SET ;
-			}
-			break;
+
+			/* Clear This flag by reading SR1*/
+			uint32_t Local_u32Reading = I2C_Index[Copy_I2Cindex]->SR1;
+			Local_BitStatus =FLAG_RESET;
 		}
-		case FLAG_EV6 :
+		break;
+	}
+	case FLAG_EV6 :
+	{
+		if (FLAG_SET ==GET_BIT(I2C_Index[Copy_I2Cindex]->SR1 ,I2C_SR1_ADDR))
 		{
-			if (FLAG_SET ==GET_BIT(I2C_Index[Copy_I2Cindex]->SR1 ,I2C_SR1_ADDR))
-			{
-				 Local_BitStatus = FLAG_SET ;
-			}
-			Local_u32DummyRead = I2C_Index[Copy_I2Cindex]->SR2 ;
-			break;
+			Local_BitStatus = FLAG_SET ;
 		}
-		case MASTER_BYTE_TRANSMITTER :
+		Local_u32DummyRead = I2C_Index[Copy_I2Cindex]->SR2 ;
+		break;
+	}
+	case MASTER_BYTE_TRANSMITTER :
+	{
+		Local_u32Flag1 = I2C_Index[Copy_I2Cindex]->SR1 ;
+		Local_u32Flag2 = I2C_Index[Copy_I2Cindex]->SR2 ;
+		Local_u32Flag2 = Local_u32Flag2 << I2C_BYTE_TRANSMITTER_MASK ;
+		Local_u32LastEvent = (Local_u32Flag1 | Local_u32Flag2) & ((uint32_t)I2C_MASTER_BYTE_TRANSMITTER_MASK);
+		if ( (Local_u32LastEvent & I2C_EVENT_MASTER_BYTE_TRANSMITTER) == I2C_EVENT_MASTER_BYTE_TRANSMITTER)
 		{
-			Local_u32Flag1 = I2C_Index[Copy_I2Cindex]->SR1 ;
-			Local_u32Flag2 = I2C_Index[Copy_I2Cindex]->SR2 ;
-			Local_u32Flag2 = Local_u32Flag2 << I2C_BYTE_TRANSMITTER_MASK ;
-			Local_u32LastEvent = (Local_u32Flag1 | Local_u32Flag2) & ((uint32_t)I2C_MASTER_BYTE_TRANSMITTER_MASK);
-			if ( (Local_u32LastEvent & I2C_EVENT_MASTER_BYTE_TRANSMITTER) == I2C_EVENT_MASTER_BYTE_TRANSMITTER)
-			{
-				 Local_BitStatus = FLAG_SET ;
-			}
-		}
-		case FLAG_EV8_1 :
-		case FLAG_EV8 :
-		{
-			if (FLAG_SET ==GET_BIT(I2C_Index[Copy_I2Cindex]->SR1 ,I2C_SR1_TxE))
-			{
-				 Local_BitStatus = FLAG_SET ;
-			}
-			break;
-		}
-		case FLAG_EV7 :
-		{
-			if (FLAG_SET ==GET_BIT(I2C_Index[Copy_I2Cindex]->SR1 ,I2C_SR1_RxNE))
-			{
-				 Local_BitStatus = FLAG_SET ;
-			}
-			break;
+			Local_BitStatus = FLAG_SET ;
 		}
 	}
+	case FLAG_EV8_1 :
+	case FLAG_EV8 :
+	{
+		if (FLAG_SET ==GET_BIT(I2C_Index[Copy_I2Cindex]->SR1 ,I2C_SR1_TxE))
+		{
+			Local_BitStatus = FLAG_SET ;
+		}
+		break;
+	}
+	case FLAG_EV7 :
+	{
+		if (FLAG_SET ==GET_BIT(I2C_Index[Copy_I2Cindex]->SR1 ,I2C_SR1_RxNE))
+		{
+			Local_BitStatus = FLAG_SET ;
+		}
+		break;
+	}
+	}
 
+	if(Local_u32Counter == I2C_BUSY_TIME_OUT)
+	{
+		Local_u32Counter = 0;
+		MI2C_voidResetI2C(Copy_I2Cindex);
+
+	}
 	return  Local_BitStatus ;
 
 }
@@ -375,10 +473,8 @@ static uint8_t MI2C_u8GenerateStart( I2Cindex_t Copy_I2Cindex , FunctionalState_
 	uint8_t Local_u8ErrorState = ERROR_STATE_OK ;
 	if ( Copy_I2Cindex <= I2C_3 &&  Copy_FunctionalState <= FUNC_STATE_ENABLE &&  Copy_StartRepeat <= REPEAT_ENABLE )
 	{
-		if ( Copy_StartRepeat != REPEAT_ENABLE )
-		{
-			while(FLAG_SET== MI2C_u8GetFlagStatus( I2C_1 , FLAG_BUSY));
-		}
+		while(FLAG_SET== MI2C_u8GetFlagStatus( Copy_I2Cindex , FLAG_BUSY));
+
 		I2C_Index[Copy_I2Cindex]->CR1  &=~ ( I2C_START_MASK       << I2C_CR1_START );
 		I2C_Index[Copy_I2Cindex]->CR1  |=  ( Copy_FunctionalState << I2C_CR1_START );
 
@@ -407,7 +503,7 @@ static uint8_t MI2C_u8GenerateStart( I2Cindex_t Copy_I2Cindex , FunctionalState_
 static uint8_t MI2C_u8SendAddress( I2Cindex_t Copy_I2Cindex , uint16_t Copy_u16SlaveAddress , Direction_t Copy_Direction )
 {
 	uint8_t Local_u8ErrorState = ERROR_STATE_OK ;
-	 uint16_t Local_u16SlaveAddress = Copy_u16SlaveAddress;
+	uint16_t Local_u16SlaveAddress = Copy_u16SlaveAddress;
 	if ( Copy_I2Cindex <= I2C_3 &&  Copy_Direction <= RECEIVER  )
 	{
 		Local_u16SlaveAddress= (Local_u16SlaveAddress <<I2C_SLAVE_ADDRESS_MASK);
@@ -442,6 +538,12 @@ static uint8_t MI2C_u8SendAddress( I2Cindex_t Copy_I2Cindex , uint16_t Copy_u16S
  *
  ******************************************************************************
  */
+
+void MI2C_voidResetI2C(I2Cindex_t Copy_I2Cindex)
+{
+	/* Reset I2C */
+	I2C_Index[Copy_I2Cindex]->CR1 = 1<<15;
+}
 static uint8_t MI2C_u8AcknowledgeConfig( I2Cindex_t Copy_I2Cindex , Acknowledge_t Copy_Acknowledge )
 {
 	uint8_t Local_u8ErrorState = ERROR_STATE_OK ;
@@ -455,6 +557,22 @@ static uint8_t MI2C_u8AcknowledgeConfig( I2Cindex_t Copy_I2Cindex , Acknowledge_
 		Local_u8ErrorState = ERROR_STATE_NOK ;
 	}
 	return Local_u8ErrorState ;
+}
+
+void MI2C_u8ACallbackTx(void)
+{
+	I2C_Index[I2C_1]->CR1  &=~ ( I2C_STOP_MASK      << I2C_CR1_STOP );
+	I2C_Index[I2C_1]->CR1  |=  ( 1 << I2C_CR1_STOP );
+
+
+}
+
+void MI2C_u8ACallbackRx(void)
+{
+	uint32_t Local_u8tmp;
+	 MI2C_u8AcknowledgeConfig(I2C_1 , ACK_DISABBLE);
+	 MI2C_u8GenerateStop(I2C_1 , STOP_ENABLE );
+
 }
 /*************************************************************************************************************************************/
 /*************************************************************************************************************************************/
