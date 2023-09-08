@@ -139,31 +139,51 @@ void APP2_voidSetAlarm(USR_Alarm_T *alarm,APP2_AlarmNumber_t alarmNumber)
 void APP2_voidAlarmNotification(void)
 {
     if ((APP2_pvAlarmTimeDatearry[APP2_ALARM_1]!=ALARM_NOT_DEFINED)
-        &&((uint64_t)(*APP2_pvCurrentDateTimearry)==(uint64_t)(APP2_AlarmsTimeDateArry[APP2_ALARM_1])))
+        &&((APP2_pvCurrentDateTimearry->minutes)==(APP2_AlarmsTimeDateArry[APP2_ALARM_1].minutes))
+        &&((APP2_pvCurrentDateTimearry->hours)==(APP2_AlarmsTimeDateArry[APP2_ALARM_1].hours))
+        &&((APP2_pvCurrentDateTimearry->date)==(APP2_AlarmsTimeDateArry[APP2_ALARM_1].date))
+        &&((APP2_pvCurrentDateTimearry->month)==(APP2_AlarmsTimeDateArry[APP2_ALARM_1].month))
+        &&((APP2_pvCurrentDateTimearry->year)==(APP2_AlarmsTimeDateArry[APP2_ALARM_1].year)))
     {
     	Globla_Alrams_Flags_state |= (1<<APP2_ALARM_1);
         /*Set interrupt && send alarm name to f103 over SPI*/
     }
     else if ((APP2_pvAlarmTimeDatearry[APP2_ALARM_2]!=ALARM_NOT_DEFINED)
-        &&((uint64_t)(*APP2_pvCurrentDateTimearry)==(uint64_t)(APP2_AlarmsTimeDateArry[APP2_ALARM_2])))
+        &&((APP2_pvCurrentDateTimearry->minutes)==(APP2_AlarmsTimeDateArry[APP2_ALARM_2].minutes))
+        &&((APP2_pvCurrentDateTimearry->hours)==(APP2_AlarmsTimeDateArry[APP2_ALARM_2].hours))
+        &&((APP2_pvCurrentDateTimearry->date)==(APP2_AlarmsTimeDateArry[APP2_ALARM_2].date))
+        &&((APP2_pvCurrentDateTimearry->month)==(APP2_AlarmsTimeDateArry[APP2_ALARM_2].month))
+        &&((APP2_pvCurrentDateTimearry->year)==(APP2_AlarmsTimeDateArry[APP2_ALARM_2].year)))
     {
     	Globla_Alrams_Flags_state |=(1<<APP2_ALARM_2);
         /*Set interrupt && send alarm name to f103 over SPI*/
     }
     else if ((APP2_pvAlarmTimeDatearry[APP2_ALARM_3]!=ALARM_NOT_DEFINED)
-        &&((uint64_t)(*APP2_pvCurrentDateTimearry)==(uint64_t)(APP2_AlarmsTimeDateArry[APP2_ALARM_3])))
+        &&((APP2_pvCurrentDateTimearry->minutes)==(APP2_AlarmsTimeDateArry[APP2_ALARM_3].minutes))
+        &&((APP2_pvCurrentDateTimearry->hours)==(APP2_AlarmsTimeDateArry[APP2_ALARM_3].hours))
+        &&((APP2_pvCurrentDateTimearry->date)==(APP2_AlarmsTimeDateArry[APP2_ALARM_3].date))
+        &&((APP2_pvCurrentDateTimearry->month)==(APP2_AlarmsTimeDateArry[APP2_ALARM_3].month))
+        &&((APP2_pvCurrentDateTimearry->year)==(APP2_AlarmsTimeDateArry[APP2_ALARM_3].year)))
     {
     	Globla_Alrams_Flags_state |=(1<<APP2_ALARM_3);
         /*Set interrupt && send alarm name to f103 over SPI*/
     }
     else if ((APP2_pvAlarmTimeDatearry[APP2_ALARM_4]!=ALARM_NOT_DEFINED)
-        &&((uint64_t)(*APP2_pvCurrentDateTimearry)==(uint64_t)(APP2_AlarmsTimeDateArry[APP2_ALARM_4])))
+        &&((APP2_pvCurrentDateTimearry->minutes)==(APP2_AlarmsTimeDateArry[APP2_ALARM_4].minutes))
+        &&((APP2_pvCurrentDateTimearry->hours)==(APP2_AlarmsTimeDateArry[APP2_ALARM_4].hours))
+        &&((APP2_pvCurrentDateTimearry->date)==(APP2_AlarmsTimeDateArry[APP2_ALARM_4].date))
+        &&((APP2_pvCurrentDateTimearry->month)==(APP2_AlarmsTimeDateArry[APP2_ALARM_4].month))
+        &&((APP2_pvCurrentDateTimearry->year)==(APP2_AlarmsTimeDateArry[APP2_ALARM_4].year)))
     {
     	Globla_Alrams_Flags_state |=(1<<APP2_ALARM_4);
         /*Set interrupt && send alarm name to f103 over SPI*/
     }
     else if ((APP2_pvAlarmTimeDatearry[APP2_ALARM_5]!=ALARM_NOT_DEFINED)
-        &&((uint64_t)(*APP2_pvCurrentDateTimearry)==(uint64_t)(APP2_AlarmsTimeDateArry[APP2_ALARM_5])))
+        &&((APP2_pvCurrentDateTimearry->minutes)==(APP2_AlarmsTimeDateArry[APP2_ALARM_5].minutes))
+        &&((APP2_pvCurrentDateTimearry->hours)==(APP2_AlarmsTimeDateArry[APP2_ALARM_5].hours))
+        &&((APP2_pvCurrentDateTimearry->date)==(APP2_AlarmsTimeDateArry[APP2_ALARM_5].date))
+        &&((APP2_pvCurrentDateTimearry->month)==(APP2_AlarmsTimeDateArry[APP2_ALARM_5].month))
+        &&((APP2_pvCurrentDateTimearry->year)==(APP2_AlarmsTimeDateArry[APP2_ALARM_5].year)))
     {
     	Globla_Alrams_Flags_state |=(1<<APP2_ALARM_5);
         /*Set interrupt && send alarm name to f103 over SPI*/
