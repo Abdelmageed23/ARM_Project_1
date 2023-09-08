@@ -47,19 +47,23 @@ void APP2_voidInit(void)
 
 void APP2_voidWantCurrentDate(RTC_date_t*GetDate)
 {
+    RTC_DateTime_t temparry;
     if (NULL!=APP2_pvCurrentDateTimearry)
     {
-        GetDate->date= (APP2_pvCurrentDateTimearry->date);
-        GetDate->month= (APP2_pvCurrentDateTimearry->month);
-        GetDate->year=  (APP2_pvCurrentDateTimearry->year);
+        BinaryToBCd(APP2_pvCurrentDateTimearry,&temparry,6);
+        GetDate->date= (temparry.date);
+        GetDate->month= (temparry.month);
+        GetDate->year=  (temparry.year);
     }
 }
 void APP2_voidWantCurrentTime(RTC_time_t*GetTime)
 {
+    RTC_DateTime_t temparry;
     if (NULL!=APP2_pvCurrentDateTimearry)
     {
-        GetTime->hours= (APP2_pvCurrentDateTimearry->hours);
-        GetTime->minutes= (APP2_pvCurrentDateTimearry->minutes);
+        BinaryToBCd(APP2_pvCurrentDateTimearry,&temparry,2);
+        GetTime->hours= (temparry.hours);
+        GetTime->minutes= (temparry.minutes);
     }
 }
 /*****************************************************************************************************
@@ -125,6 +129,7 @@ void APP2_voidSetAlarm(USR_Alarm_T *alarm,APP2_AlarmNumber_t alarmNumber)
             .month   =alarm->date[1]-'0',
             .year    =alarm->date[2]-'0',
         };
+        BCDToBinary(&APP2_AlarmsTimeDateArry[alarmNumber],&APP2_AlarmsTimeDateArry[alarmNumber],6);
         APP2_pvAlarmTimeDatearry[alarmNumber]=ALAREM_DFINED;
     }
 }
