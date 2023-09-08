@@ -6,16 +6,16 @@
  */
 #include<stdint.h>
 /*******************************Libarry************************/
-#include"../../../D_LIB/ERROR_STATE.h"
+#include"ERROR_STATE.h"
 /******************************MCAL****************************/
-#include "../../../C_MCAL/SysTick/STK_interface.h"
-#include "../../../C_MCAL/Inc/I2C_interface.h"
+#include "STK_interface.h"
+#include "I2C_interface.h"
 /******************************HAL******************************/
-#include"../../../B_HAL/RTC/RTC_interface.h"
+#include "RTC_interface.h"
 /******************************APP*******************************/
-#include"../../MegaPrj_APP1/Inc/USR_interface.h"
-#include"../inc/APP_2_interface.h"
-#include"../inc/APP_2_private.h"
+#include "USR_interface.h"
+#include "APP_2_interface.h"
+#include "APP_2_private.h"
 /*****************************************************************************************************
  * Globle Variables
  * ***************************************************************************************************
