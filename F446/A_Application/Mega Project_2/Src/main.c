@@ -34,7 +34,8 @@
 #include "USR_interface.h"
 #include "USR_sctipts.h"
 #include "APP3_interface.h"
-
+#include"APP_2_interface.h"
+extern uint8_t Globla_Alrams_Flags_state = 0;
 int main(void)
 {
 	/*************************	Clock Settings	*****************************/
@@ -170,16 +171,54 @@ int main(void)
 	/* Logged in successfully*/
 	else
 	{
+		/***************************************************************************************/
+		/*************************** Turn On Green Led *****************************************/
+		/***************************************************************************************/
+		APP3_voidTurnOnGreenLed();
 		do
 		{
 
-			/***************************************************************************************/
-			/*************************** Turn On Green Led *****************************************/
-			/***************************************************************************************/
-			if (Local_u8GreenLedFlag==0)
+			
+			if (Globla_Alrams_Flags_state==0)
 			{
-				Local_u8GreenLedFlag=1;
-				APP3_voidTurnOnGreenLed();
+				/********************************************************
+				 * alarm EXTI and notification
+				*/
+				if (((Globla_Alrams_Flags_state>>APP2_ALARM_1)&1)==1)
+				{
+					/*send the name of alarm 1 */
+
+					/*clear bit*/
+					APP2_alarmFlagState &=~(1<<APP2_ALARM_1);
+				}
+				if (((Globla_Alrams_Flags_state>>APP2_ALARM_2)&1)==1)
+				{
+					/*send the name of alarm 2 */
+
+					/*clear bit*/
+					APP2_alarmFlagState &=~(1<<APP2_ALARM_2);
+				}
+				if (((Globla_Alrams_Flags_state>>APP2_ALARM_3)&1)==1)
+				{
+					/*send the name of alarm 3 */
+
+					/*clear bit*/
+					APP2_alarmFlagState &=~(1<<APP2_ALARM_3);
+				}
+				if (((Globla_Alrams_Flags_state>>APP2_ALARM_4)&1)==1)
+				{
+					/*send the name of alarm 4 */
+
+					/*clear bit*/
+					APP2_alarmFlagState &=~(1<<APP2_ALARM_4);
+				}
+				if (((Globla_Alrams_Flags_state>>APP2_ALARM_5)&1)==1)
+				{
+					/*send the name of alarm 5 */
+
+					/*clear bit*/
+					APP2_alarmFlagState &=~(1<<APP2_ALARM_5);
+				}
 			}
 			/***************************************************************************************/
 			/***************************************************************************************/

@@ -153,7 +153,7 @@ void APP3_voidAlarmCompareMatch(void)
 void APP3_voidDisplayTime(void)
 {
 	RTC_time_t   GetTime;
-	HRTC_voidGetCurrentTime(&GetTime);
+	APP2_voidWantCurrentTime(&GetTime);
 
 	GPIO_u8SetPinValue(APP3_GPIO_NSS_PIN, PIN_LOW);
 	MSPI_u8SendReceiveSynch(APP3_SPI_INDEX,APP3_SPI_TRIGGER_TIME,&Global_u8ReceiveTemp);
@@ -178,7 +178,7 @@ void APP3_voidDisplayTime(void)
 void APP3_voidDisplayDate(void)
 {
 	RTC_date_t   GetDate;
-	HRTC_voidGetCurrentDate(&GetDate);
+	APP2_voidWantCurrentDate(&GetDate);
 
 	GPIO_u8SetPinValue(APP3_GPIO_NSS_PIN, PIN_LOW);
 	MSPI_u8SendReceiveSynch(APP3_SPI_INDEX,APP3_SPI_TRIGGER_DATE,&Global_u8ReceiveTemp);
