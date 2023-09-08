@@ -1,0 +1,11 @@
+../Src/USART_program.c:46:9:MUSART_u8SetConfiguration	72	static
+../Src/USART_program.c:138:10:MUSART_u8ReceiveCharSynch	24	static
+../Src/USART_program.c:166:10:MUSART_u8ReceiveCharNonSynch	24	static
+../Src/USART_program.c:194:10:MUSART_u8ReceiveArraySynch	24	static
+../Src/USART_program.c:226:10:MUSART_u8TransmitCharSynch	24	static
+../Src/USART_program.c:254:11:MUSART_u8TransmitArraySynch	24	static
+../Src/USART_program.c:285:8:MUSART_voidClearFlags	16	static
+../Src/USART_program.c:303:10:MUSART_u8SetCallBack	24	static
+../Src/USART_program.c:320:6:USART1_IRQHandler	8	static
+../Src/USART_program.c:329:6:USART2_IRQHandler	8	static
+../Src/USART_program.c:338:6:USART3_IRQHandler	8	static
