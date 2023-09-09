@@ -1,0 +1,10 @@
+../Src/RCC_prog.c:22:9:RCC_SetClksts	24	static
+../Src/RCC_prog.c:51:9:RCC_SetSysClk	24	static
+../Src/RCC_prog.c:65:9:RCC_HSE_Config	24	static
+../Src/RCC_prog.c:83:6:RCC_PLL_Config	16	static
+../Src/RCC_prog.c:101:6:RCC_AHBEnableClock	16	static
+../Src/RCC_prog.c:105:6:RCC_AHBDisableClock	16	static
+../Src/RCC_prog.c:110:6:RCC_APB1EnableClock	16	static
+../Src/RCC_prog.c:114:6:RCC_APB1DisableClock	16	static
+../Src/RCC_prog.c:119:6:RCC_APB2EnableClock	16	static
+../Src/RCC_prog.c:123:6:RCC_APB2DisableClock	16	static

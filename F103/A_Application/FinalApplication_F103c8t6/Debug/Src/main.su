@@ -1,0 +1,4 @@
+../Src/main.c:49:6:ReceiveSwitchFunc	16	static
+../Src/main.c:85:6:AlarmStopNotificationFunc	8	static
+../Src/main.c:93:6:AlarmNotificationFunc	8	static
+../Src/main.c:102:5:main	112	static

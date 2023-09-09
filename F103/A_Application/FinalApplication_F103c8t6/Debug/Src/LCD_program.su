@@ -1,0 +1,9 @@
+../Src/LCD_program.c:30:6:HLCD_voidInit	56	static
+../Src/LCD_program.c:86:6:HLCD_voidClearLCD	8	static
+../Src/LCD_program.c:91:6:HLCD_voidHiddenCursor	8	static
+../Src/LCD_program.c:96:13:HLCD_voidSendCmnd	16	static
+../Src/LCD_program.c:131:6:HLCD_voidSendChar	16	static
+../Src/LCD_program.c:166:6:HLCD_voidSendString	24	static
+../Src/LCD_program.c:174:6:HLCD_voidSendNumber	40	static
+../Src/LCD_program.c:210:6:HLCD_voidSetCursor	16	static
+../Src/LCD_program.c:219:6:HLCD_voidWriteSpicalCaracter	24	static
