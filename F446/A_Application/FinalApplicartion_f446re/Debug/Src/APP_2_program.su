@@ -1,0 +1,8 @@
+../Src/APP_2_program.c:42:6:APP2_voidInit	8	static
+../Src/APP_2_program.c:49:6:APP2_voidWantCurrentDate	24	static
+../Src/APP_2_program.c:60:6:APP2_voidWantCurrentTime	24	static
+../Src/APP_2_program.c:79:6:APP2_voidReadTime	8	static
+../Src/APP_2_program.c:93:6:APP2_voidSetTime	16	static
+../Src/APP_2_program.c:120:6:APP2_voidSetAlarm	16	static
+../Src/APP_2_program.c:139:6:APP2_voidAlarmNotification	4	static
+../Src/APP_2_program.c:196:6:APP2_SysTick_ISR	8	static

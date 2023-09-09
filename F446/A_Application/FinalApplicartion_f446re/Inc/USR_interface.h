@@ -15,7 +15,7 @@
 #define USR_DATE_LENGTH				4
 #define USR_TIME_LENGTH				2
 #define USR_MAX_NAME_LENGTH			10
-
+#include "USART_interface.h"
 typedef enum
 {
 	PASS_NOT_CORRECT,

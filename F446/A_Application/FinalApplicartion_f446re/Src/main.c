@@ -22,20 +22,22 @@
 /************************ MCAL Layer ******************************************/
 /******************************************************************************/
 #include "RCC_interface.h"
-#include "USART_interface.h"
+//#include "USART_interface.h"
 #include "GPIO_interface.h"
+#include "NVIC_interface.h"
 /******************************************************************************/
 /************************ HAL Layer *******************************************/
 /******************************************************************************/
 #include "RTC_interface.h"
+#include "RTC_config.h"
 /******************************************************************************/
 /******************************************************************************/
 /******************************************************************************/
 #include "USR_interface.h"
 #include "USR_sctipts.h"
 #include "APP3_interface.h"
-#include"APP_2_interface.h"
-extern uint8_t Globla_Alrams_Flags_state = 0;
+#include "APP_2_interface.h"
+extern uint8_t Globla_Alrams_Flags_state;
 int main(void)
 {
 	/*************************	Clock Settings	*****************************/
@@ -51,7 +53,64 @@ int main(void)
 	/********************************************************************************************************************************************/
 	/**************************************************** RTC initialization ********************************************************************/
 	/********************************************************************************************************************************************/
-	HRTC_u8Init();
+	GPIO_PinConfig_T sda ={RTC_I2C_PORT , RTC_I2C_SDA_PIN , ALTER_FUNC , SPEED_FAST , OPEN_DRAIN , RTC_I2C_PULL , AF4};
+	GPIO_u8PinInit(&sda);
+	GPIO_PinConfig_T scl ={RTC_I2C_PORT , RTC_I2C_SCL_PIN , ALTER_FUNC , SPEED_FAST , OPEN_DRAIN , RTC_I2C_PULL , AF4};
+	GPIO_u8PinInit(&scl);
+
+	GPIO_u8SetPinValue(sda.Port, sda.PinNum, PIN_HIGH);
+	GPIO_u8SetPinValue(scl.Port, scl.PinNum, PIN_HIGH);
+
+	/*********************************************************************************************/
+
+	RCC_voidAPB1EnablePerapheralClock(APB1_I2C1);
+
+
+	I2Cconfig_t I2cCinfig ={RTC_I2C,SM,SCL_SM_100K,STRETCHING_ENABLE,I2C_MODE,ACK_ENABLE,ENGC_ENABLE};
+
+	DMA_Cnfg_T I2C_DMA_Rx =
+	{
+			.CallBackFunc = &MI2C_u8ACallbackRx,
+			.ChannelNum = CHANNEL1,
+			.DMA_Type = DMA_1,
+			.InterruptType = FULL_TRANS,
+			.MemIncMode = INCREMENT,
+			.MemIncSize = BYTE,
+			.PerIncMode = FIXED,
+			.PerIncSize = BYTE,
+			.PriorityLevel = HIGH,
+			.SrcDestMode = PERIPH_TO_MEM,
+			.StreamNum = STREAM0,
+			.TransferMode = DIRECT_MODE
+	};
+
+	DMA_Cnfg_T I2C_DMA_Tx =
+	{
+			.CallBackFunc = &MI2C_u8ACallbackTx,
+			.ChannelNum = CHANNEL1,
+			.DMA_Type = DMA_1,
+			.InterruptType = FULL_TRANS,
+			.MemIncMode = INCREMENT,
+			.MemIncSize = BYTE,
+			.PerIncMode = FIXED,
+			.PerIncSize = BYTE,
+			.PriorityLevel = VERY_HIGH,
+			.SrcDestMode = MEM_TO_PERIPH,
+			.StreamNum = STREAM7,
+			.TransferMode = DIRECT_MODE
+	};
+
+
+	I2cCinfig.DMA_Rx = I2C_DMA_Rx;
+	I2cCinfig.DMA_Tx = I2C_DMA_Tx;
+	DMA_u8Init(&I2C_DMA_Tx);
+	DMA_u8Init(&I2C_DMA_Rx);
+
+	MI2C_u8SetConfiguration(&I2cCinfig);
+
+	MNVIC_u8EnableInterrupt(NVIC_DMA1_Stream0);
+	MNVIC_u8EnableInterrupt(NVIC_DMA1_Stream7);
+	HRTC_u8Init(&I2cCinfig);
 	/********************************************************************************************************************************************/
 	/**************************************************** APP3 initialization *******************************************************************/
 	/********************************************************************************************************************************************/
@@ -64,15 +123,15 @@ int main(void)
 	volatile uint8_t Local_u8Pulstemp ;
 	uint8_t Local_u8GreenLedFlag=0;
 	uint8_t Local_u8PassFlag,
-			Local_u8Trials = 0,
-			Local_u8Counter;
+	Local_u8Trials = 0,
+	Local_u8Counter;
 
 
 	USR_Alarm_T Local_NewDateTime=
 	{
-		.Date = "\0",
-		.Name = "NewDate",
-		.Time = "\0"
+			.Date = "\0",
+			.Name = "NewDate",
+			.Time = "\0"
 	};
 
 	USR_Alarm_T Local_Alarms[USR_MAX_ALRMS]= {"\0"};
@@ -178,46 +237,46 @@ int main(void)
 		do
 		{
 
-			
+
 			if (Globla_Alrams_Flags_state==0)
 			{
 				/********************************************************
 				 * alarm EXTI and notification
-				*/
+				 */
 				if (((Globla_Alrams_Flags_state>>APP2_ALARM_1)&1)==1)
 				{
 					/*send the name of alarm 1 */
 
 					/*clear bit*/
-					APP2_alarmFlagState &=~(1<<APP2_ALARM_1);
+					Globla_Alrams_Flags_state &=~(1<<APP2_ALARM_1);
 				}
 				if (((Globla_Alrams_Flags_state>>APP2_ALARM_2)&1)==1)
 				{
 					/*send the name of alarm 2 */
 
 					/*clear bit*/
-					APP2_alarmFlagState &=~(1<<APP2_ALARM_2);
+					Globla_Alrams_Flags_state &=~(1<<APP2_ALARM_2);
 				}
 				if (((Globla_Alrams_Flags_state>>APP2_ALARM_3)&1)==1)
 				{
 					/*send the name of alarm 3 */
 
 					/*clear bit*/
-					APP2_alarmFlagState &=~(1<<APP2_ALARM_3);
+					Globla_Alrams_Flags_state &=~(1<<APP2_ALARM_3);
 				}
 				if (((Globla_Alrams_Flags_state>>APP2_ALARM_4)&1)==1)
 				{
 					/*send the name of alarm 4 */
 
 					/*clear bit*/
-					APP2_alarmFlagState &=~(1<<APP2_ALARM_4);
+					Globla_Alrams_Flags_state &=~(1<<APP2_ALARM_4);
 				}
 				if (((Globla_Alrams_Flags_state>>APP2_ALARM_5)&1)==1)
 				{
 					/*send the name of alarm 5 */
 
 					/*clear bit*/
-					APP2_alarmFlagState &=~(1<<APP2_ALARM_5);
+					Globla_Alrams_Flags_state &=~(1<<APP2_ALARM_5);
 				}
 			}
 			/***************************************************************************************/

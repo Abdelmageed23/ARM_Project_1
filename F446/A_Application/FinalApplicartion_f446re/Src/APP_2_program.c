@@ -51,7 +51,7 @@ void APP2_voidWantCurrentDate(RTC_date_t*GetDate)
     RTC_DateTime_t temparry;
     if (NULL!=APP2_pvCurrentDateTimearry)
     {
-        BinaryToBCd(APP2_pvCurrentDateTimearry,&temparry,6);
+    	BinaryToBCD(&APP2_pvCurrentDateTimearry->minutes,&temparry.minutes,6);
         GetDate->date= (temparry.date);
         GetDate->month= (temparry.month);
         GetDate->year=  (temparry.year);
@@ -62,7 +62,7 @@ void APP2_voidWantCurrentTime(RTC_time_t*GetTime)
     RTC_DateTime_t temparry;
     if (NULL!=APP2_pvCurrentDateTimearry)
     {
-        BinaryToBCd(APP2_pvCurrentDateTimearry,&temparry,2);
+    	BinaryToBCD(&APP2_pvCurrentDateTimearry->minutes,&temparry.minutes,2);
         GetTime->hours= (temparry.hours);
         GetTime->minutes= (temparry.minutes);
     }
@@ -101,7 +101,7 @@ void APP2_voidSetTime(USR_Alarm_T *Current)
         APP2_CurrentTime.date    =(Current->Date[0])-'0';
         APP2_CurrentTime.month   =(Current->Date[1])-'0';
         APP2_CurrentTime.year    =(Current->Date[2])-'0';
-        BCDToBinary(&APP2_CurrentTime,&APP2_CurrentTime,6);
+        BCDToBinary(&APP2_CurrentTime.minutes,&APP2_CurrentTime.minutes,6);
         APP2_pvCurrentDateTimearry = &APP2_CurrentTime;
         HRTC_voidSetDateTime(&I2cCinfig ,APP2_pvCurrentDateTimearry);
     }    
@@ -127,7 +127,7 @@ void APP2_voidSetAlarm(USR_Alarm_T *alarm,APP2_AlarmNumber_t alarmNumber)
 		APP2_AlarmsTimeDateArry[alarmNumber].date    =(alarm->Date[0])-'0';
 		APP2_AlarmsTimeDateArry[alarmNumber].month   =(alarm->Date[1])-'0';
 		APP2_AlarmsTimeDateArry[alarmNumber].year    =(alarm->Date[2])-'0';
-        BCDToBinary(&APP2_AlarmsTimeDateArry[alarmNumber],&APP2_AlarmsTimeDateArry[alarmNumber],6);
+        BCDToBinary(&APP2_AlarmsTimeDateArry[alarmNumber].minutes,&APP2_AlarmsTimeDateArry[alarmNumber].minutes,6);
         APP2_pvAlarmTimeDatearry[alarmNumber]=ALAREM_DFINED;
     }
 }
@@ -195,7 +195,7 @@ void APP2_voidAlarmNotification(void)
 */
 void APP2_SysTick_ISR(void)
 {
-    static Local_Static_counter=0;
+    static uint8_t Local_Static_counter=0;
     if (Local_Static_counter==0)
     {
         APP2_voidReadTime();
