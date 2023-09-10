@@ -11,7 +11,7 @@
 #define ALARM_NOT_DEFINED       0U
 #define ALAREM_DFINED           1U
 #define MAX_SYSTICK_OF_COUNT    10U
-#define SYSTICK_RELOAD_VALUE    2000000UL
+#define SYSTICK_RELOAD_VALUE    500000UL
 
 void APP2_SysTick_ISR(void);
 

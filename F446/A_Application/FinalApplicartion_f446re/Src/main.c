@@ -22,21 +22,22 @@
 /************************ MCAL Layer ******************************************/
 /******************************************************************************/
 #include "RCC_interface.h"
-//#include "USART_interface.h"
+#include "USART_interface.h"
 #include "GPIO_interface.h"
-#include "NVIC_interface.h"
 /******************************************************************************/
 /************************ HAL Layer *******************************************/
 /******************************************************************************/
 #include "RTC_interface.h"
-#include "RTC_config.h"
 /******************************************************************************/
 /******************************************************************************/
 /******************************************************************************/
-#include "USR_interface.h"
-#include "USR_sctipts.h"
-#include "APP3_interface.h"
+//#include "USR_interface.h"
+//#include "USR_sctipts.h"
+
+#include "APP1_interface.h"
 #include "APP_2_interface.h"
+#include "APP3_interface.h"
+
 extern uint8_t Globla_Alrams_Flags_state;
 int main(void)
 {
@@ -53,192 +54,76 @@ int main(void)
 	/********************************************************************************************************************************************/
 	/**************************************************** RTC initialization ********************************************************************/
 	/********************************************************************************************************************************************/
-	GPIO_PinConfig_T sda ={RTC_I2C_PORT , RTC_I2C_SDA_PIN , ALTER_FUNC , SPEED_FAST , OPEN_DRAIN , RTC_I2C_PULL , AF4};
-	GPIO_u8PinInit(&sda);
-	GPIO_PinConfig_T scl ={RTC_I2C_PORT , RTC_I2C_SCL_PIN , ALTER_FUNC , SPEED_FAST , OPEN_DRAIN , RTC_I2C_PULL , AF4};
-	GPIO_u8PinInit(&scl);
+	HRTC_u8Init();
 
-	GPIO_u8SetPinValue(sda.Port, sda.PinNum, PIN_HIGH);
-	GPIO_u8SetPinValue(scl.Port, scl.PinNum, PIN_HIGH);
+	/* APP1 Initialization*/
+	APP1_voidInit();
 
-	/*********************************************************************************************/
-
-	RCC_voidAPB1EnablePerapheralClock(APB1_I2C1);
-
-
-	I2Cconfig_t I2cCinfig ={RTC_I2C,SM,SCL_SM_100K,STRETCHING_ENABLE,I2C_MODE,ACK_ENABLE,ENGC_ENABLE};
-
-	DMA_Cnfg_T I2C_DMA_Rx =
-	{
-			.CallBackFunc = &MI2C_u8ACallbackRx,
-			.ChannelNum = CHANNEL1,
-			.DMA_Type = DMA_1,
-			.InterruptType = FULL_TRANS,
-			.MemIncMode = INCREMENT,
-			.MemIncSize = BYTE,
-			.PerIncMode = FIXED,
-			.PerIncSize = BYTE,
-			.PriorityLevel = HIGH,
-			.SrcDestMode = PERIPH_TO_MEM,
-			.StreamNum = STREAM0,
-			.TransferMode = DIRECT_MODE
-	};
-
-	DMA_Cnfg_T I2C_DMA_Tx =
-	{
-			.CallBackFunc = &MI2C_u8ACallbackTx,
-			.ChannelNum = CHANNEL1,
-			.DMA_Type = DMA_1,
-			.InterruptType = FULL_TRANS,
-			.MemIncMode = INCREMENT,
-			.MemIncSize = BYTE,
-			.PerIncMode = FIXED,
-			.PerIncSize = BYTE,
-			.PriorityLevel = VERY_HIGH,
-			.SrcDestMode = MEM_TO_PERIPH,
-			.StreamNum = STREAM7,
-			.TransferMode = DIRECT_MODE
-	};
-
-
-	I2cCinfig.DMA_Rx = I2C_DMA_Rx;
-	I2cCinfig.DMA_Tx = I2C_DMA_Tx;
-	DMA_u8Init(&I2C_DMA_Tx);
-	DMA_u8Init(&I2C_DMA_Rx);
-
-	MI2C_u8SetConfiguration(&I2cCinfig);
-
-	MNVIC_u8EnableInterrupt(NVIC_DMA1_Stream0);
-	MNVIC_u8EnableInterrupt(NVIC_DMA1_Stream7);
-	HRTC_u8Init(&I2cCinfig);
 	/********************************************************************************************************************************************/
 	/**************************************************** APP3 initialization *******************************************************************/
 	/********************************************************************************************************************************************/
 	APP3_voidinit();
-	/********************************************************************************************************************************************/
-	/********************************************************************************************************************************************/
-	/********************************************************************************************************************************************/
+
 
 	/********************	Local variables initialization	********************/
-	volatile uint8_t Local_u8Pulstemp ;
-	uint8_t Local_u8GreenLedFlag=0;
-	uint8_t Local_u8PassFlag,
-	Local_u8Trials = 0,
-	Local_u8Counter;
+	uint8_t Local_u8Pulstemp ;
+	APP1_AlarmSelect Local_u8AlrmNumber;
 
-
-	USR_Alarm_T Local_NewDateTime=
+	APP1_Alarm_T Local_NewDateTime=
 	{
 			.Date = "\0",
 			.Name = "NewDate",
 			.Time = "\0"
 	};
 
-	USR_Alarm_T Local_Alarms[USR_MAX_ALRMS]= {"\0"};
+	APP1_Alarm_T Local_Alarms[APP1_MAX_ALRMS]= {"\0"};
 
-	USR_Choice Local_u8Choice;
-	USR_AlarmSelect Local_u8AlrmSelect;
+	APP1_Choice Local_u8Choice;
 
 
-	/*********************	GPIO Pins configurations ***********************/
-	GPIO_PinConfig_T USARTPinRX =
+	RTC_time_t SetTime,GetTime;
+	RTC_date_t SetDate,GetDate;
+
+
+	HRTC_voidSetCurrentTimeDate(&SetTime, &SetDate);
+
+
+	HRTC_voidGetCurrentTimeDate(&GetTime, &GetDate);
+
+
+
+
+	/* Login System */
+	if((APP1_u8LoginSystem())== PASS_NOT_CORRECT)
 	{
-			.AltFunc = AF7,
-			.Mode = ALTER_FUNC,
-			.PinNum = PIN2,
-			.Port = PORTA,
-			.PullType = PUSH_PULL,
-			.Speed = SPEED_LOW
-	};
-
-	GPIO_PinConfig_T USARTPinTX =
-	{
-			.AltFunc = AF7,
-			.Mode = ALTER_FUNC,
-			.PinNum = PIN3,
-			.Port = PORTA,
-			.PullType = PUSH_PULL,
-			.Speed = SPEED_LOW
-	};
-
-
-	/*********************	USART configuration	*************************/
-	USARTconfig_t USR_USART_Cnfg =
-	{
-			.DMAresevier = DMAR_DISABLE,
-			.DMAtransmitter = DMAT_DISABLE,
-			.ErrorTnterrupt = INHIBITED,
-			.OverSampling = BY_16,
-			.ParityControl = PARITY_CONTROL_DISABLE,
-			.RXNEinterrupt = RXNE_INTERRUPT_DISABLE,
-			.Receiver = RECEIVER_ENABLE,
-			.StopBit_t = ONE_BIT,
-			.TXEinterrupt = TXE_INTERRUPT_DISABLE,
-			.TransmetCompleteInterrupt = TRANSMITTER_COMPLETE_INTERRUPT_DISABLE,
-			.Transmitter = TRANSMITTER_ENABLE,
-			.USARTindex = USART_2,
-			.WordLength = DATA_8_BITS,
-			.ParitySelection = PARITY_SELECTION_EVEN
-	};
-
-
-	/***********************	MCAL Initialization ***********************/
-	MUSART_u8SetConfiguration(&USR_USART_Cnfg);
-	GPIO_u8PinInit(&USARTPinRX);
-	GPIO_u8PinInit(&USARTPinTX);
-
-
-	/*******************	User Interface Program	***********************/
-
-	/* Welcome */
-	MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_Welcome);
-	MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
-
-	MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_EnterPass);
-	MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
-
-	do
-	{
-
-		if(Local_u8Trials != 0)
-		{
-			/* Wrong Password*/
-			MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_WrongPass);
-			MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
-		}
-		/* Check password*/
-		Local_u8PassFlag = USR_u8ReceivePass(USR_USART_Cnfg.USARTindex);
-		Local_u8Trials++;
-	}
-	while((Local_u8PassFlag == PASS_NOT_CORRECT) && (Local_u8Trials < USR_MAX_TRIALS));
-
-
-	if(Local_u8PassFlag == PASS_NOT_CORRECT)
-	{
-		/***************************************************************************************/
 		/*************************** Turn On Red Led *******************************************/
-		/***************************************************************************************/
 		APP3_voidTurnOnRedLed();
-		/***************************************************************************************/
-		/***************************************************************************************/
-		/***************************************************************************************/
-		/*Login Failed*/
-		MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_TrailFailed);
-		MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
+
+		APP1_voidFaliedLogin();
 	}
 
 	/* Logged in successfully*/
 	else
 	{
-		/***************************************************************************************/
 		/*************************** Turn On Green Led *****************************************/
-		/***************************************************************************************/
 		APP3_voidTurnOnGreenLed();
+
+		/* Set Time for the first time */
+		APP1_voidReceiveTimeDate(&Local_NewDateTime);
+
+		/* Set new time & date*/
+		APP2_voidSetTime(&Local_NewDateTime);
+
+		/* Date and time is updated */
+		APP1_voidTimeIsSet();
+
+		/* initialize APP2*/
+		APP2_voidInit();
+
+
 		do
 		{
-
-
-			if (Globla_Alrams_Flags_state==0)
+			if (Globla_Alrams_Flags_state!=0)
 			{
 				/********************************************************
 				 * alarm EXTI and notification
@@ -246,6 +131,7 @@ int main(void)
 				if (((Globla_Alrams_Flags_state>>APP2_ALARM_1)&1)==1)
 				{
 					/*send the name of alarm 1 */
+					APP3_voidAlarmCompareMatch((uint8_t *)&Local_Alarms[ALRM1-1].Name);
 
 					/*clear bit*/
 					Globla_Alrams_Flags_state &=~(1<<APP2_ALARM_1);
@@ -253,6 +139,7 @@ int main(void)
 				if (((Globla_Alrams_Flags_state>>APP2_ALARM_2)&1)==1)
 				{
 					/*send the name of alarm 2 */
+					APP3_voidAlarmCompareMatch((uint8_t *)&Local_Alarms[ALRM2-1].Name);
 
 					/*clear bit*/
 					Globla_Alrams_Flags_state &=~(1<<APP2_ALARM_2);
@@ -260,6 +147,7 @@ int main(void)
 				if (((Globla_Alrams_Flags_state>>APP2_ALARM_3)&1)==1)
 				{
 					/*send the name of alarm 3 */
+					APP3_voidAlarmCompareMatch((uint8_t *)&Local_Alarms[ALRM1-3].Name);
 
 					/*clear bit*/
 					Globla_Alrams_Flags_state &=~(1<<APP2_ALARM_3);
@@ -267,6 +155,7 @@ int main(void)
 				if (((Globla_Alrams_Flags_state>>APP2_ALARM_4)&1)==1)
 				{
 					/*send the name of alarm 4 */
+					APP3_voidAlarmCompareMatch((uint8_t *)&Local_Alarms[ALRM4-1].Name);
 
 					/*clear bit*/
 					Globla_Alrams_Flags_state &=~(1<<APP2_ALARM_4);
@@ -274,106 +163,69 @@ int main(void)
 				if (((Globla_Alrams_Flags_state>>APP2_ALARM_5)&1)==1)
 				{
 					/*send the name of alarm 5 */
+					APP3_voidAlarmCompareMatch((uint8_t *)&Local_Alarms[ALRM5-1].Name);
 
 					/*clear bit*/
 					Globla_Alrams_Flags_state &=~(1<<APP2_ALARM_5);
 				}
 			}
-			/***************************************************************************************/
-			/***************************************************************************************/
-			/***************************************************************************************/
+
 			/* Display dash-board*/
-			USR_voidSendDashBoard(USR_USART_Cnfg.USARTindex);
-			MUSART_u8ReceiveCharSynch(USR_USART_Cnfg.USARTindex, &Local_u8Choice);
-			MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
+			Local_u8Choice = APP1_u8DisplayDashBoard();
 
 			switch(Local_u8Choice)
 			{
 			case CHOICE_DISPLAY :
 
-				/*Call RTC HERE to get time
-				 *
-				 *
-				 * */
-				/***************************************************************************************/
-				/*************************** Display On LCD ********************************************/
-				/***************************************************************************************/
-				APP3_voidDisplayTime();
+				APP2_voidReadDateTime();
+				HRTC_voidGetCurrentTimeDate(&GetTime, &GetDate);
+
+				/**** Display On LCD ****/
+				APP3_voidDisplayTime(&GetTime);
+
 				for (uint32_t Local_u8Counter =0 ; Local_u8Counter<=10000;Local_u8Counter++)
 				{
 					Local_u8Pulstemp=Local_u8Counter;
 				}
-				APP3_voidDisplayDate();
-				/***************************************************************************************/
-				/***************************************************************************************/
-				/***************************************************************************************/
+
+				APP3_voidDisplayDate(&GetDate);
+
 				break;
 
 			case CHOICE_SET_TIME :
 
-				USR_voidReceiveTimeDate(USR_USART_Cnfg.USARTindex ,&Local_NewDateTime);
+				/* Get new time & date */
+				APP1_voidReceiveTimeDate(&Local_NewDateTime);
 
-				/* Call RTC HERE to set new time & date
-				 *
-				 *
-				 *
-				 *
-				 * */
+				/* Set new time & date*/
+				APP2_voidSetTime(&Local_NewDateTime);
 
 				/* Date and time is update d*/
-				MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_DateUpd);
-				MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
+				APP1_voidTimeIsSet();
+
 				break;
 
 			case CHOICE_SET_ALRM :
-				/***************************************************************************************/
-				/*************************** For Testing ***********************************************/
-				/***************************************************************************************/
-				APP3_voidSendAlarmName((uint8_t*)"Alarm Test");
-				for (uint32_t Local_u8Counter =0 ; Local_u8Counter<=10000;Local_u8Counter++)
-				{
-					Local_u8Pulstemp=Local_u8Counter;
-				}
-				APP3_voidAlarmCompareMatch();
-				/***************************************************************************************/
-				/***************************************************************************************/
-				/***************************************************************************************/
 
-				for(Local_u8Counter = 0 ;Local_u8Counter < USR_MAX_ALRMS ;Local_u8Counter++)
-				{
-					/* Display Alarms board */
-					USR_u8DisplayAlarms(USR_USART_Cnfg.USARTindex,(Local_u8Counter+1) ,(uint8_t *)(&(Local_Alarms[Local_u8Counter].Name)));
-				}
+				/*Set Alarm*/
+				Local_u8AlrmNumber = APP1_u8SetAlarmCnfg(Local_Alarms);
 
-				/*Select alarm */
-				Local_u8AlrmSelect = USR_u8ReceiveAlarmSelect(USR_USART_Cnfg.USARTindex);
-
-				/* Set alarm configuration*/
-				USR_voidReceiveAlarmCnfg(USR_USART_Cnfg.USARTindex ,(&Local_Alarms[Local_u8AlrmSelect-1]));
-
-				/* Call APP2 HERE
-				 *
-				 *
-				 *
-				 * */
+				APP2_voidSetAlarm(&Local_Alarms[Local_u8AlrmNumber-1], Local_u8AlrmNumber-1);
 
 				/* New alarm is set */
-				MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_AlarmSet);
-				MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
+				APP1_voidAlarmIsSet();
 
 				break;
 
 			case CHOICE_EXIT :
 
 				/* Exit the system */
-				MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_Exit);
-				MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
+				APP1_voidExit();
 				break;
 
 			default :
 				/* Invalid Choice */
-				MUSART_u8TransmitArraySynch(USR_USART_Cnfg.USARTindex,(uint8_t *)USR_Script_Invalid);
-				MUSART_u8TransmitCharSynch(USR_USART_Cnfg.USARTindex,USR_Script_NewLine);
+				APP1_voidInvalidChoice();
 
 				break;
 			}

@@ -1,7 +1,7 @@
 #ifndef	I2C_INTERFACE_H
 #define I2C_INTERFACE_H
 
-#include "DMA_interface.h"
+
 
 /******************************************************************************/
 /************************ @I2Cindex_t *****************************************/
@@ -70,7 +70,7 @@ typedef enum{
 			REPEAT_ENABLE
 }StartRepeat_t ;
 /******************************************************************************/
-/************************ @DMArequests_t **************************************/
+/************************ @StopCondition_t ************************************/
 /******************************************************************************/
 typedef enum{
 			I2C_DMA_DISABLE  =0,
@@ -89,8 +89,6 @@ typedef struct{
 	Acknowledge_t            Acknowledge     ;
 	GeneralCall_t            GeneralCall     ;
 
-	DMA_Cnfg_T				 DMA_Rx			 ;
-	DMA_Cnfg_T				 DMA_Tx			 ;
 }I2Cconfig_t;
 
 /*************************************************************************************************************************************/
@@ -168,13 +166,4 @@ uint8_t MI2C_u8DMArequests (  I2Cindex_t Copy_I2Cindex , DMArequests_t Copy_DMAr
 /*************************************************************************************************************************************/
 /*************************************************************************************************************************************/
 /*************************************************************************************************************************************/
-
-uint8_t MI2C_u8Transmit_DMA( I2Cconfig_t* I2Cconfig , uint16_t Copy_u16SlaveAdd ,uint8_t *Copy_pu8Data , uint32_t Copy_u32Size);
-
-uint8_t MI2C_u8Receive_DMA( I2Cconfig_t* I2Cconfig , uint16_t Copy_u16SlaveAdd ,uint8_t *Copy_pu8Data , uint32_t Copy_u32Size);
-void MI2C_voidResetI2C(I2Cindex_t Copy_I2Cindex);
-
-void MI2C_u8ACallbackTx(void);
-void MI2C_u8ACallbackRx(void);
-
 #endif

@@ -48,50 +48,50 @@ uint8_t MSPI_u8SetConfiguration ( const SPIconfig_t* SPIconfig )
 	uint8_t Local_u8ErrorState = ERROR_STATE_OK;
 	if (  SPIconfig !=NULL )
 	{
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 &=~ ( SPI_CPHA_MASK         << SPI_CR1_CPHA );
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 |=  ( SPIconfig->ClockPhase << SPI_CR1_CPHA );
+		SPI_Index[SPIconfig->SPIindex] -> CR1 &=~ ( SPI_CPHA_MASK         << SPI_CR1_CPHA );
+		SPI_Index[SPIconfig->SPIindex] -> CR1 |=  ( SPIconfig->ClockPhase << SPI_CR1_CPHA );
 
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 &=~ ( SPI_CPOL_MASK            << SPI_CR1_CPOL );
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 |=  ( SPIconfig->ClockPolarity << SPI_CR1_CPOL );
+		SPI_Index[SPIconfig->SPIindex] -> CR1 &=~ ( SPI_CPOL_MASK            << SPI_CR1_CPOL );
+		SPI_Index[SPIconfig->SPIindex] -> CR1 |=  ( SPIconfig->ClockPolarity << SPI_CR1_CPOL );
 
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 &=~ ( SPI_MSTR_MASK           << SPI_CR1_MSTR );
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 |=  ( SPIconfig->SPI_MCUstate << SPI_CR1_MSTR );
+		SPI_Index[SPIconfig->SPIindex] -> CR1 &=~ ( SPI_MSTR_MASK           << SPI_CR1_MSTR );
+		SPI_Index[SPIconfig->SPIindex] -> CR1 |=  ( SPIconfig->SPI_MCUstate << SPI_CR1_MSTR );
 
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 &=~ ( SPI_BR_MASK         << SPI_CR1_BR );
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 |=  ( SPIconfig->BaudRate << SPI_CR1_BR );
+		SPI_Index[SPIconfig->SPIindex] -> CR1 &=~ ( SPI_BR_MASK         << SPI_CR1_BR );
+		SPI_Index[SPIconfig->SPIindex] -> CR1 |=  ( SPIconfig->BaudRate << SPI_CR1_BR );
 
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 &=~ (SPI_LSBFIRST_MASK      << (SPI_CR1_LSBFIRST));
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 |=  (SPIconfig->FrameFormat << (SPI_CR1_LSBFIRST));
+		SPI_Index[SPIconfig->SPIindex] -> CR1 &=~ (SPI_LSBFIRST_MASK      << (SPI_CR1_LSBFIRST));
+		SPI_Index[SPIconfig->SPIindex] -> CR1 |=  (SPIconfig->FrameFormat << (SPI_CR1_LSBFIRST));
 
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 &=~ (SPI_SSI_MASK                   << (SPI_CR1_SSI));
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 |=  (SPIconfig->InternalSlaveSelect << (SPI_CR1_SSI));
+		SPI_Index[SPIconfig->SPIindex] -> CR1 &=~ (SPI_SSI_MASK                   << (SPI_CR1_SSI));
+		SPI_Index[SPIconfig->SPIindex] -> CR1 |=  (SPIconfig->InternalSlaveSelect << (SPI_CR1_SSI));
 
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 &=~ (SPI_SSM_MASK                      << (SPI_CR1_SSM));
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 |=  (SPIconfig->SoftwareSlaveManagment << (SPI_CR1_SSM));
+		SPI_Index[SPIconfig->SPIindex] -> CR1 &=~ (SPI_SSM_MASK                      << (SPI_CR1_SSM));
+		SPI_Index[SPIconfig->SPIindex] -> CR1 |=  (SPIconfig->SoftwareSlaveManagment << (SPI_CR1_SSM));
 
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 &=~ (SPI_RXONLY_MASK        << (SPI_CR1_RXONLY));
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 |=  (SPIconfig->ReceiveOnly << (SPI_CR1_RXONLY));
+		SPI_Index[SPIconfig->SPIindex] -> CR1 &=~ (SPI_RXONLY_MASK        << (SPI_CR1_RXONLY));
+		SPI_Index[SPIconfig->SPIindex] -> CR1 |=  (SPIconfig->ReceiveOnly << (SPI_CR1_RXONLY));
 
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 &=~ (SPI_DFF_MASK         << (SPI_CR1_DFF));
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 |=  (SPIconfig->DataFrame << (SPI_CR1_DFF));
+		SPI_Index[SPIconfig->SPIindex] -> CR1 &=~ (SPI_DFF_MASK         << (SPI_CR1_DFF));
+		SPI_Index[SPIconfig->SPIindex] -> CR1 |=  (SPIconfig->DataFrame << (SPI_CR1_DFF));
 /****************************************************************************************************/
 
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR2 &=~ (SPI_RXDMAEN_MASK << (SPI_CR2_RXDMAEN));
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR2 |=  (SPIconfig->RXDMA << (SPI_CR2_RXDMAEN));
+		SPI_Index[SPIconfig->SPIindex] -> CR2 &=~ (SPI_RXDMAEN_MASK << (SPI_CR2_RXDMAEN));
+		SPI_Index[SPIconfig->SPIindex] -> CR2 |=  (SPIconfig->RXDMA << (SPI_CR2_RXDMAEN));
 	
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR2 &=~ (SPI_TXDMAEN_MASK << (SPI_CR2_TXDMAEN));
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR2 |=  (SPIconfig->TXDMA << (SPI_CR2_TXDMAEN));
+		SPI_Index[SPIconfig->SPIindex] -> CR2 &=~ (SPI_TXDMAEN_MASK << (SPI_CR2_TXDMAEN));
+		SPI_Index[SPIconfig->SPIindex] -> CR2 |=  (SPIconfig->TXDMA << (SPI_CR2_TXDMAEN));
 	
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR2 &=~ (SPI_SSOE_MASK       << (SPI_CR2_SSOE));
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR2 |=  (SPIconfig->SSoutput << (SPI_CR2_SSOE));
+		SPI_Index[SPIconfig->SPIindex] -> CR2 &=~ (SPI_SSOE_MASK       << (SPI_CR2_SSOE));
+		SPI_Index[SPIconfig->SPIindex] -> CR2 |=  (SPIconfig->SSoutput << (SPI_CR2_SSOE));
 
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR2 &=~ (SPI_RXNEIE_MASK        << (SPI_CR2_RXNEIE));
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR2 |=  (SPIconfig->RXinterrupt << (SPI_CR2_RXNEIE));
+		SPI_Index[SPIconfig->SPIindex] -> CR2 &=~ (SPI_RXNEIE_MASK        << (SPI_CR2_RXNEIE));
+		SPI_Index[SPIconfig->SPIindex] -> CR2 |=  (SPIconfig->RXinterrupt << (SPI_CR2_RXNEIE));
 
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR2 &=~ (SPI_TXEIE_MASK         << (SPI_CR2_TXEIE));
-		SPI_Index[SPIconfig->SPIindex] -> SPI_CR2 |=  (SPIconfig->TXinterrupt << (SPI_CR2_TXEIE));
+		SPI_Index[SPIconfig->SPIindex] -> CR2 &=~ (SPI_TXEIE_MASK         << (SPI_CR2_TXEIE));
+		SPI_Index[SPIconfig->SPIindex] -> CR2 |=  (SPIconfig->TXinterrupt << (SPI_CR2_TXEIE));
 
-		SET_BIT( SPI_Index[SPIconfig->SPIindex] -> SPI_CR1 , SPI_CR1_SPE );
+		SET_BIT( SPI_Index[SPIconfig->SPIindex] -> CR1 , SPI_CR1_SPE );
 	}
 	else
 	{
@@ -119,11 +119,11 @@ uint8_t MSPI_u8SendReceiveSynch ( SPIindex_t Copy_SPIindex , uint8_t Copy_u8Data
 	uint8_t Local_u8ErrorState = ERROR_STATE_OK ;
 	if (   Copy_u8DataToReceive != NULL )
 	{
-		while ( 0==GET_BIT(SPI_Index[Copy_SPIindex]  ->  SPI_SR , 1 ) );
-		SPI_Index[Copy_SPIindex]  -> SPI_DR = Copy_u8DataToTransmit ;
-		while ( 1 == GET_BIT( SPI_Index[Copy_SPIindex] -> SPI_SR , 7 ) );
-		while ( 0==GET_BIT(SPI_Index[Copy_SPIindex]  ->  SPI_SR , 0 ) );
-		*Copy_u8DataToReceive = SPI_Index[Copy_SPIindex]  -> SPI_DR  ;
+		while ( 0==GET_BIT(SPI_Index[Copy_SPIindex]  ->  SR , 1 ) );
+		SPI_Index[Copy_SPIindex]  -> DR = Copy_u8DataToTransmit ;
+		while ( 1 == GET_BIT( SPI_Index[Copy_SPIindex] ->  SR , 7 ) );
+		while ( 0==GET_BIT(SPI_Index[Copy_SPIindex]  ->  SR , 0 ) );
+		*Copy_u8DataToReceive = SPI_Index[Copy_SPIindex]  -> DR  ;
 	}
 	else 
 	{
@@ -187,7 +187,7 @@ uint8_t MSPI_u8SendReceiveAsynch ( SPIindex_t Copy_SPIindex , uint8_t Copy_u8Dat
 	if (  Copy_pFunNotification != NULL  )
 	{
 		SPI_ApFunCallBack[Copy_SPIindex]=Copy_pFunNotification;
-		SPI_Index[Copy_SPIindex] -> SPI_DR = Copy_u8DataToTransmit ;
+		SPI_Index[Copy_SPIindex] -> DR = Copy_u8DataToTransmit ;
 	}
 	else 
 	{
@@ -202,28 +202,28 @@ void SPI1_IRQHandler(void)
 {
     if ( SPI_ApFunCallBack[SPI_1] != NULL )
 	{
-    	SPI_ApFunCallBack[SPI_1]( SPI_Index[SPI_1] -> SPI_DR );
+    	SPI_ApFunCallBack[SPI_1]( SPI_Index[SPI_1] -> DR );
 	}
 }
 void SPI2_IRQHandler(void)
 {
     if ( SPI_ApFunCallBack[SPI_2] != NULL )
 	{
-    	SPI_ApFunCallBack[SPI_2]( SPI_Index[SPI_2] -> SPI_DR );
+    	SPI_ApFunCallBack[SPI_2]( SPI_Index[SPI_2] -> DR );
 	}
 }
 void SPI3_IRQHandler(void)
 {
     if ( SPI_ApFunCallBack[SPI_3] != NULL )
 	{
-    	SPI_ApFunCallBack[SPI_3]( SPI_Index[SPI_3] -> SPI_DR );
+    	SPI_ApFunCallBack[SPI_3]( SPI_Index[SPI_3] -> DR );
 	}
 }
 void SPI4_IRQHandler(void)
 {
     if ( SPI_ApFunCallBack[SPI_4] != NULL )
 	{
-    	SPI_ApFunCallBack[SPI_4]( SPI_Index[SPI_4] -> SPI_DR );
+    	SPI_ApFunCallBack[SPI_4]( SPI_Index[SPI_4] -> DR );
 	}
 }
 /*************************************************************************************************************************************/

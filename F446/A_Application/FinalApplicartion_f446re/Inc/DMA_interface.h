@@ -93,8 +93,6 @@ typedef enum
 
 }DMA_Interrupt;
 
-
-
 typedef struct
 {
 	DMA_DMAType DMA_Type;

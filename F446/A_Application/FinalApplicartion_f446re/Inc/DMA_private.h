@@ -1,11 +1,6 @@
 #ifndef DMA_PRIVATE_H_
 #define DMA_PRIVATE_H_
 
-typedef enum
-{
-	  DMA_IS_IDLE,
-	  DMA_IS_BUSY
-}DMA_Status;
 #define DMA_TYPE_NUM			2
 #define DMA_STREAM_NUM			8			/*Number of Streams*/
 #define DMA_STREAM_REG_NUM		6			/*Number of SCR registers*/
@@ -37,10 +32,6 @@ typedef enum
 #define DMA_FEIE_SHIFT			7			/* FIFO Interrupt enable shift*/
 
 #define DMA_FLAG_RISED			1
-
-
-
-
 
 #endif
 

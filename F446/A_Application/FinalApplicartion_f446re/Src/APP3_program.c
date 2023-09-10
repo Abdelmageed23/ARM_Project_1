@@ -66,7 +66,7 @@ void APP3_voidinit (void)
 	GPIO_PinConfig_T SCK   ={ APP3_SPI_SCK_PIN  , ALTER_FUNC , SPEED_LOW , PUSH_PULL , NO_PULL , AF5 };
 	GPIO_u8PinInit(&SCK);
 	SPIconfig_t SPI_config ={APP3_SPI_INDEX,LEADING_CAPTURE,LEADING_RISING,MASTER,F_CLK_DIV_8,MSB,SELECT_ONE,MANAGMENT_ENABLE,FULL_DUPLEX,FORMAT_8_BIT
-				                  ,RX_DMA_DISABLE ,TX_DMA_DISABLE,SS_OUTPUT_DISABLE ,RX_INTERRUPT_MASKED,TX_INTERRUPT_MASKED };
+			,RX_DMA_DISABLE ,TX_DMA_DISABLE,SS_OUTPUT_DISABLE ,RX_INTERRUPT_MASKED,TX_INTERRUPT_MASKED };
 	MSPI_u8SetConfiguration(&SPI_config);
 	GPIO_PinConfig_T NSS  ={APP3_GPIO_NSS_PIN , OUTPUT , SPEED_LOW , PUSH_PULL , NO_PULL , AF0};
 	GPIO_u8PinInit(&NSS);
@@ -129,8 +129,17 @@ void APP3_voidTurnOnRedLed(void)
  *
  ******************************************************************************
  */
-void APP3_voidAlarmCompareMatch(void)
+void APP3_voidAlarmCompareMatch(uint8_t *Copy_pu8AlrmName)
 {
+	uint8_t Local_u8Pulstemp;
+
+	APP3_voidSendAlarmName(Copy_pu8AlrmName);
+
+	for (uint32_t Local_u8Counter =0 ; Local_u8Counter<=100000;Local_u8Counter++)
+	{
+		Local_u8Pulstemp=Local_u8Counter;
+	}
+
 	GPIO_u8SetPinValue(APP3_GPIO_TO_EXTI_PIN, PIN_HIGH);
 	for (uint32_t Local_u8Counter =0 ; Local_u8Counter<=100;Local_u8Counter++)
 	{
@@ -150,17 +159,15 @@ void APP3_voidAlarmCompareMatch(void)
  *
  ******************************************************************************
  */
-void APP3_voidDisplayTime(void)
+void APP3_voidDisplayTime(RTC_time_t *Copy_u8Time)
 {
-	RTC_time_t   GetTime;
-	APP2_voidWantCurrentTime(&GetTime);
 
 	GPIO_u8SetPinValue(APP3_GPIO_NSS_PIN, PIN_LOW);
 	MSPI_u8SendReceiveSynch(APP3_SPI_INDEX,APP3_SPI_TRIGGER_TIME,&Global_u8ReceiveTemp);
 	GPIO_u8SetPinValue(APP3_GPIO_NSS_PIN, PIN_HIGH);
 
 	GPIO_u8SetPinValue(APP3_GPIO_NSS_PIN, PIN_LOW);
-	MSPI_u8TransmitArraySynch(APP3_SPI_INDEX,TimeToString(&GetTime));
+	MSPI_u8TransmitArraySynch(APP3_SPI_INDEX,TimeToString(Copy_u8Time));
 	GPIO_u8SetPinValue(APP3_GPIO_NSS_PIN, PIN_HIGH);
 }
 /**
@@ -175,17 +182,15 @@ void APP3_voidDisplayTime(void)
  *
  ******************************************************************************
  */
-void APP3_voidDisplayDate(void)
+void APP3_voidDisplayDate(RTC_date_t *Copy_u8Date)
 {
-	RTC_date_t   GetDate;
-	APP2_voidWantCurrentDate(&GetDate);
 
 	GPIO_u8SetPinValue(APP3_GPIO_NSS_PIN, PIN_LOW);
 	MSPI_u8SendReceiveSynch(APP3_SPI_INDEX,APP3_SPI_TRIGGER_DATE,&Global_u8ReceiveTemp);
 	GPIO_u8SetPinValue(APP3_GPIO_NSS_PIN, PIN_HIGH);
 
 	GPIO_u8SetPinValue(APP3_GPIO_NSS_PIN, PIN_LOW);
-	MSPI_u8TransmitArraySynch(APP3_SPI_INDEX,DataToString(&GetDate));
+	MSPI_u8TransmitArraySynch(APP3_SPI_INDEX,DataToString(Copy_u8Date));
 	GPIO_u8SetPinValue(APP3_GPIO_NSS_PIN, PIN_HIGH);
 }
 /**

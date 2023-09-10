@@ -72,7 +72,7 @@ void APP3_voidTurnOnRedLed(void);
  *
  ******************************************************************************
  */
-void APP3_voidDisplayTime(void);
+void APP3_voidDisplayTime(RTC_time_t *Copy_u8Time);
 /**
  ******************************************************************************
  * @fn             : APP3_voidDisplayDate
@@ -85,7 +85,7 @@ void APP3_voidDisplayTime(void);
  *
  ******************************************************************************
  */
-void APP3_voidDisplayDate(void);
+void APP3_voidDisplayDate(RTC_date_t *Copy_u8Date);
 /**
  ******************************************************************************
  * @fn             : APP3_voidAlarmCompareMatch
@@ -99,7 +99,7 @@ void APP3_voidDisplayDate(void);
  * Used in APP2
  ******************************************************************************
  */
-void APP3_voidAlarmCompareMatch(void);
+void APP3_voidAlarmCompareMatch(uint8_t *Copy_pu8AlrmName);
 /**
  ******************************************************************************
  * @fn             : APP3_voidSendAlarmName

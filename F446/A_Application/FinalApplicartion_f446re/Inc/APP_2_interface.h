@@ -7,6 +7,10 @@
 
 #ifndef APP_2_INTERFACE_H_
 #define APP_2_INTERFACE_H_
+
+#include "APP1_interface.h"
+#include "RTC_interface.h"
+
 typedef enum
 {
     APP2_FLAG_UNRISED=0,
@@ -23,10 +27,10 @@ typedef enum
 }APP2_AlarmNumber_t;
 
 void APP2_voidInit(void);
-void APP2_voidReadTime(void);
+void APP2_voidReadDateTime(void);
 void APP2_voidWantCurrentDate(RTC_date_t*GetDate);
 void APP2_voidWantCurrentTime(RTC_time_t*GetTime);
-void APP2_voidSetTime(USR_Alarm_T *Current);
-void APP2_voidSetAlarm(USR_Alarm_T* alarm,APP2_AlarmNumber_t alarmNumber);
+void APP2_voidSetTime(APP1_Alarm_T *Current);
+void APP2_voidSetAlarm(APP1_Alarm_T* alarm,APP2_AlarmNumber_t alarmNumber);
 void APP2_voidAlarmNotification(void);
 #endif /* APP_2_INTERFACE_H_ */
