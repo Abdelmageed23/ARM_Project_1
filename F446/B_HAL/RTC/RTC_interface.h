@@ -80,7 +80,7 @@ void HRTC_u8GetRtcStatus ( uint8_t *Copy_u8Status );
  ******************************************************************************
  * @fn             : HRTC_voidSetCurrentTime
  * @brief          : Set Current Time
- * @param[in]      : RTC_time_t --> Set Value @RTC_time struct
+ * @param[in]      : RTC_time --> Set Value @RTC_time_t struct
  * @retval         : void
  ******************************************************************************
  * @attention
@@ -93,7 +93,7 @@ void HRTC_voidSetCurrentTime ( RTC_time_t *RTC_time );
  ******************************************************************************
  * @fn             : HRTC_voidGetCurrentTime
  * @brief          : Get Current Time
- * @param[in]      : RTC_time_t --> Get Value @RTC_time struct
+ * @param[in]      : RTC_time --> Get Value @RTC_time_t struct
  * @retval         : void
  ******************************************************************************
  * @attention
@@ -106,20 +106,20 @@ void HRTC_voidGetCurrentTime(RTC_time_t *RTC_time );
  ******************************************************************************
  * @fn             : HRTC_voidSetCurrentDate
  * @brief          : Set Current Date
- * @param[in]      : RTC_data_t --> Set Value @RTC_date struct
+ * @param[in]      : RTC_data --> Set Value @RTC_date_t struct
  * @retval         : void
  ******************************************************************************
  * @attention
  *
  *
  ******************************************************************************
- */
-void HRTC_voidSetCurrentDate(RTC_date_t *RTC_date);
+
+void HRTC_voidSetCurrentDate(RTC_date_t *RTC_date); */
 /**
  ******************************************************************************
  * @fn             : HRTC_voidGetCurrentDate
  * @brief          : Get Current Date
- * @param[in]      : RTC_data_t --> Get Value @RTC_date struct
+ * @param[in]      : RTC_data --> Get Value @RTC_date_t struct
  * @retval         : void
  ******************************************************************************
  * @attention
@@ -128,9 +128,39 @@ void HRTC_voidSetCurrentDate(RTC_date_t *RTC_date);
  ******************************************************************************
  */
 void HRTC_voidGetCurrentDate(RTC_date_t *RTC_date);
+/*************************************************************************************************************************************/
+/*************************************************************************************************************************************/
+/*************************************************************************************************************************************/
+/**
+ ******************************************************************************
+ * @fn             : HRTC_voidGetCurrentTimeDate
+ * @brief          : Get Current Time and Date
+ * @param[in]      : RTC_time --> Set Value @RTC_time_t struct
+ * @param[in]      : RTC_data --> Get Value @RTC_date_t struct
+ * @retval         : void
+ ******************************************************************************
+ * @attention
+ *
+ *
+ ******************************************************************************
+ */
+void HRTC_voidGetCurrentTimeDate(RTC_time_t *RTC_time , RTC_date_t *RTC_date);
+/**
+ ******************************************************************************
+ * @fn             : HRTC_voidSetCurrentTimeDate
+ * @brief          : Set Current Time and Date
+ * @param[in]      : RTC_time --> Set Value @RTC_time_t struct
+ * @param[in]      : RTC_data --> Get Value @RTC_date_t struct
+ * @retval         : void
+ ******************************************************************************
+ * @attention
+ *
+ *
+ ******************************************************************************
+ */
+void HRTC_voidSetCurrentTimeDate(RTC_time_t *RTC_time , RTC_date_t *RTC_date);
 
 /*************************************************************************************************************************************/
 /*************************************************************************************************************************************/
 /*************************************************************************************************************************************/
-
 #endif

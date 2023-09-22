@@ -73,16 +73,16 @@ void HRTC_u8Init(void)
  *
  *
  ******************************************************************************
- */
+
 void HRTC_u8GetRtcStatus ( uint8_t *Copy_u8Status )
 {
 	*Copy_u8Status = GET_BIT( RTC_voidReadRegister( RTC_ADDRESS_SEC ) , RTC_SEC_CH_BIT );
-}
+}*/
 /**
  ******************************************************************************
  * @fn             : HRTC_voidSetCurrentTime
  * @brief          : Set Current Time
- * @param[in]      : RTC_time_t --> Set Value @RTC_time struct
+ * @param[in]      : RTC_time --> Set Value @RTC_time_t struct
  * @retval         : void
  ******************************************************************************
  * @attention
@@ -121,12 +121,13 @@ void HRTC_voidSetCurrentTime ( RTC_time_t *RTC_time )
 	}*/
 	RTC_voidWriteRegister(Local_u8Hours , RTC_ADDRESS_HRS );
 	/*********************************************************************************************/
+
 }
 /**
  ******************************************************************************
  * @fn             : HRTC_voidGetCurrentTime
  * @brief          : Get Current Time
- * @param[in]      : RTC_time_t --> Get Value @RTC_time struct
+ * @param[in]      : RTC_time --> Get Value @RTC_time_t struct
  * @retval         : void
  ******************************************************************************
  * @attention
@@ -137,41 +138,21 @@ void HRTC_voidSetCurrentTime ( RTC_time_t *RTC_time )
 void HRTC_voidGetCurrentTime(RTC_time_t *RTC_time)
 {
 	/*********************************************************************************************/
-	//uint8_t Local_u8Second = RTC_voidReadRegister(RTC_ADDRESS_SEC);
-	//Local_u8Second &= ~(RTC_SEC_CH_MASK<<RTC_SEC_CH_BIT);
-	//RTC_time->seconds = BCDToBinary(Local_u8Second);
+	uint8_t Local_u8RegAddress=RTC_ADDRESS_MIN;
+	uint8_t Local_u8Data[2];
+	MI2C_u8SendSynch    ( RTC_I2C , RTC_I2C_SLAVE_ADDRESS ,&Local_u8RegAddress , 1 , STOP_ENABLE , REPEAT_DISABBLE);
+	MI2C_u8ReceiveSynch ( RTC_I2C , RTC_I2C_SLAVE_ADDRESS , Local_u8Data       , 2 , STOP_ENABLE , REPEAT_ENABLE  );
 	/*********************************************************************************************/
-	RTC_time->minutes = BCDToBinary(RTC_voidReadRegister(RTC_ADDRESS_MIN));
+	RTC_time->minutes = BCDToBinary(Local_u8Data[0]);
 	/*********************************************************************************************/
-	uint8_t Local_u8Hours  = RTC_voidReadRegister(RTC_ADDRESS_HRS) ;
-	/*
-	if (  Local_u8Hours & (RTC_HRS_12_24_MASK << RTC_HRS_12_24_BIT ))
-	{
-		if (  Local_u8Hours & (RTC_HRS_PM_AM_MASK << RTC_HRS_PM_AM_BIT ) )
-		{
-
-			RTC_time->time_format = _12HRS_PM;
-		}
-		else
-		{
-			RTC_time->time_format = _12HRS_AM;
-
-		}
-		Local_u8Hours &= ~(RTC_HRS_12_24_PM_AM_MASK<<RTC_HRS_PM_AM_BIT);
-	}
-	else
-	{
-		RTC_time->time_format = _24HRS ;
-
-	}*/
-	RTC_time->hours   = BCDToBinary(Local_u8Hours);
+	RTC_time->hours   = BCDToBinary(Local_u8Data[1]);
 	/*********************************************************************************************/
 }
 /**
  ******************************************************************************
  * @fn             : HRTC_voidSetCurrentDate
  * @brief          : Set Current Date
- * @param[in]      : RTC_data_t --> Set Value @RTC_date struct
+ * @param[in]      : RTC_data --> Set Value @RTC_date_t struct
  * @retval         : void
  ******************************************************************************
  * @attention
@@ -190,7 +171,7 @@ void HRTC_voidSetCurrentDate(RTC_date_t *RTC_date)
  ******************************************************************************
  * @fn             : HRTC_voidGetCurrentDate
  * @brief          : Get Current Date
- * @param[in]      : RTC_data_t --> Get Value @RTC_date struct
+ * @param[in]      : RTC_data --> Get Value @RTC_date_t struct
  * @retval         : void
  ******************************************************************************
  * @attention
@@ -200,10 +181,90 @@ void HRTC_voidSetCurrentDate(RTC_date_t *RTC_date)
  */
 void HRTC_voidGetCurrentDate(RTC_date_t *RTC_date)
 {
-	RTC_date->date   = BCDToBinary (RTC_voidReadRegister(RTC_ADDRESS_DATE));
-	RTC_date->month  = BCDToBinary (RTC_voidReadRegister(RTC_ADDRESS_MONTH));
-	RTC_date->year   = BCDToBinary (RTC_voidReadRegister(RTC_ADDRESS_YEAR));
-	//RTC_date->day    = BCDToBinary (RTC_voidReadRegister(RTC_ADDRESS_DAY));
+	/*********************************************************************************************/
+	uint8_t Local_u8RegAddress=RTC_ADDRESS_DATE;
+	uint8_t Local_u8Data[3];
+	MI2C_u8SendSynch    ( RTC_I2C , RTC_I2C_SLAVE_ADDRESS ,&Local_u8RegAddress , 1 , STOP_ENABLE , REPEAT_DISABBLE);
+	MI2C_u8ReceiveSynch ( RTC_I2C , RTC_I2C_SLAVE_ADDRESS , Local_u8Data       , 3 , STOP_ENABLE , REPEAT_ENABLE  );
+	/*********************************************************************************************/
+	RTC_date->date   = BCDToBinary (Local_u8Data[0]);
+	/*********************************************************************************************/
+	RTC_date->month  = BCDToBinary (Local_u8Data[1]);
+	/*********************************************************************************************/
+	RTC_date->year   = BCDToBinary (Local_u8Data[2]);
+	/*********************************************************************************************/
+}
+/*************************************************************************************************************************************/
+/*************************************************************************************************************************************/
+/*************************************************************************************************************************************/
+/**
+ ******************************************************************************
+ * @fn             : HRTC_voidGetCurrentTimeDate
+ * @brief          : Get Current Time and Date
+ * @param[in]      : RTC_time --> Set Value @RTC_time_t struct
+ * @param[in]      : RTC_data --> Get Value @RTC_date_t struct
+ * @retval         : void
+ ******************************************************************************
+ * @attention
+ *
+ *
+ ******************************************************************************
+ */
+void HRTC_voidGetCurrentTimeDate(RTC_time_t *RTC_time , RTC_date_t *RTC_date)
+{
+	/*********************************************************************************************/
+	uint8_t Local_u8RegAddress=RTC_ADDRESS_MIN;
+	uint8_t Local_u8Data[6];
+	MI2C_u8SendSynch    ( RTC_I2C , RTC_I2C_SLAVE_ADDRESS ,&Local_u8RegAddress , 1 , STOP_ENABLE , REPEAT_DISABBLE);
+	MI2C_u8ReceiveSynch ( RTC_I2C , RTC_I2C_SLAVE_ADDRESS , Local_u8Data       , 6 , STOP_ENABLE , REPEAT_ENABLE  );
+	/*********************************************************************************************/
+	RTC_time->minutes = BCDToBinary(Local_u8Data[0]);
+	/*********************************************************************************************/
+	RTC_time->hours   = BCDToBinary(Local_u8Data[1]);
+	/*********************************************************************************************/
+	/*********************************************************************************************/
+	RTC_date->date   = BCDToBinary (Local_u8Data[3]);
+	/*********************************************************************************************/
+	RTC_date->month  = BCDToBinary (Local_u8Data[4]);
+	/*********************************************************************************************/
+	RTC_date->year   = BCDToBinary (Local_u8Data[5]);
+	/*********************************************************************************************/
+}
+/**
+ ******************************************************************************
+ * @fn             : HRTC_voidSetCurrentTimeDate
+ * @brief          : Set Current Time and Date
+ * @param[in]      : RTC_time --> Set Value @RTC_time_t struct
+ * @param[in]      : RTC_data --> Get Value @RTC_date_t struct
+ * @retval         : void
+ ******************************************************************************
+ * @attention
+ *
+ *
+ ******************************************************************************
+ */
+void HRTC_voidSetCurrentTimeDate(RTC_time_t *RTC_time , RTC_date_t *RTC_date)
+{
+    uint8_t Local_Au8TransmitArray[7] ;
+	/*********************************************************************************************/
+    //Local_Au8TransmitArray[0]=0;
+	/*********************************************************************************************/
+    Local_Au8TransmitArray[1]=BinaryToBCD(RTC_time->minutes) ;
+	/*********************************************************************************************/
+	uint8_t Local_u8Hours = BinaryToBCD(RTC_time->hours);
+	Local_u8Hours &= ~(RTC_HRS_12_24_MASK<<RTC_HRS_12_24_BIT);
+	Local_Au8TransmitArray[2]=Local_u8Hours ;
+	/*********************************************************************************************/
+    //Local_Au8TransmitArray[3]=0;
+	/*********************************************************************************************/
+	Local_Au8TransmitArray[4]= BinaryToBCD(RTC_date->date) ;
+	/*********************************************************************************************/
+	Local_Au8TransmitArray[5]= BinaryToBCD(RTC_date->month);
+	/*********************************************************************************************/
+	Local_Au8TransmitArray[6]= BinaryToBCD(RTC_date->year) ;
+	/*********************************************************************************************/
+	MI2C_u8SendSynch ( RTC_I2C , RTC_I2C_SLAVE_ADDRESS , Local_Au8TransmitArray , 7 , STOP_ENABLE , REPEAT_DISABBLE );
+
 }
 /*************************************************************************************************************************************/
 /********************************************************* Static Functions implementations ******************************************/
@@ -227,26 +288,6 @@ static void RTC_voidWriteRegister( uint8_t Copy_u8Value , uint8_t Copy_u8RegAddr
     Local_Au8TransmitArray[0] = Copy_u8RegAddress ;
     Local_Au8TransmitArray[1] = Copy_u8Value ;
 	MI2C_u8SendSynch ( RTC_I2C , RTC_I2C_SLAVE_ADDRESS , Local_Au8TransmitArray , 2 , STOP_ENABLE , REPEAT_DISABBLE );
-
-}
-/**
- ******************************************************************************
- * @fn             : RTC_voidReadRegister
- * @brief          : Read Data From Rtc Register
- * @param[in]      : Copy_u8RegAddress --> Set Register Address
- * @retval         : Register Value u8
- ******************************************************************************
- * @attention
- *
- *
- ******************************************************************************
- */
-static uint8_t RTC_voidReadRegister( uint8_t Copy_u8RegAddress )
-{
-	uint8_t Local_u8Data ;
-	MI2C_u8SendSynch    ( RTC_I2C , RTC_I2C_SLAVE_ADDRESS ,&Copy_u8RegAddress , 1 , STOP_ENABLE , REPEAT_DISABBLE);
-	MI2C_u8ReceiveSynch ( RTC_I2C , RTC_I2C_SLAVE_ADDRESS ,&Local_u8Data      , 1 , STOP_ENABLE , REPEAT_ENABLE  );
-	return Local_u8Data ;
 
 }
 /**
