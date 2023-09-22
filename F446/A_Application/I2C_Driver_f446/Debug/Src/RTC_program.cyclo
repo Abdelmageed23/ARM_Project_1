@@ -1,0 +1,10 @@
+RTC_program.c:52:6:HRTC_u8Init	1
+RTC_program.c:117:6:HRTC_u8GetRtcStatus	1
+RTC_program.c:133:6:HRTC_voidSetCurrentTime	3
+RTC_program.c:174:6:HRTC_voidGetCurrentTime	3
+RTC_program.c:218:6:HRTC_voidSetCurrentDate	1
+RTC_program.c:237:6:HRTC_voidGetCurrentDate	1
+RTC_program.c:260:13:RTC_voidWriteRegister	1
+RTC_program.c:281:16:RTC_voidReadRegister	1
+RTC_program.c:304:16:BinaryToBCD	2
+RTC_program.c:329:16:BCDToBinary	1
