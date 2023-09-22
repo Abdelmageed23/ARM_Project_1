@@ -1,0 +1,13 @@
+../Src/DMA_program.c:13:9:DMA_u8Init	24	static
+../Src/DMA_program.c:75:9:DMA_u8StartTransfer	32	static
+../Src/DMA_program.c:121:6:DMA1_Channel1_IRQHandler	8	static
+../Src/DMA_program.c:127:6:DMA1_Channel2_IRQHandler	8	static
+../Src/DMA_program.c:134:6:DMA1_Channel3_IRQHandler	8	static
+../Src/DMA_program.c:141:6:DMA1_Channel4_IRQHandler	8	static
+../Src/DMA_program.c:147:6:DMA1_Channel5_IRQHandler	8	static
+../Src/DMA_program.c:153:6:DMA1_Channel6_IRQHandler	8	static
+../Src/DMA_program.c:159:6:DMA1_Channel7_IRQHandler	8	static
+../Src/DMA_program.c:166:6:DMA2_Channel1_IRQHandler	8	static
+../Src/DMA_program.c:172:6:DMA2_Channel2_IRQHandler	8	static
+../Src/DMA_program.c:178:6:DMA2_Channel3_IRQHandler	8	static
+../Src/DMA_program.c:184:6:DMA2_Channel4_5_IRQHandler	8	static

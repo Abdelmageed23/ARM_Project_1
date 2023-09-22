@@ -1,0 +1,5 @@
+../Src/RTC_program.c:52:6:HRTC_u8Init	24	static
+../Src/RTC_program.c:63:6:HRTC_voidSetDateTime	32	static
+../Src/RTC_program.c:85:6:HRTC_voidGetDateTime	24	static
+../Src/RTC_program.c:105:6:BinaryToBCD	32	static
+../Src/RTC_program.c:140:7:BCDToBinary	32	static

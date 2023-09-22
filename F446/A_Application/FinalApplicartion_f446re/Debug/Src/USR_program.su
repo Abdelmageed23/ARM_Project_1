@@ -1,0 +1,6 @@
+../Src/USR_program.c:18:16:USR_u8ReceivePass	32	static
+../Src/USR_program.c:40:6:USR_voidSendDashBoard	16	static
+../Src/USR_program.c:59:6:USR_voidReceiveTimeDate	24	static
+../Src/USR_program.c:141:6:USR_u8DisplayAlarms	16	static
+../Src/USR_program.c:159:17:USR_u8ReceiveAlarmSelect	24	static
+../Src/USR_program.c:172:6:USR_voidReceiveAlarmCnfg	16	static

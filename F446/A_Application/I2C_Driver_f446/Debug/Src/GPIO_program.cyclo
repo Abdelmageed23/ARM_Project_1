@@ -1,4 +1,0 @@
-GPIO_program.c:26:9:GPIO_u8PinInit	12
-GPIO_program.c:95:9:GPIO_u8SetPinValue	4
-GPIO_program.c:122:9:GPIO_u8TogglePinValue	3
-GPIO_program.c:150:9:GPIO_u8ReadPinValue	3
