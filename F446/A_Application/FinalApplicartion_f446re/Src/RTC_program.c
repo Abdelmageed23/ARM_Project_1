@@ -216,7 +216,6 @@ void HRTC_voidGetCurrentTimeDate(RTC_time_t *RTC_time , RTC_date_t *RTC_date)
 	/*********************************************************************************************/
 	uint8_t Local_u8RegAddress=RTC_ADDRESS_SEC;
 	uint8_t Local_u8Data[7];
-//	MI2C_u8SendSynch    ( RTC_I2C , RTC_I2C_SLAVE_ADDRESS ,&Local_u8RegAddress , 1 , STOP_ENABLE , REPEAT_DISABBLE);
 
 	RTC_voidWriteRegister( RTC_SEC_MASK , RTC_ADDRESS_SEC );
 	MI2C_u8SendSynch    ( RTC_I2C , RTC_I2C_SLAVE_ADDRESS ,&Local_u8RegAddress , 1 , STOP_ENABLE , REPEAT_DISABBLE);

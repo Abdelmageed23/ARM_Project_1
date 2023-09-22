@@ -37,6 +37,9 @@
 #define APP1_Script_AlarmName			"\n Enter ALarm Name :"
 #define APP1_Script_AlarmSet				"\nThe alarm is set successfully\n"
 
+#define APP1_Script_NeweDate			"\nEnter New Date :"
+#define APP1_Script_NeweTime			"\nEnter New Time :"
+
 #define APP1_Script_Exit					"\nThanks for using 7moksha alarm system\n"
 
 #define APP1_Script_NewLine					'\r'

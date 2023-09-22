@@ -84,13 +84,50 @@ int main(void)
 	RTC_time_t SetTime,GetTime;
 	RTC_date_t SetDate,GetDate;
 
+	SetDate.date = 12;
+	SetDate.month = 2;
+	SetDate.year = 23;
 
-	HRTC_voidSetCurrentTimeDate(&SetTime, &SetDate);
+	SetTime.hours = 1;
+	SetTime.minutes = 20;
 
 
-	HRTC_voidGetCurrentTimeDate(&GetTime, &GetDate);
+//	HRTC_u8Init();
+//	HRTC_voidSetCurrentTimeDate(&SetTime, &SetDate);
 
-
+//	APP3_voidDisplayTime(&SetTime);
+//	for(int i = 0 ; i < 10000 ; i++);
+//
+//	APP3_voidDisplayDate(&SetDate);
+//
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//	for(int i = 0 ; i < 4000000 ; i++);
+//
+//	HRTC_u8Init();
+//	HRTC_voidGetCurrentTimeDate(&GetTime, &GetDate);
+//
+//	APP3_voidDisplayTime(&GetTime);
+//	for(int i = 0 ; i < 10000 ; i++);
+//
+//	APP3_voidDisplayDate(&GetDate);
 
 
 	/* Login System */
@@ -178,6 +215,8 @@ int main(void)
 			case CHOICE_DISPLAY :
 
 				APP2_voidReadDateTime();
+
+				HRTC_u8Init();
 				HRTC_voidGetCurrentTimeDate(&GetTime, &GetDate);
 
 				/**** Display On LCD ****/

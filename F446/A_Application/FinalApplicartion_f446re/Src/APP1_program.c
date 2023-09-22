@@ -138,7 +138,7 @@ void APP1_voidReceiveTimeDate(APP1_Alarm_T *Copy_TimeDateCnfg)
 	uint8_t Local_u8RecVal[APP1_DATE_LENGTH];
 
 	/*Get Date*/
-	MUSART_u8TransmitArraySynch(APP1_USART_Cnfg.USARTindex,(uint8_t *)APP1_Script_AlarmDate);
+	MUSART_u8TransmitArraySynch(APP1_USART_Cnfg.USARTindex,(uint8_t *)APP1_Script_NeweDate);
 	MUSART_u8TransmitCharSynch(APP1_USART_Cnfg.USARTindex,APP1_Script_NewLine);
 
 	MUSART_u8TransmitArraySynch(APP1_USART_Cnfg.USARTindex,(uint8_t *)APP1_Script_DateTmp);
@@ -161,7 +161,7 @@ void APP1_voidReceiveTimeDate(APP1_Alarm_T *Copy_TimeDateCnfg)
 
 
 	/* Get Time*/
-	MUSART_u8TransmitArraySynch(APP1_USART_Cnfg.USARTindex,(uint8_t *)APP1_Script_AlarmTime);
+	MUSART_u8TransmitArraySynch(APP1_USART_Cnfg.USARTindex,(uint8_t *)APP1_Script_NewTime);
 	MUSART_u8TransmitCharSynch(APP1_USART_Cnfg.USARTindex,APP1_Script_NewLine);
 
 	MUSART_u8TransmitArraySynch(APP1_USART_Cnfg.USARTindex,(uint8_t *)APP1_Script_TimeTmp);

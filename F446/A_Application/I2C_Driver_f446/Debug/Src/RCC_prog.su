@@ -1,8 +1,0 @@
-../Src/RCC_prog.c:22:9:RCC_u8SetClksts	24	static
-../Src/RCC_prog.c:64:9:RCC_SetSysClk	24	static
-../Src/RCC_prog.c:80:6:RCC_voidAHB1EnablePerapheralClock	16	static
-../Src/RCC_prog.c:84:6:RCC_voidAHB1DisablePerapheralClock	16	static
-../Src/RCC_prog.c:89:6:RCC_voidAPB2EnablePerapheralClock	16	static
-../Src/RCC_prog.c:93:6:RCC_voidAPB2DisablePerapheralClock	16	static
-../Src/RCC_prog.c:98:6:RCC_voidAPB1EnablePerapheralClock	16	static
-../Src/RCC_prog.c:102:6:RCC_voidAPB1DisablePerapheralClock	16	static

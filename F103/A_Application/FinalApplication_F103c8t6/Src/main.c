@@ -52,9 +52,17 @@ void ReceiveSwitchFunc (uint8_t Data)
 	{
 		switch (Data)
 		{
-		case '~':   GPIO_u8SetPinValue(PORTA, PIN1 , PIN_HIGH); break;
+		case '~':
+			GPIO_u8SetPinValue(PORTA, PIN1 , PIN_HIGH);
+			for(int i = 0; i < 1000000 ;i++);
+			GPIO_u8SetPinValue(PORTA, PIN1 , PIN_LOW);
+		break;
 
-		case '!':   GPIO_u8SetPinValue(PORTC, PIN15, PIN_HIGH); break;
+		case '!':
+			GPIO_u8SetPinValue(PORTC, PIN15, PIN_HIGH);
+			for(int i = 0; i < 1000000 ;i++);
+			GPIO_u8SetPinValue(PORTC, PIN15, PIN_LOW);
+		break;
 
 		case '@':   Global_ReceiveFlag=1;break;
 
@@ -127,6 +135,8 @@ int main(void)
 	GPIO_u8PinInit(&GRN);
 	GPIO_PinConfig_T BUZ    ={ PORTB , PIN4 , OUTPUT_2MHZ , GPO_PUSHPULL , PULL_DN  };
 	GPIO_u8PinInit(&BUZ);
+	GPIO_u8SetPinValue(BUZ.Port, BUZ.PinNum, PIN_LOW);
+
 	GPIO_PinConfig_T BLU    ={ PORTC , PIN14 , OUTPUT_2MHZ , GPO_PUSHPULL , PULL_DN };
 	GPIO_u8PinInit(&BLU);
 	/********************************************************************************************************************************************/
@@ -142,7 +152,7 @@ int main(void)
 	GPIO_u8PinInit(&MOSI);
 	MNVIC_u8EnableInterrupt(NVIC_SPI1);
 	SPIconfig_t SPI_config ={SPI_1,LEADING_CAPTURE,LEADING_RISING,SLAVE,F_CLK_DIV_8,MSB,SELECT_ZERO,MANAGMENT_DISABLE,FULL_DUPLEX,FORMAT_8_BIT
-				                 ,RX_DMA_DISABLE,TX_DMA_DISABLE,SS_OUTPUT_DISABLE,RX_INTERRUPT_NOT_MASKED,TX_INTERRUPT_MASKED};
+			,RX_DMA_DISABLE,TX_DMA_DISABLE,SS_OUTPUT_DISABLE,RX_INTERRUPT_NOT_MASKED,TX_INTERRUPT_MASKED};
 	MSPI_u8SetConfiguration(&SPI_config);
 	MSPI_u8SendReceiveAsynch  ( SPI_1 ,'.' ,&ReceiveSwitchFunc );
 	/********************************************************************************************************************************************/
@@ -156,32 +166,34 @@ int main(void)
 	/********************************************************************************************************************************************/
 	/**************************************************** Loop **********************************************************************************/
 	/********************************************************************************************************************************************/
+	HLCD_voidInit();
+
 	while(1)
 	{
 
-	   if( Global_u8ReceieComplateFlag==1)
+		if( Global_u8ReceieComplateFlag==1)
 		{
 			switch (Global_ReceiveFlag)
 			{
-				case 1 :	HLCD_voidClearLCD();
-							HLCD_voidSetCursor(Location0, LCD_LINE0);
-							HLCD_voidSendString((uint8_t *)"Time:");
-							HLCD_voidSetCursor(Location5, LCD_LINE0);
-							HLCD_voidSendString(Global_pu8ReceiveArray);
-							Global_u8ReceieComplateFlag=0; Global_ReceiveFlag=0; break;
-				case 2 :
-							HLCD_voidSetCursor(Location0, LCD_LINE1);
-							HLCD_voidSendString((uint8_t *)"Date:");
-							HLCD_voidSetCursor(Location5, LCD_LINE1);
-							HLCD_voidSendString(Global_pu8ReceiveArray);
-							Global_u8ReceieComplateFlag=0; Global_ReceiveFlag=0;  break;
+			case 1 :	HLCD_voidClearLCD();
+			HLCD_voidSetCursor(Location0, LCD_LINE0);
+			HLCD_voidSendString((uint8_t *)"Time:");
+			HLCD_voidSetCursor(Location5, LCD_LINE0);
+			HLCD_voidSendString(Global_pu8ReceiveArray);
+			Global_u8ReceieComplateFlag=0; Global_ReceiveFlag=0; break;
+			case 2 :
+				HLCD_voidSetCursor(Location0, LCD_LINE1);
+				HLCD_voidSendString((uint8_t *)"Date:");
+				HLCD_voidSetCursor(Location5, LCD_LINE1);
+				HLCD_voidSendString(Global_pu8ReceiveArray);
+				Global_u8ReceieComplateFlag=0; Global_ReceiveFlag=0;  break;
 
-				case 3 : 	HLCD_voidClearLCD();
-							HLCD_voidSetCursor(Location0, LCD_LINE0);
-							HLCD_voidSendString((uint8_t *)"Alarm:");
-							HLCD_voidSetCursor(Location5, LCD_LINE1);
-							HLCD_voidSendString(Global_pu8ReceiveArray);
-							Global_u8ReceieComplateFlag=0; Global_ReceiveFlag=0;  break;
+			case 3 : 	HLCD_voidClearLCD();
+			HLCD_voidSetCursor(Location0, LCD_LINE0);
+			HLCD_voidSendString((uint8_t *)"Alarm:");
+			HLCD_voidSetCursor(Location5, LCD_LINE1);
+			HLCD_voidSendString(Global_pu8ReceiveArray);
+			Global_u8ReceieComplateFlag=0; Global_ReceiveFlag=0;  break;
 			}
 		}
 

@@ -1,7 +1,0 @@
-#ifndef AFIO_PRIVATE_H_
-#define AFIO_PRAIVATE_H_
-
-#define AFIO_EXTICR_REG_LINEBITS			4
-#define AFIO_EXTICR_REG_MASK				0b1111
-
-#endif

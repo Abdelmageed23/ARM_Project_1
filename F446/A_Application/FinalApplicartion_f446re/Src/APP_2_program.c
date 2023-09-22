@@ -82,11 +82,10 @@ void APP2_voidWantCurrentTime(RTC_time_t*GetTime)
  */
 void APP2_voidReadDateTime(void)
 {
-	RTC_date_t Date;
-	RTC_time_t Time;
+	RTC_date_t Date = {0};
+	RTC_time_t Time = {0};
 
-	uint8_t Local_u8Pulstemp;
-
+	HRTC_u8Init();
 	HRTC_voidGetCurrentTimeDate(&Time, &Date);
 
 	APP2_pvCurrentDateTimearry.minutes = Time.minutes;
@@ -115,6 +114,13 @@ void APP2_voidSetTime(APP1_Alarm_T *Current)
 		SetDate.date    =Current->Date[0];
 		SetDate.month   =Current->Date[1];
 		SetDate.year    =Current->Date[2];
+
+
+		APP2_pvCurrentDateTimearry.minutes = SetTime.minutes;
+		APP2_pvCurrentDateTimearry.hours = SetTime.hours;
+		APP2_pvCurrentDateTimearry.date = SetDate.date;
+		APP2_pvCurrentDateTimearry.month = SetDate.month;
+		APP2_pvCurrentDateTimearry.year = SetDate.year;
 
 		HRTC_u8Init();
 		HRTC_voidSetCurrentTimeDate(&SetTime, &SetDate);
@@ -168,6 +174,7 @@ void APP2_voidAlarmNotification(void)
 			&&((APP2_pvCurrentDateTimearry.year)==(APP2_AlarmsTimeDateArry[APP2_ALARM_1].year)))
 	{
 		Globla_Alrams_Flags_state |= (1<<APP2_ALARM_1);
+		APP2_pvAlarmTimeDatearry[APP2_ALARM_1]=ALARM_NOT_DEFINED;
 		/*Set interrupt && send alarm name to f103 over SPI*/
 	}
 	else if ((APP2_pvAlarmTimeDatearry[APP2_ALARM_2]!=ALARM_NOT_DEFINED)
@@ -178,6 +185,8 @@ void APP2_voidAlarmNotification(void)
 			&&((APP2_pvCurrentDateTimearry.year)==(APP2_AlarmsTimeDateArry[APP2_ALARM_2].year)))
 	{
 		Globla_Alrams_Flags_state |=(1<<APP2_ALARM_2);
+		APP2_pvAlarmTimeDatearry[APP2_ALARM_2]=ALARM_NOT_DEFINED;
+
 		/*Set interrupt && send alarm name to f103 over SPI*/
 	}
 	else if ((APP2_pvAlarmTimeDatearry[APP2_ALARM_3]!=ALARM_NOT_DEFINED)
@@ -188,6 +197,8 @@ void APP2_voidAlarmNotification(void)
 			&&((APP2_pvCurrentDateTimearry.year)==(APP2_AlarmsTimeDateArry[APP2_ALARM_3].year)))
 	{
 		Globla_Alrams_Flags_state |=(1<<APP2_ALARM_3);
+		APP2_pvAlarmTimeDatearry[APP2_ALARM_3]=ALARM_NOT_DEFINED;
+
 		/*Set interrupt && send alarm name to f103 over SPI*/
 	}
 	else if ((APP2_pvAlarmTimeDatearry[APP2_ALARM_4]!=ALARM_NOT_DEFINED)
@@ -198,6 +209,8 @@ void APP2_voidAlarmNotification(void)
 			&&((APP2_pvCurrentDateTimearry.year)==(APP2_AlarmsTimeDateArry[APP2_ALARM_4].year)))
 	{
 		Globla_Alrams_Flags_state |=(1<<APP2_ALARM_4);
+		APP2_pvAlarmTimeDatearry[APP2_ALARM_4]=ALARM_NOT_DEFINED;
+
 		/*Set interrupt && send alarm name to f103 over SPI*/
 	}
 	else if ((APP2_pvAlarmTimeDatearry[APP2_ALARM_5]!=ALARM_NOT_DEFINED)
@@ -208,6 +221,8 @@ void APP2_voidAlarmNotification(void)
 			&&((APP2_pvCurrentDateTimearry.year)==(APP2_AlarmsTimeDateArry[APP2_ALARM_5].year)))
 	{
 		Globla_Alrams_Flags_state |=(1<<APP2_ALARM_5);
+		APP2_pvAlarmTimeDatearry[APP2_ALARM_4]=ALARM_NOT_DEFINED;
+
 		/*Set interrupt && send alarm name to f103 over SPI*/
 	}
 }
